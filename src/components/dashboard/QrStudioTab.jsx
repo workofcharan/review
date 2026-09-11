@@ -1,0 +1,250 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Download, 
+  Printer, 
+  Copy, 
+  Check, 
+  Sliders
+} from 'lucide-react';
+import { useApp } from '../../context/AppContext';
+import { generateQrDataUrl } from '../../utils/qrHelper';
+
+export default function QrStudioTab() {
+  const { activeBusiness } = useApp();
+
+  const [cardFormat, setCardFormat] = useState('table_tent');
+  const [headline, setHeadline] = useState('How was your dining experience?');
+  const [subheadline, setSubheadline] = useState('Scan to rate & unlock 10% VIP Perk');
+  const [qrColor, setQrColor] = useState(activeBusiness.brandColors?.primary || '#e11d48');
+  const [tableLabel, setTableLabel] = useState('Table #');
+  const [qrDataUrl, setQrDataUrl] = useState('');
+  const [isCopied, setIsCopied] = useState(false);
+
+  const baseUrl = window.location.origin + window.location.pathname;
+  const targetFeedbackUrl = `${baseUrl}#/b/${activeBusiness.slug}`;
+
+  useEffect(() => {
+    async function loadQr() {
+      const url = await generateQrDataUrl(targetFeedbackUrl, {
+        darkColor: qrColor,
+        lightColor: '#ffffff'
+      });
+      setQrDataUrl(url || '');
+    }
+    loadQr();
+  }, [targetFeedbackUrl, qrColor]);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(targetFeedbackUrl);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const handleDownloadPng = () => {
+    if (!qrDataUrl) return;
+    const link = document.createElement('a');
+    link.href = qrDataUrl;
+    link.download = `${activeBusiness.slug}-qr-code.png`;
+    link.click();
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight">QR Code Studio & Print Generator</h2>
+          <p className="text-xs text-slate-500">
+            Generate customized, print-ready table tents, coaster cards, and stickers linked to {activeBusiness.name}.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleCopyLink}
+            className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors"
+          >
+            {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
+            <span>{isCopied ? 'Link Copied!' : 'Copy Direct URL'}</span>
+          </button>
+          <button
+            onClick={handlePrint}
+            className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>Print Table Flyer</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column: Customizer Controls */}
+        <div className="lg:col-span-5 space-y-5">
+          <div className="glass-card rounded-3xl p-6 border border-slate-200 shadow-xs space-y-5">
+            <div className="flex items-center gap-2 text-sky-600 border-b border-slate-100 pb-3">
+              <Sliders className="w-4 h-4" />
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Design Settings</h3>
+            </div>
+
+            {/* Template Format Selector */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-700">Collateral Template:</label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: 'table_tent', label: 'A5 Table Tent', desc: 'Foldable stand' },
+                  { id: 'acrylic', label: 'Acrylic Stand', desc: 'Square 4x4 card' },
+                  { id: 'coaster', label: 'Coaster Disc', desc: 'Circular drink mat' },
+                  { id: 'receipt', label: 'Bill Insert', desc: 'Compact slip' },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setCardFormat(item.id)}
+                    className={`p-2.5 rounded-xl text-left border transition-all text-xs ${
+                      cardFormat === item.id
+                        ? 'bg-sky-50 border-sky-500 text-sky-800 ring-1 ring-sky-400 font-bold'
+                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <div>{item.label}</div>
+                    <div className="text-[10px] text-slate-400 font-normal">{item.desc}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Headline */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">Card Headline:</label>
+              <input
+                type="text"
+                value={headline}
+                onChange={(e) => setHeadline(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              />
+            </div>
+
+            {/* Subtitle / CTA */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">Subheader / Reward Hook:</label>
+              <input
+                type="text"
+                value={subheadline}
+                onChange={(e) => setSubheadline(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              />
+            </div>
+
+            {/* Table Number Placeholder */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">Table / Location Tag:</label>
+              <input
+                type="text"
+                value={tableLabel}
+                onChange={(e) => setTableLabel(e.target.value)}
+                placeholder="e.g. Table # / Room #"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              />
+            </div>
+
+            {/* Color Accent Picker */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-slate-700">QR Code Accent Color:</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="color"
+                  value={qrColor}
+                  onChange={(e) => setQrColor(e.target.value)}
+                  className="w-9 h-9 rounded-lg bg-transparent cursor-pointer border border-slate-300"
+                />
+                <span className="font-mono text-xs text-slate-700 font-bold uppercase">{qrColor}</span>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="pt-2 flex gap-2">
+              <button
+                onClick={handleDownloadPng}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Download PNG</span>
+              </button>
+              <button
+                onClick={handlePrint}
+                className="flex-1 py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                <span>Print Flyer</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Live Card Preview & Print Canvas */}
+        <div className="lg:col-span-7 flex flex-col items-center justify-center">
+          <div className="w-full max-w-sm">
+            <div className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider text-center">
+              Live Mockup Preview ({cardFormat.replace('_', ' ')})
+            </div>
+
+            {/* Printable & Interactive Preview Card */}
+            <div 
+              id="printable-qr-card"
+              className={`w-full bg-white text-slate-900 shadow-xl rounded-3xl p-7 flex flex-col items-center text-center relative border-4 transition-all duration-300 ${
+                cardFormat === 'coaster' ? 'rounded-full aspect-square justify-center' : ''
+              }`}
+              style={{ borderColor: qrColor }}
+            >
+              {/* Top Business Logo */}
+              <div className="mb-3">
+                <div 
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl text-white shadow-md mx-auto"
+                  style={{ backgroundColor: qrColor }}
+                >
+                  {activeBusiness.logo}
+                </div>
+                <h4 className="font-extrabold text-base text-slate-950 mt-2 tracking-tight">
+                  {activeBusiness.name}
+                </h4>
+              </div>
+
+              {/* Headline */}
+              <h5 className="font-bold text-sm text-slate-800 leading-snug max-w-xs">
+                {headline}
+              </h5>
+
+              {/* QR Image Container */}
+              <div className="my-4 p-3 bg-slate-50 rounded-2xl border-2 border-slate-100 shadow-inner">
+                {qrDataUrl ? (
+                  <img
+                    src={qrDataUrl}
+                    alt="Scan QR code for feedback"
+                    className="w-44 h-44 object-contain rounded-lg"
+                  />
+                ) : (
+                  <div className="w-44 h-44 flex items-center justify-center text-slate-400">
+                    Generating...
+                  </div>
+                )}
+              </div>
+
+              {/* Subheadline & Table Tag */}
+              <p className="text-xs text-slate-600 font-medium max-w-xs leading-relaxed">
+                {subheadline}
+              </p>
+
+              <div className="mt-3 pt-3 border-t border-slate-100 w-full flex items-center justify-between text-[11px] text-slate-400">
+                <span className="font-mono font-semibold text-slate-500">{tableLabel} ___</span>
+                <span className="font-bold" style={{ color: qrColor }}>Instant VIP Perk</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
