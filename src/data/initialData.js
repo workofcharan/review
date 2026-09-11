@@ -1,5 +1,7 @@
 // Initial Seed Data for Multi-Tenant Smart QR Feedback Platform
 
+const DR_C_EXACT_REVIEW_URL = "https://www.google.com/maps/place/Dr+C+Dental+Clinic/@17.5299467,78.4874924,17z/data=!4m8!3m7!1s0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057!8m2!3d17.5299467!4d78.4874924!9m1!1b1!16s%2Fg%2F11wc8j_30z?entry=ttu&g_ep=EgoyMDI2MDkwOC4wIKXMDSoASAFQAw%3D%3D";
+
 export const INITIAL_BUSINESSES = [
   {
     id: "biz-drc",
@@ -14,8 +16,8 @@ export const INITIAL_BUSINESSES = [
       accent: "#0ea5e9",
       bgGradient: "from-sky-950 via-slate-900 to-slate-950"
     },
-    publicReviewUrl: "https://www.google.com/search?q=Dr+C+Dental+Clinic#lrd=0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057,3,,,",
-    yelpUrl: "https://www.google.com/search?q=Dr+C+Dental+Clinic#lrd=0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057,3,,,",
+    publicReviewUrl: DR_C_EXACT_REVIEW_URL,
+    yelpUrl: DR_C_EXACT_REVIEW_URL,
     tripAdvisorUrl: "",
     minPublicRating: 4,
     tableCount: 6,
