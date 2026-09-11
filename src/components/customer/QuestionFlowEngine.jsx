@@ -9,7 +9,7 @@ import RewardModal from './RewardModal';
 
 export default function QuestionFlowEngine({
   business,
-  tableNumber = 'Table 12',
+  tableNumber = 'Reception / Operatory',
   onFinishFeedback
 }) {
   const flow = business.questionFlow || {};
@@ -28,7 +28,7 @@ export default function QuestionFlowEngine({
   };
 
   const getNextNodeId = (question, answerValue) => {
-    if (!question || !question.next) return 'completion_screen';
+    if (!question || !question.next) return 'ai_review_screen';
 
     if (typeof answerValue === 'string' || typeof answerValue === 'number') {
       const key = String(answerValue);
@@ -46,11 +46,9 @@ export default function QuestionFlowEngine({
     if (question.type === 'emoji_scale') {
       const rating = Number(answerValue);
       if (rating >= (business.minPublicRating || 4)) {
-        if (question.next['positive']) return question.next['positive'];
-      } else if (rating === 3) {
-        if (question.next['neutral']) return question.next['neutral'];
+        if (question.next['5'] || question.next['positive']) return question.next['5'] || question.next['positive'];
       } else {
-        if (question.next['negative']) return question.next['negative'];
+        if (question.next['1'] || question.next['negative']) return question.next['1'] || question.next['negative'];
       }
     }
 
@@ -109,8 +107,14 @@ export default function QuestionFlowEngine({
     }
   };
 
-  const totalEstimatedSteps = 4;
-  const currentStepNumber = Math.min(history.length + 1, totalEstimatedSteps);
+  // 3-step calculation
+  const totalEstimatedSteps = 3;
+  let currentStepNumber = 1;
+  if (currentNodeId === 'overall_experience') currentStepNumber = 1;
+  else if (currentNodeId === 'positive_highlights') currentStepNumber = 2;
+  else if (currentNodeId === 'ai_review_screen') currentStepNumber = 3;
+  else currentStepNumber = Math.min(history.length + 1, totalEstimatedSteps);
+
   const progressPct = Math.round((currentStepNumber / totalEstimatedSteps) * 100);
 
   const renderQuestionContent = () => {
@@ -156,13 +160,23 @@ export default function QuestionFlowEngine({
 
     return (
       <div className="space-y-5 animate-slide-up">
+        {/* Step Indicator Badge */}
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-extrabold uppercase tracking-wider text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
+            Step {currentStepNumber} of 3
+          </span>
+          <span className="text-[11px] font-semibold text-slate-400">
+            {progressPct}% Complete
+          </span>
+        </div>
+
         {/* Question Title & Subtitle */}
         <div className="space-y-1.5">
           <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight leading-snug">
             {currentQuestion.title || currentQuestion.text}
           </h2>
           {currentQuestion.subtitle && (
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
               {currentQuestion.subtitle}
             </p>
           )}
@@ -177,7 +191,7 @@ export default function QuestionFlowEngine({
               handleAnswerChange(val);
               setTimeout(() => {
                 advanceToNext(val);
-              }, 250);
+              }, 200);
             }}
           />
         )}
@@ -195,8 +209,8 @@ export default function QuestionFlowEngine({
               onClick={() => advanceToNext()}
               className="w-full py-3.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all transform active:scale-98"
             >
-              <span>Continue</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>See AI Review Draft (Step 3)</span>
+              <Sparkles className="w-4 h-4 text-amber-300" />
             </button>
           </div>
         )}
@@ -227,8 +241,8 @@ export default function QuestionFlowEngine({
               onClick={() => advanceToNext()}
               className="w-full py-3.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all transform active:scale-98"
             >
-              <span>{answers[currentNodeId] ? 'Generate AI Review Draft' : 'Skip & Continue'}</span>
-              <Sparkles className="w-4 h-4 text-amber-300" />
+              <span>See Final Review Draft</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -261,7 +275,7 @@ export default function QuestionFlowEngine({
           {/* Location & Progress Bar */}
           <div className="flex items-center gap-2">
             <span className="text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200 font-medium">
-              {tableNumber}
+              Step {currentStepNumber} of 3
             </span>
             <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
               <div 
@@ -279,9 +293,9 @@ export default function QuestionFlowEngine({
         <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
           <div className="flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="font-medium">Verified Guest Portal</span>
+            <span className="font-medium">Direct Google Review Converter</span>
           </div>
-          <span className="text-slate-400">Powered by RevPulse AI</span>
+          <span className="text-slate-400">Dr C Dental Clinic</span>
         </div>
       </div>
 

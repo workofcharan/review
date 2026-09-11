@@ -27,11 +27,12 @@ export const INITIAL_BUSINESSES = [
     questionFlow: {
       start: "overall_experience",
       questions: {
+        // Step 1: Rating
         overall_experience: {
           id: "overall_experience",
           type: "emoji_scale",
           title: "How was your dental care experience at Dr C Dental Clinic?",
-          subtitle: "Tap an emoji to rate your visit today",
+          subtitle: "Tap an emoji to rate your visit today (Step 1 of 3)",
           options: [
             { value: 1, label: "Painful/Poor", emoji: "😣", sentiment: "negative" },
             { value: 2, label: "Uncomfortable", emoji: "😕", sentiment: "negative" },
@@ -42,16 +43,17 @@ export const INITIAL_BUSINESSES = [
           next: {
             "5": "positive_highlights",
             "4": "positive_highlights",
-            "3": "neutral_categories",
-            "2": "negative_categories",
-            "1": "negative_categories",
+            "3": "private_manager_alert",
+            "2": "private_manager_alert",
+            "1": "private_manager_alert",
           }
         },
+        // Step 2: What delighted you about your treatment & visit?
         positive_highlights: {
           id: "positive_highlights",
           type: "chips_multiselect",
           title: "What delighted you about your treatment & visit?",
-          subtitle: "Select all highlights that made your appointment comfortable",
+          subtitle: "Select all that made your appointment comfortable (Step 2 of 3)",
           options: [
             "Painless & Gentle Procedure",
             "Dr. C's Clear & Reassuring Guidance",
@@ -63,67 +65,10 @@ export const INITIAL_BUSINESSES = [
             "Comfortable Treatment Chair & Ambiance"
           ],
           next: {
-            default: "staff_shoutout"
-          }
-        },
-        staff_shoutout: {
-          id: "staff_shoutout",
-          type: "chips_single",
-          title: "Would you like to give a shoutout to our clinic staff?",
-          subtitle: "Your kind words brighten our team's day!",
-          options: [
-            "Dr. C (Lead Dental Surgeon)",
-            "Dental Hygienist & Assistant",
-            "Front Desk Coordinator",
-            "The Entire Clinic Staff",
-            "Prefer to skip"
-          ],
-          next: {
-            default: "positive_free_text"
-          }
-        },
-        positive_free_text: {
-          id: "positive_free_text",
-          type: "free_text",
-          title: "Any specific treatment or doctor compliment to share?",
-          subtitle: "Optional: Our AI will turn your praise into a ready-to-post 5-star Google review for Dr C Dental Clinic!",
-          placeholder: "e.g., Dr. C made my root canal completely painless and explained every step with patience. The clinic is spotless and highly professional...",
-          next: {
             default: "ai_review_screen"
           }
         },
-        neutral_categories: {
-          id: "neutral_categories",
-          type: "chips_multiselect",
-          title: "What could make your next visit even more seamless?",
-          subtitle: "Help our clinic director optimize your patient care",
-          options: [
-            "Faster Appointment Booking",
-            "Post-Treatment Care Instructions",
-            "Waiting Room Seating",
-            "More Flexible Evening Slots",
-            "Payment & Insurance Options"
-          ],
-          next: {
-            default: "private_manager_alert"
-          }
-        },
-        negative_categories: {
-          id: "negative_categories",
-          type: "chips_multiselect",
-          title: "We sincerely apologize. What fell short of expectations?",
-          subtitle: "Dr. C and our clinical director review all concerns immediately to ensure patient comfort",
-          options: [
-            "Treatment Discomfort or Sensitivity",
-            "Long Wait Time Past Appointment",
-            "Billing or Fee Clarification",
-            "Staff Interaction or Communication",
-            "Post-Care Follow-up Delay"
-          ],
-          next: {
-            default: "private_manager_alert"
-          }
-        },
+        // Private Interception for 1-3 stars
         private_manager_alert: {
           id: "private_manager_alert",
           type: "private_resolution",
@@ -167,7 +112,7 @@ export const INITIAL_BUSINESSES = [
           id: "overall_experience",
           type: "emoji_scale",
           title: "How was your dining experience at L'Aura?",
-          subtitle: "Tap an emoji to share your initial impression",
+          subtitle: "Tap an emoji to share your impression (Step 1 of 3)",
           options: [
             { value: 1, label: "Disappointing", emoji: "😞", sentiment: "negative" },
             { value: 2, label: "Underwhelming", emoji: "😕", sentiment: "negative" },
@@ -178,16 +123,16 @@ export const INITIAL_BUSINESSES = [
           next: {
             "5": "positive_highlights",
             "4": "positive_highlights",
-            "3": "neutral_categories",
-            "2": "negative_categories",
-            "1": "negative_categories",
+            "3": "private_manager_alert",
+            "2": "private_manager_alert",
+            "1": "private_manager_alert",
           }
         },
         positive_highlights: {
           id: "positive_highlights",
           type: "chips_multiselect",
           title: "What delighted your palate and evening?",
-          subtitle: "Select all highlights that made your visit memorable",
+          subtitle: "Select all highlights that made your visit memorable (Step 2 of 3)",
           options: [
             "Truffle Tagliatelle",
             "Dry-Aged Ribeye",
@@ -199,69 +144,7 @@ export const INITIAL_BUSINESSES = [
             "Decadent Chocolate Soufflé"
           ],
           next: {
-            default: "staff_shoutout"
-          }
-        },
-        staff_shoutout: {
-          id: "staff_shoutout",
-          type: "chips_single",
-          title: "Would you like to shout out a team member?",
-          subtitle: "We pass your praise directly to our staff!",
-          options: [
-            "Alex (Lead Server)",
-            "Chef Marco (Kitchen)",
-            "Maya (Master Sommelier)",
-            "Front Desk Host",
-            "The Entire Kitchen Team",
-            "Prefer to skip"
-          ],
-          next: {
-            default: "positive_free_text"
-          }
-        },
-        positive_free_text: {
-          id: "positive_free_text",
-          type: "free_text",
-          title: "Any special note or dish review to highlight?",
-          subtitle: "Optional: Our AI will turn your feedback into a ready-to-post 5-star draft!",
-          placeholder: "e.g., The wine pairing with the duck confit was absolute perfection, and Alex was so knowledgeable...",
-          next: {
             default: "ai_review_screen"
-          }
-        },
-        neutral_categories: {
-          id: "neutral_categories",
-          type: "chips_multiselect",
-          title: "What could take your experience from okay to exceptional?",
-          subtitle: "Your candid feedback helps our kitchen & floor team refine every detail",
-          options: [
-            "Faster Service Pace",
-            "Portion Sizes",
-            "Acoustics / Noise Level",
-            "More Vegetarian Options",
-            "Table Spacing & Privacy",
-            "Cocktail Balance",
-            "Dessert Variety"
-          ],
-          next: {
-            default: "private_manager_alert"
-          }
-        },
-        negative_categories: {
-          id: "negative_categories",
-          type: "chips_multiselect",
-          title: "We are truly sorry. What fell short of expectations?",
-          subtitle: "Please let us know so management can make this right immediately",
-          options: [
-            "Food Temperature / Quality",
-            "Service Delay & Wait Times",
-            "Server Inattentiveness",
-            "Billing or Reservation Issue",
-            "Noise / Table Atmosphere",
-            "Dietary Request Overlooked"
-          ],
-          next: {
-            default: "private_manager_alert"
           }
         },
         private_manager_alert: {
@@ -307,7 +190,7 @@ export const INITIAL_BUSINESSES = [
           id: "overall_experience",
           type: "emoji_scale",
           title: "How has your stay at The Grand Azure been?",
-          subtitle: "Rate your overall resort & hospitality experience",
+          subtitle: "Rate your overall resort experience (Step 1 of 3)",
           options: [
             { value: 1, label: "Unsatisfactory", emoji: "😞", sentiment: "negative" },
             { value: 2, label: "Below Standards", emoji: "😕", sentiment: "negative" },
@@ -318,16 +201,16 @@ export const INITIAL_BUSINESSES = [
           next: {
             "5": "positive_highlights",
             "4": "positive_highlights",
-            "3": "neutral_categories",
-            "2": "negative_categories",
-            "1": "negative_categories",
+            "3": "private_manager_alert",
+            "2": "private_manager_alert",
+            "1": "private_manager_alert",
           }
         },
         positive_highlights: {
           id: "positive_highlights",
           type: "chips_multiselect",
           title: "Which aspects exceeded your expectations?",
-          subtitle: "Select all that made your stay luxurious",
+          subtitle: "Select all that made your stay luxurious (Step 2 of 3)",
           options: [
             "Ocean View Suite & Bed Comfort",
             "Infinity Pool & Cabana Service",
@@ -335,55 +218,10 @@ export const INITIAL_BUSINESSES = [
             "Breakfast Buffet & Terrace Dining",
             "Valet & Concierge Assistance",
             "Spotless Housekeeping",
-            "Private Beach Access",
-            "Kids Club / Family Amenities"
+            "Private Beach Access"
           ],
-          next: {
-            default: "positive_free_text"
-          }
-        },
-        positive_free_text: {
-          id: "positive_free_text",
-          type: "free_text",
-          title: "Any memorable moments or staff member you'd like to highlight?",
-          subtitle: "We'll draft your glowing review ready for Google & TripAdvisor!",
-          placeholder: "e.g., The sunset from the infinity pool was breathtaking and Elena at concierge booked us prime dinner reservations...",
           next: {
             default: "ai_review_screen"
-          }
-        },
-        neutral_categories: {
-          id: "neutral_categories",
-          type: "chips_multiselect",
-          title: "What could elevate your future stay?",
-          subtitle: "Let our Guest Experience Director know",
-          options: [
-            "Faster Check-in / Mobile Key",
-            "Gym Equipment Selection",
-            "Room Service Speed",
-            "Pool Chair Availability",
-            "Soundproofing between rooms",
-            "Late Checkout Flexibility"
-          ],
-          next: {
-            default: "private_manager_alert"
-          }
-        },
-        negative_categories: {
-          id: "negative_categories",
-          type: "chips_multiselect",
-          title: "We are deeply sorry. What caused dissatisfaction?",
-          subtitle: "Our Duty Manager is notified in real time",
-          options: [
-            "Room Cleanliness / Maintenance",
-            "AC or Plumbing Issue",
-            "Noise Disruption during sleep",
-            "Unhelpful Staff / Check-in Delay",
-            "Billing or Deposit Discrepancy",
-            "Spa / Pool Reservation Issue"
-          ],
-          next: {
-            default: "private_manager_alert"
           }
         },
         private_manager_alert: {
@@ -391,7 +229,7 @@ export const INITIAL_BUSINESSES = [
           type: "private_resolution",
           title: "Connect Directly with Resort Duty Manager",
           subtitle: "We will address this during your stay or arrange immediate compensation.",
-          placeholder: "Please share your room number or contact details so we can resolve this right now...",
+          placeholder: "Please share your room number or contact details...",
           next: {
             default: "completion_screen"
           }
@@ -429,7 +267,7 @@ export const INITIAL_BUSINESSES = [
           id: "overall_experience",
           type: "emoji_scale",
           title: "How was your coffee break today?",
-          subtitle: "Tap how Velvet Roast energized you",
+          subtitle: "Tap how Velvet Roast energized you (Step 1 of 3)",
           options: [
             { value: 1, label: "Poor", emoji: "☕👎", sentiment: "negative" },
             { value: 2, label: "Meh", emoji: "😕", sentiment: "negative" },
@@ -440,16 +278,16 @@ export const INITIAL_BUSINESSES = [
           next: {
             "5": "positive_highlights",
             "4": "positive_highlights",
-            "3": "neutral_categories",
-            "2": "negative_categories",
-            "1": "negative_categories",
+            "3": "private_manager_alert",
+            "2": "private_manager_alert",
+            "1": "private_manager_alert",
           }
         },
         positive_highlights: {
           id: "positive_highlights",
           type: "chips_multiselect",
           title: "What hit the sweet spot?",
-          subtitle: "Pick your favorites",
+          subtitle: "Pick your favorites (Step 2 of 3)",
           options: [
             "Oat Milk Lavender Latte",
             "Single-Origin Ethiopian Pour-Over",
@@ -457,54 +295,10 @@ export const INITIAL_BUSINESSES = [
             "Super Fast Barista Speed",
             "Vibey Music & Cozy Seating",
             "Reliable Fast WiFi / Remote Work",
-            "Friendly Barista Banter",
             "Seasonal Cold Brew"
           ],
           next: {
-            default: "positive_free_text"
-          }
-        },
-        positive_free_text: {
-          id: "positive_free_text",
-          type: "free_text",
-          title: "Any favorite roast or shoutout to your barista?",
-          subtitle: "AI will draft your review for Google Maps!",
-          placeholder: "e.g., Best flat white in the neighborhood, the foam art was gorgeous!",
-          next: {
             default: "ai_review_screen"
-          }
-        },
-        neutral_categories: {
-          id: "neutral_categories",
-          type: "chips_multiselect",
-          title: "How can we make your next coffee run better?",
-          subtitle: "Help us brew perfection",
-          options: [
-            "More seating / outlets",
-            "Wider vegan/gluten-free pastry selection",
-            "Faster queue management",
-            "More syrup / milk alternatives",
-            "Temperature of drink"
-          ],
-          next: {
-            default: "private_manager_alert"
-          }
-        },
-        negative_categories: {
-          id: "negative_categories",
-          type: "chips_multiselect",
-          title: "Sorry about that! What went wrong?",
-          subtitle: "Let our café lead fix it on the spot",
-          options: [
-            "Drink made incorrectly (wrong milk/syrup)",
-            "Coffee tasted burnt or sour",
-            "Pastry was stale / cold",
-            "Long wait time (>15 min for coffee)",
-            "Unfriendly barista service",
-            "Dirty tables / trash full"
-          ],
-          next: {
-            default: "private_manager_alert"
           }
         },
         private_manager_alert: {
@@ -550,7 +344,7 @@ export const INITIAL_BUSINESSES = [
           id: "overall_experience",
           type: "emoji_scale",
           title: "How was your styling and shopping experience?",
-          subtitle: "Rate your visit to Moda Luxe",
+          subtitle: "Rate your visit to Moda Luxe (Step 1 of 3)",
           options: [
             { value: 1, label: "Poor", emoji: "🛍️👎", sentiment: "negative" },
             { value: 2, label: "Fair", emoji: "😕", sentiment: "negative" },
@@ -561,16 +355,16 @@ export const INITIAL_BUSINESSES = [
           next: {
             "5": "positive_highlights",
             "4": "positive_highlights",
-            "3": "neutral_categories",
-            "2": "negative_categories",
-            "1": "negative_categories",
+            "3": "private_manager_alert",
+            "2": "private_manager_alert",
+            "1": "private_manager_alert",
           }
         },
         positive_highlights: {
           id: "positive_highlights",
           type: "chips_multiselect",
           title: "What did you adore most about our boutique?",
-          subtitle: "Select your highlights",
+          subtitle: "Select your highlights (Step 2 of 3)",
           options: [
             "Curated Seasonal Collection",
             "Knowledgeable Personal Stylist",
@@ -580,49 +374,7 @@ export const INITIAL_BUSINESSES = [
             "Store Aesthetic & Music"
           ],
           next: {
-            default: "positive_free_text"
-          }
-        },
-        positive_free_text: {
-          id: "positive_free_text",
-          type: "free_text",
-          title: "Any special shoutout or item you loved?",
-          subtitle: "AI will draft your recommendation for Google Reviews!",
-          placeholder: "e.g., The stylist found the perfect evening jacket and the fitting room mirrors are so flattering...",
-          next: {
             default: "ai_review_screen"
-          }
-        },
-        neutral_categories: {
-          id: "neutral_categories",
-          type: "chips_multiselect",
-          title: "What would enhance your shopping journey?",
-          subtitle: "We value your boutique styling insights",
-          options: [
-            "More Size Inclusivity (XS/XL)",
-            "Expanded Shoe or Accessory selection",
-            "Faster fitting room assistance",
-            "Clearer Price Tagging",
-            "Loyalty Program Perks"
-          ],
-          next: {
-            default: "private_manager_alert"
-          }
-        },
-        negative_categories: {
-          id: "negative_categories",
-          type: "chips_multiselect",
-          title: "We sincerely apologize. What went wrong?",
-          subtitle: "Our Store Director will review your feedback immediately",
-          options: [
-            "Staff was unwelcoming or dismissive",
-            "Fitting room was messy / occupied too long",
-            "Size out of stock with no online ordering help",
-            "Return / Exchange friction",
-            "Billing or promo code issue"
-          ],
-          next: {
-            default: "private_manager_alert"
           }
         },
         private_manager_alert: {
@@ -653,13 +405,11 @@ export const INITIAL_FEEDBACKS = [
     channel: "QR Scan (Clinic Reception Tent)",
     answers: {
       overall_experience: 5,
-      positive_highlights: ["Painless & Gentle Procedure", "Dr. C's Clear & Reassuring Guidance", "Spotless & Modern Sterile Equipment"],
-      staff_shoutout: "Dr. C (Lead Dental Surgeon)",
-      positive_free_text: "Dr. C is truly a magician! I was terrified of dental procedures, but my root canal and scaling were completely painless. Highly recommend to everyone in the area!"
+      positive_highlights: ["Painless & Gentle Procedure", "Dr. C's Clear & Reassuring Guidance", "Spotless & Modern Sterile Equipment"]
     },
     generatedReview: {
       tone: "enthusiastic",
-      draft: "Had the most incredible experience at Dr C Dental Clinic! The treatment was completely painless, and Dr. C explained every step with such kindness and clarity. The clinic is ultra-clean and modern. 5/5 stars all the way!",
+      draft: "Had an incredible experience at Dr C Dental Clinic! The treatment was completely painless, and Dr. C explained every step with such kindness and clarity. The clinic is ultra-clean and modern. 5/5 stars all the way!",
       wasPublishedPublicly: true,
       platform: "Google Reviews"
     },
@@ -678,9 +428,7 @@ export const INITIAL_FEEDBACKS = [
     channel: "QR Scan (Discharge Slip)",
     answers: {
       overall_experience: 5,
-      positive_highlights: ["Prompt Zero-Wait Time", "Thorough Scaling & Cleaning", "Affordable & Transparent Treatment Plan"],
-      staff_shoutout: "Dental Hygienist & Assistant",
-      positive_free_text: "Very professional staff and transparent pricing. Best dental clinic in the neighborhood."
+      positive_highlights: ["Prompt Zero-Wait Time", "Thorough Scaling & Cleaning", "Affordable & Transparent Treatment Plan"]
     },
     generatedReview: {
       tone: "detailed",
@@ -691,63 +439,12 @@ export const INITIAL_FEEDBACKS = [
     recoveryStatus: "none_needed",
     customerContact: "priya.reddy@outlook.com",
     managerNotes: ""
-  },
-  {
-    id: "fb-101",
-    businessId: "biz-1",
-    businessSlug: "laura-bistro",
-    createdAt: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
-    rating: 5,
-    sentiment: "positive",
-    tableOrLocation: "Table 14 (Patio)",
-    channel: "QR Scan (Table Tent)",
-    answers: {
-      overall_experience: 5,
-      positive_highlights: ["Truffle Tagliatelle", "Sommelier Wine Pairing", "Warm & Attentive Service"],
-      staff_shoutout: "Maya (Master Sommelier)",
-      positive_free_text: "The wine pairing suggestion by Maya made our anniversary dinner absolutely unforgettable."
-    },
-    generatedReview: {
-      tone: "enthusiastic",
-      draft: "Had an extraordinary dining experience at L'Aura Bistro! The Truffle Tagliatelle was sublime and the sommelier wine pairings were spot-on. Special shoutout to Maya for phenomenal service.",
-      wasPublishedPublicly: true,
-      platform: "Google Reviews"
-    },
-    recoveryStatus: "none_needed",
-    customerContact: "clara.v@gmail.com",
-    managerNotes: ""
-  },
-  {
-    id: "fb-103",
-    businessId: "biz-1",
-    businessSlug: "laura-bistro",
-    createdAt: new Date(Date.now() - 1000 * 60 * 110).toISOString(),
-    rating: 2,
-    sentiment: "negative",
-    tableOrLocation: "Table 22",
-    channel: "QR Scan (Bill Folder)",
-    answers: {
-      overall_experience: 2,
-      negative_categories: ["Service Delay & Wait Times"],
-      private_manager_alert: "We had a reservation at 7:30 PM but waited 40 minutes for mains."
-    },
-    generatedReview: null,
-    recoveryStatus: "pending_review",
-    customerContact: "david.h@techfirm.co",
-    managerNotes: "Comped $50 dining credit."
   }
 ];
 
 // Pre-calculated intelligence insights
 export const INITIAL_AI_INSIGHTS = {
   complaintClusters: [
-    {
-      topic: "Weekend Main Course Delay",
-      count: 7,
-      severity: "high",
-      impact: "Accounts for 62% of negative ratings between 7:30 PM - 9:00 PM on Fri/Sat.",
-      suggestedAction: "Implement kitchen expediter staging during peak rush hours."
-    },
     {
       topic: "Dental Appointment Spacing",
       count: 2,
@@ -762,12 +459,6 @@ export const INITIAL_AI_INSIGHTS = {
       count: 48,
       positiveScore: 99,
       quote: "Completely painless procedure, Dr. C is patient, gentle, and explains every step."
-    },
-    {
-      topic: "Truffle Tagliatelle & Fresh Pasta",
-      count: 34,
-      positiveScore: 99,
-      quote: "Best homemade pasta in the entire city, perfectly rich sauce."
     }
   ]
 };

@@ -5,9 +5,9 @@ import { generateReviewDraft } from '../../utils/aiReviewGenerator';
 
 const TONES = [
   { id: 'enthusiastic', label: '🤩 Enthusiastic', desc: 'Energetic & glowing' },
-  { id: 'detailed', label: '🍷 Detailed & Foodie', desc: 'Sophisticated & refined' },
-  { id: 'concise', label: '⚡ Short & Sweet', desc: 'Quick 2-sentence punch' },
-  { id: 'casual', label: '😎 Friendly / Chill', desc: 'Natural & relaxed' },
+  { id: 'detailed', label: '🩺 Clear & Detailed', desc: 'Professional patient feedback' },
+  { id: 'concise', label: '⚡ Short & Sweet', desc: 'Quick 2-sentence review' },
+  { id: 'casual', label: '😊 Friendly & Recommending', desc: 'Warm & welcoming' },
 ];
 
 export default function PositiveReviewScreen({ 
@@ -28,13 +28,13 @@ export default function PositiveReviewScreen({
         business,
         rating: answers.overall_experience || 5,
         highlights: answers.positive_highlights || [],
-        staffShoutout: answers.staff_shoutout || '',
+        staffShoutout: answers.staff_shoutout || 'Dr. C',
         freeText: answers.positive_free_text || '',
         tone
       });
       setDraftText(generated);
       setIsGenerating(false);
-    }, 200);
+    }, 150);
   };
 
   useEffect(() => {
@@ -52,10 +52,10 @@ export default function PositiveReviewScreen({
 
     try {
       confetti({
-        particleCount: 80,
+        particleCount: 90,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#0284c7', '#e11d48', '#10b981', '#f59e0b', '#8b5cf6']
+        colors: ['#0284c7', '#0ea5e9', '#10b981', '#f59e0b', '#6366f1']
       });
     } catch (e) {
       console.error(e);
@@ -71,11 +71,11 @@ export default function PositiveReviewScreen({
       recoveryStatus: 'none_needed'
     });
 
-    const targetUrl = business.publicReviewUrl || 'https://maps.google.com';
+    const targetUrl = business.publicReviewUrl || 'https://www.google.com/maps/place/Dr+C+Dental+Clinic/@17.5299467,78.4849175,17z/data=!3m1!4b1!4m6!3m5!1s0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057!8m2!3d17.5299467!4d78.4874924!16s%2Fg%2F11wc8j_30z?entry=ttu';
     setTimeout(() => {
       window.open(targetUrl, '_blank', 'noopener,noreferrer');
       onOpenPerk();
-    }, 800);
+    }, 750);
   };
 
   const handleSkipToPerk = () => {
@@ -92,33 +92,33 @@ export default function PositiveReviewScreen({
   };
 
   return (
-    <div className="w-full space-y-5 animate-fade-in">
+    <div className="w-full space-y-4 animate-fade-in">
       {/* Header Badge */}
-      <div className="text-center space-y-1.5">
+      <div className="text-center space-y-1">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold">
           <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-          <span>AI Review Drafter Ready</span>
+          <span>Step 3 of 3: Final Review Ready</span>
         </div>
         <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">
-          Thank you! We'd love your support on Google.
+          Thank you! Here is your ready-to-post Google Review:
         </h3>
-        <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
-          We used your positive feedback to draft an authentic review. 1-click copy & paste directly to our Google page!
+        <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+          1-click copy & paste directly on our Google Maps profile!
         </p>
       </div>
 
       {/* Tone Selectors */}
       <div className="space-y-1.5">
-        <label className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+        <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
           Review Tone:
         </label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-1.5">
           {TONES.map((tone) => (
             <button
               key={tone.id}
               type="button"
               onClick={() => handleToneChange(tone.id)}
-              className={`p-2.5 rounded-xl text-left border transition-all duration-200 ${
+              className={`p-2 rounded-xl text-left border transition-all duration-200 ${
                 selectedTone === tone.id
                   ? 'bg-sky-50 border-sky-500 text-sky-900 ring-1 ring-sky-400 font-bold'
                   : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
@@ -146,7 +146,7 @@ export default function PositiveReviewScreen({
             type="button"
             onClick={() => refreshDraft()}
             disabled={isGenerating}
-            className="flex items-center gap-1 text-sky-600 hover:text-sky-700 font-bold transition-colors"
+            className="flex items-center gap-1 text-sky-600 hover:text-sky-700 font-bold transition-colors text-xs"
           >
             <RefreshCw className={`w-3 h-3 ${isGenerating ? 'animate-spin' : ''}`} />
             <span>Regenerate</span>
@@ -161,8 +161,8 @@ export default function PositiveReviewScreen({
         />
       </div>
 
-      {/* Actions */}
-      <div className="space-y-2.5 pt-2">
+      {/* Primary Action */}
+      <div className="space-y-2 pt-1">
         <button
           type="button"
           onClick={handleCopyAndRedirect}
@@ -176,7 +176,7 @@ export default function PositiveReviewScreen({
           ) : (
             <>
               <Copy className="w-4 h-4" />
-              <span>Copy Draft & Post to Google Review</span>
+              <span>Copy Draft & Post to Google Maps</span>
               <ExternalLink className="w-4 h-4 opacity-80" />
             </>
           )}
@@ -185,10 +185,10 @@ export default function PositiveReviewScreen({
         <button
           type="button"
           onClick={handleSkipToPerk}
-          className="w-full py-2.5 px-3 text-xs text-slate-600 hover:text-slate-900 font-semibold transition-colors flex items-center justify-center gap-1.5"
+          className="w-full py-2 text-xs text-slate-500 hover:text-slate-800 font-semibold transition-colors flex items-center justify-center gap-1"
         >
           <Gift className="w-3.5 h-3.5 text-amber-500" />
-          <span>Claim VIP Perk without posting public review</span>
+          <span>Claim VIP Dental Perk without posting</span>
         </button>
       </div>
     </div>
