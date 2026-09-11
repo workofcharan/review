@@ -4,13 +4,13 @@ import { INITIAL_BUSINESSES, INITIAL_FEEDBACKS, INITIAL_AI_INSIGHTS } from '../d
 const AppContext = createContext(null);
 
 const STORAGE_KEYS = {
-  BUSINESSES: 'revpulse_businesses_v1',
-  SELECTED_BIZ: 'revpulse_selected_biz_v1',
-  FEEDBACKS: 'revpulse_feedbacks_v1',
+  BUSINESSES: 'revpulse_businesses_v2',
+  SELECTED_BIZ: 'revpulse_selected_biz_v2',
+  FEEDBACKS: 'revpulse_feedbacks_v2',
 };
 
 export function AppProvider({ children }) {
-  // Load businesses from localStorage or fallback to defaults
+  // Load businesses from localStorage or fallback to defaults (starting with Dr C Dental Clinic)
   const [businesses, setBusinesses] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.BUSINESSES);
@@ -20,7 +20,7 @@ export function AppProvider({ children }) {
     }
   });
 
-  // Active business ID
+  // Active business ID defaults to Dr C Dental Clinic
   const [selectedBusinessId, setSelectedBusinessId] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SELECTED_BIZ);

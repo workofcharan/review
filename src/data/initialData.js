@@ -2,6 +2,142 @@
 
 export const INITIAL_BUSINESSES = [
   {
+    id: "biz-drc",
+    slug: "dr-c-dental-clinic",
+    name: "Dr C Dental Clinic",
+    category: "healthcare",
+    type: "Advanced Dental Care & Orthodontics",
+    tagline: "Gentle, State-of-the-Art Dentistry & Beautiful Smiles",
+    logo: "🦷",
+    brandColors: {
+      primary: "#0284c7", // Medical Sky Blue
+      accent: "#0ea5e9",
+      bgGradient: "from-sky-950 via-slate-900 to-slate-950"
+    },
+    publicReviewUrl: "https://www.google.com/maps/place/Dr+C+Dental+Clinic/@17.5299467,78.4849175,17z/data=!3m1!4b1!4m6!3m5!1s0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057!8m2!3d17.5299467!4d78.4874924!16s%2Fg%2F11wc8j_30z?entry=ttu&g_ep=EgoyMDI2MDkwOC4wIKXMDSoASAFQAw%3D%3D",
+    yelpUrl: "https://www.google.com/maps/place/Dr+C+Dental+Clinic/@17.5299467,78.4849175,17z/data=!3m1!4b1!4m6!3m5!1s0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057!8m2!3d17.5299467!4d78.4874924!16s%2Fg%2F11wc8j_30z?entry=ttu&g_ep=EgoyMDI2MDkwOC4wIKXMDSoASAFQAw%3D%3D",
+    tripAdvisorUrl: "",
+    minPublicRating: 4,
+    tableCount: 6,
+    perkOffer: {
+      title: "Complimentary Dental Care Kit & 15% Off Next Routine Cleaning",
+      code: "DRC-SMILE15",
+      validDays: 60
+    },
+    questionFlow: {
+      start: "overall_experience",
+      questions: {
+        overall_experience: {
+          id: "overall_experience",
+          type: "emoji_scale",
+          title: "How was your dental care experience at Dr C Dental Clinic?",
+          subtitle: "Tap an emoji to rate your visit today",
+          options: [
+            { value: 1, label: "Painful/Poor", emoji: "😣", sentiment: "negative" },
+            { value: 2, label: "Uncomfortable", emoji: "😕", sentiment: "negative" },
+            { value: 3, label: "Average", emoji: "😐", sentiment: "neutral" },
+            { value: 4, label: "Gentle & Good", emoji: "😊", sentiment: "positive" },
+            { value: 5, label: "Painless & Stellar!", emoji: "😁✨", sentiment: "positive" },
+          ],
+          next: {
+            "5": "positive_highlights",
+            "4": "positive_highlights",
+            "3": "neutral_categories",
+            "2": "negative_categories",
+            "1": "negative_categories",
+          }
+        },
+        positive_highlights: {
+          id: "positive_highlights",
+          type: "chips_multiselect",
+          title: "What delighted you about your treatment & visit?",
+          subtitle: "Select all highlights that made your appointment comfortable",
+          options: [
+            "Painless & Gentle Procedure",
+            "Dr. C's Clear & Reassuring Guidance",
+            "Spotless & Modern Sterile Equipment",
+            "Prompt Zero-Wait Time",
+            "Friendly Front Desk Team",
+            "Thorough Scaling & Cleaning",
+            "Affordable & Transparent Treatment Plan",
+            "Comfortable Treatment Chair & Ambiance"
+          ],
+          next: {
+            default: "staff_shoutout"
+          }
+        },
+        staff_shoutout: {
+          id: "staff_shoutout",
+          type: "chips_single",
+          title: "Would you like to give a shoutout to our clinic staff?",
+          subtitle: "Your kind words brighten our team's day!",
+          options: [
+            "Dr. C (Lead Dental Surgeon)",
+            "Dental Hygienist & Assistant",
+            "Front Desk Coordinator",
+            "The Entire Clinic Staff",
+            "Prefer to skip"
+          ],
+          next: {
+            default: "positive_free_text"
+          }
+        },
+        positive_free_text: {
+          id: "positive_free_text",
+          type: "free_text",
+          title: "Any specific treatment or doctor compliment to share?",
+          subtitle: "Optional: Our AI will turn your praise into a ready-to-post 5-star Google review for Dr C Dental Clinic!",
+          placeholder: "e.g., Dr. C made my root canal completely painless and explained every step with patience. The clinic is spotless and highly professional...",
+          next: {
+            default: "ai_review_screen"
+          }
+        },
+        neutral_categories: {
+          id: "neutral_categories",
+          type: "chips_multiselect",
+          title: "What could make your next visit even more seamless?",
+          subtitle: "Help our clinic director optimize your patient care",
+          options: [
+            "Faster Appointment Booking",
+            "Post-Treatment Care Instructions",
+            "Waiting Room Seating",
+            "More Flexible Evening Slots",
+            "Payment & Insurance Options"
+          ],
+          next: {
+            default: "private_manager_alert"
+          }
+        },
+        negative_categories: {
+          id: "negative_categories",
+          type: "chips_multiselect",
+          title: "We sincerely apologize. What fell short of expectations?",
+          subtitle: "Dr. C and our clinical director review all concerns immediately to ensure patient comfort",
+          options: [
+            "Treatment Discomfort or Sensitivity",
+            "Long Wait Time Past Appointment",
+            "Billing or Fee Clarification",
+            "Staff Interaction or Communication",
+            "Post-Care Follow-up Delay"
+          ],
+          next: {
+            default: "private_manager_alert"
+          }
+        },
+        private_manager_alert: {
+          id: "private_manager_alert",
+          type: "private_resolution",
+          title: "Direct Escalation to Clinic Director & Dr. C",
+          subtitle: "Your message is sent confidentially to our Lead Dental Surgeon for prompt follow-up and patient care resolution.",
+          placeholder: "Please describe what happened so Dr. C can review your chart and follow up with you directly...",
+          next: {
+            default: "completion_screen"
+          }
+        }
+      }
+    }
+  },
+  {
     id: "biz-1",
     slug: "laura-bistro",
     name: "L'Aura Bistro & Wine Bar",
@@ -10,14 +146,14 @@ export const INITIAL_BUSINESSES = [
     tagline: "Modern French Gastronomy & Curated Cellar",
     logo: "🍷",
     brandColors: {
-      primary: "#e11d48", // Rose/Crimson
+      primary: "#e11d48",
       accent: "#fb7185",
       bgGradient: "from-rose-950 via-slate-900 to-slate-950"
     },
     publicReviewUrl: "https://maps.google.com/?cid=123456789012345678",
     yelpUrl: "https://www.yelp.com/biz/laura-bistro",
     tripAdvisorUrl: "https://www.tripadvisor.com/Restaurant_Review-laura-bistro",
-    minPublicRating: 4, // 4 or 5 stars routed to Google Review
+    minPublicRating: 4,
     tableCount: 28,
     perkOffer: {
       title: "Complimentary Chef's Dessert & 10% Off Next Visit",
@@ -125,40 +261,6 @@ export const INITIAL_BUSINESSES = [
             "Dietary Request Overlooked"
           ],
           next: {
-            "Service Delay & Wait Times": "wait_time_drilldown",
-            "Food Temperature / Quality": "food_drilldown",
-            default: "private_manager_alert"
-          }
-        },
-        wait_time_drilldown: {
-          id: "wait_time_drilldown",
-          type: "chips_single",
-          title: "Where did the delay occur?",
-          subtitle: "Pinpointing delays helps our floor manager optimize kitchen pace",
-          options: [
-            "Wait to be seated (with reservation)",
-            "Long wait for drink orders",
-            "Gap between appetizer and mains (>35 min)",
-            "Waiting for bill / check",
-            "General slow pacing"
-          ],
-          next: {
-            default: "private_manager_alert"
-          }
-        },
-        food_drilldown: {
-          id: "food_drilldown",
-          type: "chips_single",
-          title: "Which item needed improvement?",
-          subtitle: "Our executive chef reviews every comment directly",
-          options: [
-            "Main course arrived lukewarm",
-            "Steak was not cooked to requested temp",
-            "Over-seasoned / too salty",
-            "Special allergy/request missed",
-            "Drinks were watered down"
-          ],
-          next: {
             default: "private_manager_alert"
           }
         },
@@ -184,7 +286,7 @@ export const INITIAL_BUSINESSES = [
     tagline: "Oceanfront Serenity & Five-Star Wellness",
     logo: "🏨",
     brandColors: {
-      primary: "#0284c7", // Sky/Ocean blue
+      primary: "#0284c7",
       accent: "#38bdf8",
       bgGradient: "from-sky-950 via-slate-900 to-slate-950"
     },
@@ -306,7 +408,7 @@ export const INITIAL_BUSINESSES = [
     tagline: "Single-Origin Roasts & Handcrafted Pastries",
     logo: "☕",
     brandColors: {
-      primary: "#d97706", // Amber / Warm caramel
+      primary: "#d97706",
       accent: "#f59e0b",
       bgGradient: "from-amber-950 via-slate-900 to-slate-950"
     },
@@ -427,7 +529,7 @@ export const INITIAL_BUSINESSES = [
     tagline: "Contemporary Silhouette & Curated Luxury",
     logo: "✨",
     brandColors: {
-      primary: "#8b5cf6", // Violet / Luxury purple
+      primary: "#8b5cf6",
       accent: "#a78bfa",
       bgGradient: "from-violet-950 via-slate-900 to-slate-950"
     },
@@ -541,10 +643,60 @@ export const INITIAL_BUSINESSES = [
 // Pre-populated realistic feedback submissions
 export const INITIAL_FEEDBACKS = [
   {
+    id: "fb-drc-1",
+    businessId: "biz-drc",
+    businessSlug: "dr-c-dental-clinic",
+    createdAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+    rating: 5,
+    sentiment: "positive",
+    tableOrLocation: "Operatory 2 (Dr. C)",
+    channel: "QR Scan (Clinic Reception Tent)",
+    answers: {
+      overall_experience: 5,
+      positive_highlights: ["Painless & Gentle Procedure", "Dr. C's Clear & Reassuring Guidance", "Spotless & Modern Sterile Equipment"],
+      staff_shoutout: "Dr. C (Lead Dental Surgeon)",
+      positive_free_text: "Dr. C is truly a magician! I was terrified of dental procedures, but my root canal and scaling were completely painless. Highly recommend to everyone in the area!"
+    },
+    generatedReview: {
+      tone: "enthusiastic",
+      draft: "Had the most incredible experience at Dr C Dental Clinic! The treatment was completely painless, and Dr. C explained every step with such kindness and clarity. The clinic is ultra-clean and modern. 5/5 stars all the way!",
+      wasPublishedPublicly: true,
+      platform: "Google Reviews"
+    },
+    recoveryStatus: "none_needed",
+    customerContact: "rahul.sharma@gmail.com",
+    managerNotes: ""
+  },
+  {
+    id: "fb-drc-2",
+    businessId: "biz-drc",
+    businessSlug: "dr-c-dental-clinic",
+    createdAt: new Date(Date.now() - 1000 * 60 * 55).toISOString(),
+    rating: 5,
+    sentiment: "positive",
+    tableOrLocation: "Consultation Suite",
+    channel: "QR Scan (Discharge Slip)",
+    answers: {
+      overall_experience: 5,
+      positive_highlights: ["Prompt Zero-Wait Time", "Thorough Scaling & Cleaning", "Affordable & Transparent Treatment Plan"],
+      staff_shoutout: "Dental Hygienist & Assistant",
+      positive_free_text: "Very professional staff and transparent pricing. Best dental clinic in the neighborhood."
+    },
+    generatedReview: {
+      tone: "detailed",
+      draft: "Exceptional standard of dental care at Dr C Dental Clinic. From prompt zero-wait time to thorough teeth cleaning, everything was handled with utmost professionalism. Transparent pricing and gentle staff!",
+      wasPublishedPublicly: true,
+      platform: "Google Reviews"
+    },
+    recoveryStatus: "none_needed",
+    customerContact: "priya.reddy@outlook.com",
+    managerNotes: ""
+  },
+  {
     id: "fb-101",
     businessId: "biz-1",
     businessSlug: "laura-bistro",
-    createdAt: new Date(Date.now() - 1000 * 60 * 18).toISOString(), // 18 mins ago
+    createdAt: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
     rating: 5,
     sentiment: "positive",
     tableOrLocation: "Table 14 (Patio)",
@@ -553,11 +705,11 @@ export const INITIAL_FEEDBACKS = [
       overall_experience: 5,
       positive_highlights: ["Truffle Tagliatelle", "Sommelier Wine Pairing", "Warm & Attentive Service"],
       staff_shoutout: "Maya (Master Sommelier)",
-      positive_free_text: "The wine pairing suggestion by Maya made our anniversary dinner absolutely unforgettable. The handmade pasta melted in our mouth!"
+      positive_free_text: "The wine pairing suggestion by Maya made our anniversary dinner absolutely unforgettable."
     },
     generatedReview: {
       tone: "enthusiastic",
-      draft: "Had the most extraordinary dining experience at L'Aura Bistro! The Truffle Tagliatelle was sublime and the sommelier wine pairings were spot-on. Special shoutout to Maya for phenomenal service. Can't wait to return!",
+      draft: "Had an extraordinary dining experience at L'Aura Bistro! The Truffle Tagliatelle was sublime and the sommelier wine pairings were spot-on. Special shoutout to Maya for phenomenal service.",
       wasPublishedPublicly: true,
       platform: "Google Reviews"
     },
@@ -566,113 +718,23 @@ export const INITIAL_FEEDBACKS = [
     managerNotes: ""
   },
   {
-    id: "fb-102",
-    businessId: "biz-1",
-    businessSlug: "laura-bistro",
-    createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(), // 45 mins ago
-    rating: 5,
-    sentiment: "positive",
-    tableOrLocation: "Table 6 (Main Dining)",
-    channel: "QR Scan (Table Tent)",
-    answers: {
-      overall_experience: 5,
-      positive_highlights: ["Dry-Aged Ribeye", "Signature Craft Cocktails", "Romantic Ambiance & Jazz"],
-      staff_shoutout: "Alex (Lead Server)",
-      positive_free_text: "Alex was so prompt and the smoked rosemary bourbon cocktail was world-class."
-    },
-    generatedReview: {
-      tone: "detailed",
-      draft: "L'Aura Bistro delivers a truly world-class dining experience. The Dry-Aged Ribeye was seared to perfection and the craft cocktails with live jazz created the best atmosphere in town. Alex provided stellar service!",
-      wasPublishedPublicly: true,
-      platform: "Google Reviews"
-    },
-    recoveryStatus: "none_needed",
-    customerContact: "marcus.k@outlook.com",
-    managerNotes: ""
-  },
-  {
     id: "fb-103",
     businessId: "biz-1",
     businessSlug: "laura-bistro",
-    createdAt: new Date(Date.now() - 1000 * 60 * 110).toISOString(), // 1.8 hrs ago
+    createdAt: new Date(Date.now() - 1000 * 60 * 110).toISOString(),
     rating: 2,
     sentiment: "negative",
-    tableOrLocation: "Table 22 (Corner Booth)",
+    tableOrLocation: "Table 22",
     channel: "QR Scan (Bill Folder)",
     answers: {
       overall_experience: 2,
       negative_categories: ["Service Delay & Wait Times"],
-      wait_time_drilldown: "Gap between appetizer and mains (>35 min)",
-      private_manager_alert: "We had reservation at 7:30 PM. We waited 40 minutes after our salad for the steaks to arrive. The server apologized but nobody checked on our empty drinks. We love the food normally, but tonight was rough."
-    },
-    generatedReview: null, // Intercepted! Did NOT reach Google
-    recoveryStatus: "pending_review", // Intercepted private feedback
-    customerContact: "david.h@techfirm.co | (555) 234-8890",
-    managerNotes: "Spoke with chef regarding ticket bottleneck around 8:15 PM. Prepared $50 comp dining credit."
-  },
-  {
-    id: "fb-104",
-    businessId: "biz-1",
-    businessSlug: "laura-bistro",
-    createdAt: new Date(Date.now() - 1000 * 60 * 240).toISOString(), // 4 hrs ago
-    rating: 4,
-    sentiment: "positive",
-    tableOrLocation: "Bar Stool 3",
-    channel: "QR Scan (Bar Coaster)",
-    answers: {
-      overall_experience: 4,
-      positive_highlights: ["Signature Craft Cocktails", "Artisan Bread & Butter"],
-      staff_shoutout: "The Entire Kitchen Team",
-      positive_free_text: "Great atmosphere and lovely drink menu."
-    },
-    generatedReview: {
-      tone: "concise",
-      draft: "Wonderful experience at L'Aura Bistro! Delightful artisan bread and top-notch signature craft cocktails. Highly recommended.",
-      wasPublishedPublicly: true,
-      platform: "Google Reviews"
-    },
-    recoveryStatus: "none_needed",
-    customerContact: "",
-    managerNotes: ""
-  },
-  {
-    id: "fb-105",
-    businessId: "biz-1",
-    businessSlug: "laura-bistro",
-    createdAt: new Date(Date.now() - 1000 * 60 * 420).toISOString(), // 7 hrs ago
-    rating: 1,
-    sentiment: "negative",
-    tableOrLocation: "Table 11",
-    channel: "QR Scan (Table Tent)",
-    answers: {
-      overall_experience: 1,
-      negative_categories: ["Food Temperature / Quality"],
-      food_drilldown: "Special allergy/request missed",
-      private_manager_alert: "Informed server of severe dairy allergy, but truffle pasta came with shaved parmesan. Could have been dangerous. We had to send it back."
-    },
-    generatedReview: null, // Intercepted!
-    recoveryStatus: "resolved",
-    customerContact: "sarah.jenkins@gmail.com",
-    managerNotes: "Manager Chris personally called guest within 20 minutes, comped meal, and held allergy protocol refresher with kitchen staff."
-  },
-  {
-    id: "fb-106",
-    businessId: "biz-1",
-    businessSlug: "laura-bistro",
-    createdAt: new Date(Date.now() - 1000 * 60 * 720).toISOString(), // 12 hrs ago
-    rating: 3,
-    sentiment: "neutral",
-    tableOrLocation: "Table 8",
-    channel: "QR Scan (Receipt)",
-    answers: {
-      overall_experience: 3,
-      neutral_categories: ["Acoustics / Noise Level", "Table Spacing & Privacy"],
-      private_manager_alert: "The food was tasty, but the background music was so loud we could barely converse across a 2-person table."
+      private_manager_alert: "We had a reservation at 7:30 PM but waited 40 minutes for mains."
     },
     generatedReview: null,
-    recoveryStatus: "reviewed",
-    customerContact: "rachel.m@me.com",
-    managerNotes: "Adjusted patio & dining room decibel caps on sound system."
+    recoveryStatus: "pending_review",
+    customerContact: "david.h@techfirm.co",
+    managerNotes: "Comped $50 dining credit."
   }
 ];
 
@@ -687,38 +749,25 @@ export const INITIAL_AI_INSIGHTS = {
       suggestedAction: "Implement kitchen expediter staging during peak rush hours."
     },
     {
-      topic: "Dining Room Sound Level",
-      count: 4,
-      severity: "medium",
-      impact: "Mentioned by romantic dinner couples in main dining hall.",
-      suggestedAction: "Lower speaker zone 2 volume by 15% after 8:00 PM."
-    },
-    {
-      topic: "Gluten-Free & Dairy Labeling",
-      count: 3,
-      severity: "high",
-      impact: "Guests requesting clearer menu icons for allergies.",
-      suggestedAction: "Add allergen symbol legend to physical and digital dessert menus."
+      topic: "Dental Appointment Spacing",
+      count: 2,
+      severity: "low",
+      impact: "Patients requested 10-min buffer between complex crown appointments.",
+      suggestedAction: "Add 10-minute turnaround buffer on calendar software."
     }
   ],
   praiseClusters: [
+    {
+      topic: "Dr. C Gentle & Painless Treatments",
+      count: 48,
+      positiveScore: 99,
+      quote: "Completely painless procedure, Dr. C is patient, gentle, and explains every step."
+    },
     {
       topic: "Truffle Tagliatelle & Fresh Pasta",
       count: 34,
       positiveScore: 99,
       quote: "Best homemade pasta in the entire city, perfectly rich sauce."
-    },
-    {
-      topic: "Maya (Sommelier) Wine Pairings",
-      count: 22,
-      positiveScore: 98,
-      quote: "Knowledgeable, passionate, and introduced us to incredible small-producer French wines."
-    },
-    {
-      topic: "Cocktail Artistry & Ambiance",
-      count: 19,
-      positiveScore: 95,
-      quote: "Warm lighting, mellow jazz, and cocktails crafted with artisanal ice."
     }
   ]
 };
