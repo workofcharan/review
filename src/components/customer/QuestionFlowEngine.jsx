@@ -18,7 +18,7 @@ export default function QuestionFlowEngine({
   const [history, setHistory] = useState([]);
   const [answers, setAnswers] = useState({});
   const [showRewardModal, setShowRewardModal] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   const currentQuestion = flow.questions ? flow.questions[currentNodeId] : null;
 
@@ -84,12 +84,14 @@ export default function QuestionFlowEngine({
     setCurrentNodeId(previous);
   };
 
-  // Direct submit & guaranteed synchronous redirect to Google Reviews page
+  // Direct Submit & Immediate Browser Redirect to Google Write Review Page
   const handleDirectGoogleSubmit = () => {
+    setRedirecting(true);
+
     const highlights = answers.positive_highlights || [];
     const rating = Number(answers.overall_experience || 5);
     
-    // 1. Synthesize authentic review draft
+    // 1. Synthesize review draft
     const draftText = generateReviewDraft({
       business,
       rating,
@@ -98,7 +100,7 @@ export default function QuestionFlowEngine({
       tone: 'enthusiastic'
     });
 
-    // 2. Copy draft text to clipboard immediately
+    // 2. Copy draft text to clipboard
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(draftText);
@@ -106,7 +108,6 @@ export default function QuestionFlowEngine({
     } catch (e) {
       console.error('Clipboard copy error:', e);
     }
-    setIsCopied(true);
 
     // 3. Fire celebration confetti
     try {
@@ -120,7 +121,7 @@ export default function QuestionFlowEngine({
       console.error(e);
     }
 
-    // 4. Record feedback payload to dashboard
+    // 4. Save feedback in dashboard
     const fullPayload = {
       businessId: business.id,
       businessSlug: business.slug,
@@ -146,15 +147,11 @@ export default function QuestionFlowEngine({
       onFinishFeedback(fullPayload);
     }
 
-    // 5. Target direct Google Review URL (opens Google Maps directly into write review / reviews tab)
-    const targetUrl = business.publicReviewUrl || 'https://www.google.com/maps/place/Dr+C+Dental+Clinic/@17.5299467,78.4849175,17z/data=!4m8!3m7!1s0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057!8m2!3d17.5299467!4d78.4874924!9m1!1b1';
+    // 5. Direct Google Write-A-Review URL
+    const targetUrl = business.publicReviewUrl || 'https://www.google.com/search?q=Dr+C+Dental+Clinic#lrd=0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057,3,,,';
 
-    // Synchronous redirect / window.open to prevent mobile popup blocking
-    const openedWindow = window.open(targetUrl, '_blank', 'noopener,noreferrer');
-    if (!openedWindow || openedWindow.closed || typeof openedWindow.closed === 'undefined') {
-      // If popup blocker was triggered, directly redirect window location
-      window.location.href = targetUrl;
-    }
+    // Redirect the browser window directly to Google Write Review
+    window.location.href = targetUrl;
   };
 
   const handleCompleteSubmission = (extraData = {}) => {
@@ -210,7 +207,7 @@ export default function QuestionFlowEngine({
             ✓
           </div>
           <h3 className="text-xl font-extrabold text-slate-900">Thank you for your feedback!</h3>
-          <p className="text-sm text-slate-600">Redirecting you to Google Reviews...</p>
+          <p className="text-sm text-slate-600">Redirecting to Google Review page...</p>
         </div>
       );
     }
@@ -265,12 +262,19 @@ export default function QuestionFlowEngine({
             {/* Direct Google Review Redirection Button */}
             <button
               type="button"
+              disabled={redirecting}
               onClick={handleDirectGoogleSubmit}
               className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
             >
-              <Copy className="w-4 h-4" />
-              <span>Copy Review & Redirect to Google Maps</span>
-              <ExternalLink className="w-4 h-4 opacity-85" />
+              {redirecting ? (
+                <span>Redirecting to Google Review Page...</span>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  <span>Copy Review & Go to Google Review Page</span>
+                  <ExternalLink className="w-4 h-4 opacity-85" />
+                </>
+              )}
             </button>
           </div>
         )}
@@ -298,10 +302,11 @@ export default function QuestionFlowEngine({
             />
             <button
               type="button"
+              disabled={redirecting}
               onClick={handleDirectGoogleSubmit}
               className="w-full py-3.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all transform active:scale-98"
             >
-              <span>Redirect to Google Reviews</span>
+              <span>Go to Google Review Page</span>
               <ExternalLink className="w-4 h-4" />
             </button>
           </div>
