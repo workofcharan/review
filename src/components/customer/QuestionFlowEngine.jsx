@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Sparkles, ShieldCheck, Copy, Check, ExternalLink } from 'lucide-react';
 import EmojiScale from './EmojiScale';
 import ChipsQuestion from './ChipsQuestion';
 import TextQuestion from './TextQuestion';
-import PositiveReviewScreen from './PositiveReviewScreen';
 import PrivateRecoveryScreen from './PrivateRecoveryScreen';
 import RewardModal from './RewardModal';
+import confetti from 'canvas-confetti';
+import { generateReviewDraft } from '../../utils/aiReviewGenerator';
 
 export default function QuestionFlowEngine({
   business,
@@ -17,6 +18,7 @@ export default function QuestionFlowEngine({
   const [history, setHistory] = useState([]);
   const [answers, setAnswers] = useState({});
   const [showRewardModal, setShowRewardModal] = useState(false);
+  const [isSubmittingGoogle, setIsSubmittingGoogle] = useState(false);
 
   const currentQuestion = flow.questions ? flow.questions[currentNodeId] : null;
 
@@ -28,7 +30,7 @@ export default function QuestionFlowEngine({
   };
 
   const getNextNodeId = (question, answerValue) => {
-    if (!question || !question.next) return 'ai_review_screen';
+    if (!question || !question.next) return 'direct_submit';
 
     if (typeof answerValue === 'string' || typeof answerValue === 'number') {
       const key = String(answerValue);
@@ -58,13 +60,18 @@ export default function QuestionFlowEngine({
 
     const overall = answers.overall_experience || 5;
     return overall >= (business.minPublicRating || 4) 
-      ? 'ai_review_screen' 
+      ? 'direct_submit' 
       : 'private_manager_alert';
   };
 
   const advanceToNext = (overrideValue) => {
     const val = overrideValue !== undefined ? overrideValue : answers[currentNodeId];
     const nextId = getNextNodeId(currentQuestion, val);
+
+    if (nextId === 'direct_submit') {
+      handleDirectGoogleSubmit();
+      return;
+    }
 
     setHistory(prev => [...prev, currentNodeId]);
     setCurrentNodeId(nextId);
@@ -75,6 +82,75 @@ export default function QuestionFlowEngine({
     const previous = history[history.length - 1];
     setHistory(prev => prev.slice(0, -1));
     setCurrentNodeId(previous);
+  };
+
+  // Direct submit & redirect to Google Maps with AI draft copied
+  const handleDirectGoogleSubmit = () => {
+    setIsSubmittingGoogle(true);
+
+    const highlights = answers.positive_highlights || [];
+    const rating = Number(answers.overall_experience || 5);
+    
+    // Synthesize authentic draft
+    const draftText = generateReviewDraft({
+      business,
+      rating,
+      highlights,
+      staffShoutout: 'Dr. C',
+      tone: 'enthusiastic'
+    });
+
+    // Copy to clipboard
+    try {
+      navigator.clipboard.writeText(draftText);
+    } catch (e) {
+      console.error(e);
+    }
+
+    // Fire celebratory confetti
+    try {
+      confetti({
+        particleCount: 90,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#0284c7', '#0ea5e9', '#10b981', '#f59e0b', '#6366f1']
+      });
+    } catch (e) {
+      console.error(e);
+    }
+
+    const fullPayload = {
+      businessId: business.id,
+      businessSlug: business.slug,
+      rating,
+      sentiment: 'positive',
+      tableOrLocation: tableNumber,
+      channel: 'QR Scan (Mobile)',
+      answers: {
+        ...answers
+      },
+      generatedReview: {
+        tone: 'enthusiastic',
+        draft: draftText,
+        wasPublishedPublicly: true,
+        platform: 'Google Reviews'
+      },
+      recoveryStatus: 'none_needed',
+      customerContact: '',
+      managerNotes: ''
+    };
+
+    if (onFinishFeedback) {
+      onFinishFeedback(fullPayload);
+    }
+
+    // Directly open Google Maps review link in new tab
+    const targetUrl = business.publicReviewUrl || 'https://www.google.com/maps/place/Dr+C+Dental+Clinic/@17.5299467,78.4849175,17z/data=!3m1!4b1!4m6!3m5!1s0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057!8m2!3d17.5299467!4d78.4874924!16s%2Fg%2F11wc8j_30z?entry=ttu';
+    setTimeout(() => {
+      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+      setIsSubmittingGoogle(false);
+      setShowRewardModal(true);
+    }, 700);
   };
 
   const handleCompleteSubmission = (extraData = {}) => {
@@ -107,28 +183,12 @@ export default function QuestionFlowEngine({
     }
   };
 
-  // 3-step calculation
-  const totalEstimatedSteps = 3;
-  let currentStepNumber = 1;
-  if (currentNodeId === 'overall_experience') currentStepNumber = 1;
-  else if (currentNodeId === 'positive_highlights') currentStepNumber = 2;
-  else if (currentNodeId === 'ai_review_screen') currentStepNumber = 3;
-  else currentStepNumber = Math.min(history.length + 1, totalEstimatedSteps);
-
+  // 2-step calculation
+  const totalEstimatedSteps = 2;
+  const currentStepNumber = currentNodeId === 'overall_experience' ? 1 : 2;
   const progressPct = Math.round((currentStepNumber / totalEstimatedSteps) * 100);
 
   const renderQuestionContent = () => {
-    if (currentNodeId === 'ai_review_screen') {
-      return (
-        <PositiveReviewScreen
-          business={business}
-          answers={answers}
-          onComplete={handleCompleteSubmission}
-          onOpenPerk={() => setShowRewardModal(true)}
-        />
-      );
-    }
-
     if (currentNodeId === 'private_manager_alert' || currentNodeId === 'private_resolution') {
       return (
         <PrivateRecoveryScreen
@@ -147,7 +207,7 @@ export default function QuestionFlowEngine({
             ✓
           </div>
           <h3 className="text-xl font-extrabold text-slate-900">Thank you for your feedback!</h3>
-          <p className="text-sm text-slate-600">Your insights help us continuously elevate our service.</p>
+          <p className="text-sm text-slate-600">Your review helps our clinic grow.</p>
           <button
             onClick={() => setShowRewardModal(true)}
             className="px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-sm"
@@ -163,7 +223,7 @@ export default function QuestionFlowEngine({
         {/* Step Indicator Badge */}
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-extrabold uppercase tracking-wider text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
-            Step {currentStepNumber} of 3
+            Step {currentStepNumber} of 2
           </span>
           <span className="text-[11px] font-semibold text-slate-400">
             {progressPct}% Complete
@@ -204,13 +264,23 @@ export default function QuestionFlowEngine({
               isMulti={true}
               onSelect={handleAnswerChange}
             />
+
+            {/* Direct 1-Click Action to Post on Google Maps */}
             <button
               type="button"
-              onClick={() => advanceToNext()}
-              className="w-full py-3.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all transform active:scale-98"
+              disabled={isSubmittingGoogle}
+              onClick={handleDirectGoogleSubmit}
+              className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold text-sm shadow-md shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
             >
-              <span>See AI Review Draft (Step 3)</span>
-              <Sparkles className="w-4 h-4 text-amber-300" />
+              {isSubmittingGoogle ? (
+                <span>Copying Review & Opening Google Maps...</span>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  <span>Submit & Post to Google Maps</span>
+                  <ExternalLink className="w-4 h-4 opacity-80" />
+                </>
+              )}
             </button>
           </div>
         )}
@@ -238,11 +308,11 @@ export default function QuestionFlowEngine({
             />
             <button
               type="button"
-              onClick={() => advanceToNext()}
+              onClick={handleDirectGoogleSubmit}
               className="w-full py-3.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all transform active:scale-98"
             >
-              <span>See Final Review Draft</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>Submit & Post to Google Maps</span>
+              <ExternalLink className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -275,7 +345,7 @@ export default function QuestionFlowEngine({
           {/* Location & Progress Bar */}
           <div className="flex items-center gap-2">
             <span className="text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200 font-medium">
-              Step {currentStepNumber} of 3
+              Step {currentStepNumber} of 2
             </span>
             <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
               <div 
@@ -295,7 +365,7 @@ export default function QuestionFlowEngine({
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span className="font-medium">Direct Google Review Converter</span>
           </div>
-          <span className="text-slate-400">Dr C Dental Clinic</span>
+          <span className="text-slate-400">{business.name}</span>
         </div>
       </div>
 
