@@ -18,7 +18,7 @@ export default function QuestionFlowEngine({
   const [history, setHistory] = useState([]);
   const [answers, setAnswers] = useState({});
   const [showRewardModal, setShowRewardModal] = useState(false);
-  const [isSubmittingGoogle, setIsSubmittingGoogle] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   const currentQuestion = flow.questions ? flow.questions[currentNodeId] : null;
 
@@ -84,14 +84,12 @@ export default function QuestionFlowEngine({
     setCurrentNodeId(previous);
   };
 
-  // Direct submit & redirect to Google Maps with AI draft copied
+  // Direct submit & guaranteed synchronous redirect to Google Reviews page
   const handleDirectGoogleSubmit = () => {
-    setIsSubmittingGoogle(true);
-
     const highlights = answers.positive_highlights || [];
     const rating = Number(answers.overall_experience || 5);
     
-    // Synthesize authentic draft
+    // 1. Synthesize authentic review draft
     const draftText = generateReviewDraft({
       business,
       rating,
@@ -100,14 +98,17 @@ export default function QuestionFlowEngine({
       tone: 'enthusiastic'
     });
 
-    // Copy to clipboard
+    // 2. Copy draft text to clipboard immediately
     try {
-      navigator.clipboard.writeText(draftText);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(draftText);
+      }
     } catch (e) {
-      console.error(e);
+      console.error('Clipboard copy error:', e);
     }
+    setIsCopied(true);
 
-    // Fire celebratory confetti
+    // 3. Fire celebration confetti
     try {
       confetti({
         particleCount: 90,
@@ -119,6 +120,7 @@ export default function QuestionFlowEngine({
       console.error(e);
     }
 
+    // 4. Record feedback payload to dashboard
     const fullPayload = {
       businessId: business.id,
       businessSlug: business.slug,
@@ -144,13 +146,15 @@ export default function QuestionFlowEngine({
       onFinishFeedback(fullPayload);
     }
 
-    // Directly open Google Maps review link in new tab
-    const targetUrl = business.publicReviewUrl || 'https://www.google.com/maps/place/Dr+C+Dental+Clinic/@17.5299467,78.4849175,17z/data=!3m1!4b1!4m6!3m5!1s0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057!8m2!3d17.5299467!4d78.4874924!16s%2Fg%2F11wc8j_30z?entry=ttu';
-    setTimeout(() => {
-      window.open(targetUrl, '_blank', 'noopener,noreferrer');
-      setIsSubmittingGoogle(false);
-      setShowRewardModal(true);
-    }, 700);
+    // 5. Target direct Google Review URL (opens Google Maps directly into write review / reviews tab)
+    const targetUrl = business.publicReviewUrl || 'https://www.google.com/maps/place/Dr+C+Dental+Clinic/@17.5299467,78.4849175,17z/data=!4m8!3m7!1s0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057!8m2!3d17.5299467!4d78.4874924!9m1!1b1';
+
+    // Synchronous redirect / window.open to prevent mobile popup blocking
+    const openedWindow = window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    if (!openedWindow || openedWindow.closed || typeof openedWindow.closed === 'undefined') {
+      // If popup blocker was triggered, directly redirect window location
+      window.location.href = targetUrl;
+    }
   };
 
   const handleCompleteSubmission = (extraData = {}) => {
@@ -183,7 +187,6 @@ export default function QuestionFlowEngine({
     }
   };
 
-  // 2-step calculation
   const totalEstimatedSteps = 2;
   const currentStepNumber = currentNodeId === 'overall_experience' ? 1 : 2;
   const progressPct = Math.round((currentStepNumber / totalEstimatedSteps) * 100);
@@ -207,13 +210,7 @@ export default function QuestionFlowEngine({
             ✓
           </div>
           <h3 className="text-xl font-extrabold text-slate-900">Thank you for your feedback!</h3>
-          <p className="text-sm text-slate-600">Your review helps our clinic grow.</p>
-          <button
-            onClick={() => setShowRewardModal(true)}
-            className="px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-sm"
-          >
-            Claim VIP Voucher
-          </button>
+          <p className="text-sm text-slate-600">Redirecting you to Google Reviews...</p>
         </div>
       );
     }
@@ -265,22 +262,15 @@ export default function QuestionFlowEngine({
               onSelect={handleAnswerChange}
             />
 
-            {/* Direct 1-Click Action to Post on Google Maps */}
+            {/* Direct Google Review Redirection Button */}
             <button
               type="button"
-              disabled={isSubmittingGoogle}
               onClick={handleDirectGoogleSubmit}
-              className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-bold text-sm shadow-md shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
+              className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
             >
-              {isSubmittingGoogle ? (
-                <span>Copying Review & Opening Google Maps...</span>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4" />
-                  <span>Submit & Post to Google Maps</span>
-                  <ExternalLink className="w-4 h-4 opacity-80" />
-                </>
-              )}
+              <Copy className="w-4 h-4" />
+              <span>Copy Review & Redirect to Google Maps</span>
+              <ExternalLink className="w-4 h-4 opacity-85" />
             </button>
           </div>
         )}
@@ -311,7 +301,7 @@ export default function QuestionFlowEngine({
               onClick={handleDirectGoogleSubmit}
               className="w-full py-3.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all transform active:scale-98"
             >
-              <span>Submit & Post to Google Maps</span>
+              <span>Redirect to Google Reviews</span>
               <ExternalLink className="w-4 h-4" />
             </button>
           </div>
@@ -363,7 +353,7 @@ export default function QuestionFlowEngine({
         <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
           <div className="flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="font-medium">Direct Google Review Converter</span>
+            <span className="font-medium">Direct Google Review Redirect</span>
           </div>
           <span className="text-slate-400">{business.name}</span>
         </div>
