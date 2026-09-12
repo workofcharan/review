@@ -247,47 +247,81 @@ export default function QuestionFlowEngine({
           />
         )}
 
-        {currentQuestion.type === 'chips_multiselect' && (
-          <div className="space-y-5">
-            <ChipsQuestion
-              question={currentQuestion}
-              selectedValue={answers[currentNodeId] || []}
-              isMulti={true}
-              onSelect={handleAnswerChange}
-            />
+        {currentQuestion.type === 'chips_multiselect' && (() => {
+          const selectedChips = answers[currentNodeId] || [];
+          const liveDraft = generateReviewDraft({
+            business,
+            rating: Number(answers.overall_experience || 5),
+            highlights: selectedChips,
+            staffShoutout: 'Dr. C',
+            tone: 'enthusiastic'
+          });
 
-            {/* Direct Google Review Redirection Button */}
-            <button
-              type="button"
-              onClick={handleDirectGoogleSubmit}
-              className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
-            >
-              {redirecting ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Opening Google Review Page...</span>
+          return (
+            <div className="space-y-4">
+              <ChipsQuestion
+                question={currentQuestion}
+                selectedValue={selectedChips}
+                isMulti={true}
+                onSelect={handleAnswerChange}
+              />
+
+              {/* Generated Review Live Preview Card */}
+              <div className="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-200/80 space-y-2">
+                <div className="flex items-center justify-between text-[11px] text-sky-900 font-bold">
+                  <div className="flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-sky-600" />
+                    <span>Your Ready-to-Paste Google Review:</span>
+                  </div>
+                  <span className="text-[10px] bg-sky-200/60 text-sky-800 px-2 py-0.5 rounded-full font-semibold">
+                    Auto-Copied on Click
+                  </span>
                 </div>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4" />
-                  <span>Copy Review & Go to Google Review Page</span>
-                  <ExternalLink className="w-4 h-4 opacity-85" />
-                </>
-              )}
-            </button>
+                <p className="text-xs text-slate-700 italic leading-relaxed bg-white/90 p-2.5 rounded-xl border border-sky-100">
+                  "{liveDraft}"
+                </p>
+                <div className="flex items-center gap-1.5 text-[10px] text-slate-600 font-medium">
+                  <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[9px] shrink-0">1</span>
+                  <span>Tap below to copy</span>
+                  <span className="text-slate-400">→</span>
+                  <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[9px] shrink-0">2</span>
+                  <span><strong>Paste</strong> directly on Google</span>
+                </div>
+              </div>
 
-            {redirecting && (
-              <a
-                href={business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE}
-                target="_top"
-                rel="noopener noreferrer"
-                className="block text-center text-xs text-sky-700 font-bold underline animate-pulse py-1"
+              {/* Direct Google Review Redirection Button */}
+              <button
+                type="button"
+                onClick={handleDirectGoogleSubmit}
+                className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
               >
-                Tap here if not opened automatically →
-              </a>
-            )}
-          </div>
-        )}
+                {redirecting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Opening Google Review Page...</span>
+                  </div>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    <span>Copy Review & Open Google Maps</span>
+                    <ExternalLink className="w-4 h-4 opacity-85" />
+                  </>
+                )}
+              </button>
+
+              {redirecting && (
+                <a
+                  href={business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE}
+                  target="_top"
+                  rel="noopener noreferrer"
+                  className="block text-center text-xs text-sky-700 font-bold underline animate-pulse py-1"
+                >
+                  Tap here if not opened automatically →
+                </a>
+              )}
+            </div>
+          );
+        })()}
 
         {currentQuestion.type === 'chips_single' && (
           <div className="space-y-5">
