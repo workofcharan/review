@@ -44,10 +44,7 @@ export default function Header() {
   }, []);
 
   const navLinks = [
-    { id: '/', label: 'Product Tour', icon: <Sparkles className="w-3.5 h-3.5" /> },
-    { id: '/dashboard', label: 'Command Hub', icon: <LayoutDashboard className="w-3.5 h-3.5" /> },
-    { id: `/b/${activeBusiness.slug}`, label: 'Live Guest QR Flow', icon: <Smartphone className="w-3.5 h-3.5" /> },
-    { id: '/preview', label: 'Dual-Screen Demo', icon: <SplitSquareVertical className="w-3.5 h-3.5" /> },
+    { id: '/', label: 'Command Hub', icon: <LayoutDashboard className="w-3.5 h-3.5" /> },
   ];
 
   const getCategoryIcon = (category) => {
@@ -85,14 +82,14 @@ export default function Header() {
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-1 bg-slate-100/90 p-1 rounded-xl border border-slate-200/80">
             {navLinks.map((link) => {
-              const isActive = link.id === currentRoute || (link.id.startsWith('/b/') && currentRoute.startsWith('/b/'));
+              const isActive = currentRoute === '/' || currentRoute === '' || currentRoute === '/dashboard';
               return (
                 <button
                   key={link.id}
                   onClick={() => navigateTo(link.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
                     isActive
-                      ? 'bg-white text-slate-900 shadow-xs border border-slate-200/70 font-bold'
+                      ? 'bg-white text-slate-900 shadow-xs border border-slate-200/70'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
                   }`}
                 >

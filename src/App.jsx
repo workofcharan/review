@@ -19,9 +19,9 @@ export default function App() {
       <Header />
       
       <main className="flex-1">
-        {currentRoute === '/dashboard' && <DashboardView />}
         {currentRoute === '/preview' && <SplitScreenView />}
-        {(currentRoute === '/' || currentRoute === '') && <LandingView />}
+        {currentRoute === '/tour' && <LandingView />}
+        {(currentRoute === '/' || currentRoute === '' || currentRoute === '/dashboard') && <DashboardView />}
       </main>
 
       {/* Global Footer */}
