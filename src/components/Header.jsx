@@ -177,15 +177,6 @@ export default function Header() {
               </div>
             )}
           </div>
-
-          {/* Quick Customer Flow Trigger */}
-          <button
-            onClick={() => navigateTo(`/b/${activeBusiness.slug}`)}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all transform active:scale-95"
-          >
-            <span>Scan Flow</span>
-            <ExternalLink className="w-3 h-3 text-slate-300" />
-          </button>
         </div>
       </div>
 

@@ -103,14 +103,6 @@ export default function DashboardView() {
           <Menu className="w-4 h-4 text-sky-600" />
           <span>Slide Menu ({tabs.find(t => t.id === activeTab)?.label})</span>
         </button>
-
-        <button
-          onClick={() => navigateTo('/preview')}
-          className="flex items-center gap-1 text-[11px] font-bold text-sky-600 hover:underline"
-        >
-          <SplitSquareVertical className="w-3.5 h-3.5" />
-          <span>Dual Demo</span>
-        </button>
       </div>
 
       {/* Mobile Slide-Out Drawer Overlay */}
@@ -138,26 +130,17 @@ export default function DashboardView() {
               {renderNavButtons(true)}
             </div>
 
-            <div className="pt-4 border-t border-slate-100 space-y-2">
+            <div className="pt-4 border-t border-slate-100">
               <button
+                type="button"
                 onClick={() => {
                   setMobileDrawerOpen(false);
-                  navigateTo('/preview');
+                  setIsAddModalOpen(true);
                 }}
-                className="w-full py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 px-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-sky-200"
               >
-                <SplitSquareVertical className="w-3.5 h-3.5 text-sky-600" />
-                <span>Dual Screen Demo</span>
-              </button>
-              <button
-                onClick={() => {
-                  setMobileDrawerOpen(false);
-                  navigateTo(`/b/${activeBusiness.slug}`);
-                }}
-                className="w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-1.5"
-              >
-                <Smartphone className="w-3.5 h-3.5" />
-                <span>Launch QR Flow</span>
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Add Business Profile</span>
               </button>
             </div>
           </div>
@@ -199,39 +182,18 @@ export default function DashboardView() {
         </div>
 
         {/* Bottom Shortcuts inside Slide Bar */}
-        <div className="pt-3 border-t border-slate-100 space-y-2">
+        <div className="pt-3 border-t border-slate-100">
           {!isCollapsed ? (
-            <>
-              <button
-                type="button"
-                onClick={() => setIsAddModalOpen(true)}
-                className="w-full py-2.5 px-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-sky-200"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>+ Add Business</span>
-              </button>
-
-              <button
-                onClick={() => navigateTo('/preview')}
-                className="w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 text-xs font-bold flex items-center justify-between transition-colors shadow-2xs"
-              >
-                <div className="flex items-center gap-2">
-                  <SplitSquareVertical className="w-3.5 h-3.5 text-sky-600" />
-                  <span>Dual Demo</span>
-                </div>
-                <ExternalLink className="w-3 h-3 text-slate-400" />
-              </button>
-
-              <button
-                onClick={() => navigateTo(`/b/${activeBusiness.slug}`)}
-                className="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-98"
-              >
-                <Smartphone className="w-3.5 h-3.5" />
-                <span>Test Live QR</span>
-              </button>
-            </>
+            <button
+              type="button"
+              onClick={() => setIsAddModalOpen(true)}
+              className="w-full py-2.5 px-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-sky-200"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>+ Add Business</span>
+            </button>
           ) : (
-            <div className="space-y-1 flex flex-col items-center">
+            <div className="flex justify-center">
               <button
                 type="button"
                 onClick={() => setIsAddModalOpen(true)}
@@ -239,20 +201,6 @@ export default function DashboardView() {
                 className="p-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 transition-colors"
               >
                 <Plus className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => navigateTo('/preview')}
-                title="Dual Screen Demo"
-                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
-              >
-                <SplitSquareVertical className="w-4 h-4 text-sky-600" />
-              </button>
-              <button
-                onClick={() => navigateTo(`/b/${activeBusiness.slug}`)}
-                title="Test Live QR Flow"
-                className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white transition-colors"
-              >
-                <Smartphone className="w-4 h-4" />
               </button>
             </div>
           )}
