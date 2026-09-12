@@ -4,9 +4,9 @@ import { INITIAL_BUSINESSES, INITIAL_FEEDBACKS, INITIAL_AI_INSIGHTS } from '../d
 const AppContext = createContext(null);
 
 const STORAGE_KEYS = {
-  BUSINESSES: 'revpulse_businesses_v2',
-  SELECTED_BIZ: 'revpulse_selected_biz_v2',
-  FEEDBACKS: 'revpulse_feedbacks_v2',
+  BUSINESSES: 'revpulse_businesses_v3',
+  SELECTED_BIZ: 'revpulse_selected_biz_v3',
+  FEEDBACKS: 'revpulse_feedbacks_v3',
 };
 
 export function AppProvider({ children }) {
@@ -14,7 +14,16 @@ export function AppProvider({ children }) {
   const [businesses, setBusinesses] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.BUSINESSES);
-      return saved ? JSON.parse(saved) : INITIAL_BUSINESSES;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.map(b => {
+          if (b.id === 'biz-drc' && (!b.publicReviewUrl || b.publicReviewUrl.includes('place/Dr+C+Dental+Clinic'))) {
+            return { ...b, publicReviewUrl: 'https://g.page/r/CVfAf-zR7rBLEBE/review', yelpUrl: 'https://g.page/r/CVfAf-zR7rBLEBE/review' };
+          }
+          return b;
+        });
+      }
+      return INITIAL_BUSINESSES;
     } catch {
       return INITIAL_BUSINESSES;
     }

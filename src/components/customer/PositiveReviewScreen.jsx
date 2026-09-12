@@ -71,7 +71,7 @@ export default function PositiveReviewScreen({
       recoveryStatus: 'none_needed'
     });
 
-    const targetUrl = business.publicReviewUrl || 'https://www.google.com/maps/place/Dr+C+Dental+Clinic/@17.5299467,78.4874924,17z/data=!4m8!3m7!1s0x3bcb8598e40bf7a9:0x4bb0eed1ec7fc057!8m2!3d17.5299467!4d78.4874924!9m1!1b1!16s%2Fg%2F11wc8j_30z?entry=ttu&g_ep=EgoyMDI2MDkwOC4wIKXMDSoASAFQAw%3D%3D';
+    const targetUrl = business.publicReviewUrl || 'https://g.page/r/CVfAf-zR7rBLEBE/review';
     setTimeout(() => {
       window.location.href = targetUrl;
       onOpenPerk();

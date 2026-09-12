@@ -89,6 +89,10 @@ export default function LandingView() {
   const handleCopyHero = () => {
     navigator.clipboard.writeText(heroGeneratedDraft);
     setHeroCopied(true);
+    const targetUrl = activeBusiness?.publicReviewUrl || 'https://g.page/r/CVfAf-zR7rBLEBE/review';
+    setTimeout(() => {
+      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    }, 300);
     setTimeout(() => setHeroCopied(false), 2000);
   };
 
