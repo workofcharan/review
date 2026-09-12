@@ -4,12 +4,12 @@ import { ShieldCheck, Send, Mail, HeartHandshake } from 'lucide-react';
 export default function PrivateRecoveryScreen({ 
   business, 
   answers, 
-  onComplete,
-  onOpenPerk 
+  onComplete
 }) {
   const [details, setDetails] = useState('');
   const [contact, setContact] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -25,9 +25,23 @@ export default function PrivateRecoveryScreen({
         recoveryStatus: 'pending_review'
       });
       setIsSubmitting(false);
-      onOpenPerk();
+      setSubmitted(true);
     }, 400);
   };
+
+  if (submitted) {
+    return (
+      <div className="text-center py-8 space-y-4 animate-fade-in">
+        <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-bold">
+          ✓
+        </div>
+        <h3 className="text-xl font-extrabold text-slate-900">Message Delivered Privately</h3>
+        <p className="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
+          Thank you for letting us know. Your feedback has been escalated directly to management for immediate review.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="w-full space-y-4 animate-fade-in">

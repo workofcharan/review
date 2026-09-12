@@ -492,7 +492,7 @@ export default function LandingView() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>VIP Perk: {selectedBiz.perkOffer?.title}</span>
+                  <span>Direct 5-Star Google Review acceleration</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -539,7 +539,7 @@ export default function LandingView() {
                 </div>
                 <div className="p-3 bg-sky-50 rounded-xl border border-sky-200 text-xs text-sky-950">
                   <div className="font-bold text-sky-900">Final: AI Review Synthesis</div>
-                  <div className="text-[11px] text-sky-700">1-click copy to Google Review + Claim Perk</div>
+                  <div className="text-[11px] text-sky-700">1-click copy to Google Review</div>
                 </div>
               </div>
             </div>

@@ -21,11 +21,6 @@ export const INITIAL_BUSINESSES = [
     tripAdvisorUrl: "",
     minPublicRating: 4,
     tableCount: 6,
-    perkOffer: {
-      title: "Complimentary Dental Care Kit & 15% Off Next Routine Cleaning",
-      code: "DRC-SMILE15",
-      validDays: 60
-    },
     questionFlow: {
       start: "overall_experience",
       questions: {
@@ -102,11 +97,6 @@ export const INITIAL_BUSINESSES = [
     tripAdvisorUrl: "https://www.tripadvisor.com/Restaurant_Review-laura-bistro",
     minPublicRating: 4,
     tableCount: 28,
-    perkOffer: {
-      title: "Complimentary Chef's Dessert & 10% Off Next Visit",
-      code: "LAURA-VIP10",
-      validDays: 30
-    },
     questionFlow: {
       start: "overall_experience",
       questions: {

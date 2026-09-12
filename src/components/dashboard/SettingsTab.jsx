@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { 
   Building2, 
   MapPin, 
-  Gift, 
   Save, 
   Check, 
   RotateCcw
@@ -21,10 +20,7 @@ export default function SettingsTab() {
     primaryColor: activeBusiness.brandColors?.primary || '#e11d48',
     publicReviewUrl: activeBusiness.publicReviewUrl || '',
     yelpUrl: activeBusiness.yelpUrl || '',
-    minPublicRating: activeBusiness.minPublicRating || 4,
-    perkTitle: activeBusiness.perkOffer?.title || '',
-    perkCode: activeBusiness.perkOffer?.code || '',
-    perkDays: activeBusiness.perkOffer?.validDays || 30
+    minPublicRating: activeBusiness.minPublicRating || 4
   });
 
   const [saved, setSaved] = useState(false);
@@ -47,12 +43,7 @@ export default function SettingsTab() {
       },
       publicReviewUrl: formData.publicReviewUrl,
       yelpUrl: formData.yelpUrl,
-      minPublicRating: Number(formData.minPublicRating),
-      perkOffer: {
-        title: formData.perkTitle,
-        code: formData.perkCode,
-        validDays: Number(formData.perkDays)
-      }
+      minPublicRating: Number(formData.minPublicRating)
     });
 
     setSaved(true);
@@ -202,38 +193,6 @@ export default function SettingsTab() {
               <p className="text-[11px] text-slate-500">
                 Customers rating {formData.minPublicRating}+ stars get the AI Google Review prompt. Lower ratings get intercepted privately.
               </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Card 3: VIP Perk Offer */}
-        <div className="glass-card rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4 lg:col-span-2">
-          <div className="flex items-center gap-2 text-amber-600 border-b border-slate-100 pb-3">
-            <Gift className="w-4 h-4" />
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Customer Incentive / Perk Offer</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-1 md:col-span-2">
-              <label className="text-xs font-bold text-slate-700">Incentive Description:</label>
-              <input
-                type="text"
-                value={formData.perkTitle}
-                onChange={(e) => handleChange('perkTitle', e.target.value)}
-                placeholder="e.g., 10% off next visit & complimentary dessert"
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-slate-700">Voucher Promo Code:</label>
-              <input
-                type="text"
-                value={formData.perkCode}
-                onChange={(e) => handleChange('perkCode', e.target.value)}
-                placeholder="e.g. VIP10"
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-amber-700 font-bold"
-              />
             </div>
           </div>
         </div>

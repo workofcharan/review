@@ -230,7 +230,7 @@ export default function FlowBuilderTab() {
                 <div className="text-center text-slate-400">↓</div>
 
                 <div className="p-3.5 bg-gradient-to-r from-emerald-600 to-sky-600 text-white rounded-xl shadow-md font-bold text-xs text-center">
-                  ✨ AI Review Drafter $\rightarrow$ Google Reviews + VIP Perk Voucher
+                  ✨ AI Review Drafter → Direct 5-Star Google Reviews
                 </div>
               </div>
 

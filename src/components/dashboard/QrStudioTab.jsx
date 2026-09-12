@@ -18,9 +18,9 @@ export default function QrStudioTab() {
 
   const [cardFormat, setCardFormat] = useState('table_tent');
   const [tabletopBg, setTabletopBg] = useState('studio'); // studio, wood, marble
-  const [headline, setHeadline] = useState('How was your dining experience?');
-  const [subheadline, setSubheadline] = useState('Scan to rate & unlock 10% VIP Perk');
-  const [qrColor, setQrColor] = useState(activeBusiness.brandColors?.primary || '#e11d48');
+  const [headline, setHeadline] = useState('How was your visit today?');
+  const [subheadline, setSubheadline] = useState('Scan to share your feedback in seconds');
+  const [qrColor, setQrColor] = useState(activeBusiness.brandColors?.primary || '#0284c7');
   const [tableLabel, setTableLabel] = useState('Table #');
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [isCopied, setIsCopied] = useState(false);
@@ -277,7 +277,7 @@ export default function QrStudioTab() {
 
               <div className="mt-3 pt-3 border-t border-slate-100 w-full flex items-center justify-between text-[11px] text-slate-400">
                 <span className="font-mono font-semibold text-slate-500">{tableLabel} ___</span>
-                <span className="font-bold" style={{ color: qrColor }}>Instant VIP Perk</span>
+                <span className="font-bold" style={{ color: qrColor }}>Direct Google Reviews</span>
               </div>
             </div>
           </div>

@@ -4,7 +4,6 @@ import EmojiScale from './EmojiScale';
 import ChipsQuestion from './ChipsQuestion';
 import TextQuestion from './TextQuestion';
 import PrivateRecoveryScreen from './PrivateRecoveryScreen';
-import RewardModal from './RewardModal';
 import confetti from 'canvas-confetti';
 import { generateReviewDraft } from '../../utils/aiReviewGenerator';
 import { copyTextToClipboard, redirectToReviewPage } from '../../utils/mobileRedirectHelper';
@@ -20,7 +19,6 @@ export default function QuestionFlowEngine({
   const [currentNodeId, setCurrentNodeId] = useState(flow.start || 'overall_experience');
   const [history, setHistory] = useState([]);
   const [answers, setAnswers] = useState({});
-  const [showRewardModal, setShowRewardModal] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [showPasteGuideModal, setShowPasteGuideModal] = useState(false);
   const [activeDraftText, setActiveDraftText] = useState('');
@@ -196,7 +194,6 @@ export default function QuestionFlowEngine({
           business={business}
           answers={answers}
           onComplete={handleCompleteSubmission}
-          onOpenPerk={() => setShowRewardModal(true)}
         />
       );
     }
@@ -454,17 +451,6 @@ export default function QuestionFlowEngine({
             </button>
           </div>
         </div>
-      )}
-
-      {/* Reward Modal */}
-      {showRewardModal && (
-        <RewardModal
-          business={business}
-          onClose={() => {
-            setShowRewardModal(false);
-            window.location.hash = '/';
-          }}
-        />
       )}
     </div>
   );

@@ -14,8 +14,7 @@ const TONES = [
 export default function PositiveReviewScreen({ 
   business, 
   answers, 
-  onComplete,
-  onOpenPerk 
+  onComplete
 }) {
   const [selectedTone, setSelectedTone] = useState('enthusiastic');
   const [draftText, setDraftText] = useState('');
@@ -75,21 +74,7 @@ export default function PositiveReviewScreen({
     const targetUrl = business.publicReviewUrl || 'https://g.page/r/CVfAf-zR7rBLEBE/review';
     setTimeout(() => {
       redirectToReviewPage(targetUrl);
-      onOpenPerk();
     }, 300);
-  };
-
-  const handleSkipToPerk = () => {
-    onComplete({
-      generatedReview: {
-        tone: selectedTone,
-        draft: draftText,
-        wasPublishedPublicly: false,
-        platform: 'Direct Internal'
-      },
-      recoveryStatus: 'none_needed'
-    });
-    onOpenPerk();
   };
 
   return (
@@ -181,15 +166,6 @@ export default function PositiveReviewScreen({
               <ExternalLink className="w-4 h-4 opacity-80" />
             </>
           )}
-        </button>
-
-        <button
-          type="button"
-          onClick={handleSkipToPerk}
-          className="w-full py-2 text-xs text-slate-500 hover:text-slate-800 font-semibold transition-colors flex items-center justify-center gap-1"
-        >
-          <Gift className="w-3.5 h-3.5 text-amber-500" />
-          <span>Claim VIP Dental Perk without posting</span>
         </button>
       </div>
     </div>
