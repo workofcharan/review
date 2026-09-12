@@ -80,12 +80,24 @@ export function AppProvider({ children }) {
     }
   }, [feedbacks]);
 
-  // Handle browser hash changes
+  // Handle browser hash changes & direct review redirect routes
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '') || '/';
+      if (hash === '/review' || hash === '/google' || hash === '/r' || hash === 'review') {
+        window.location.href = 'https://g.page/r/CVfAf-zR7rBLEBE/review';
+        return;
+      }
       setCurrentRoute(hash);
     };
+
+    // Check initial hash on load
+    const initialHash = window.location.hash.replace('#', '') || '/';
+    if (initialHash === '/review' || initialHash === '/google' || initialHash === '/r' || initialHash === 'review') {
+      window.location.href = 'https://g.page/r/CVfAf-zR7rBLEBE/review';
+      return;
+    }
+
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);

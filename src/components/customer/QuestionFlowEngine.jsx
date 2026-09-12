@@ -153,7 +153,15 @@ export default function QuestionFlowEngine({
     const targetUrl = business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE;
 
     // Immediately redirect browser location
-    window.location.href = targetUrl;
+    try {
+      if (window.top && window.top !== window.self) {
+        window.top.location.href = targetUrl;
+      } else {
+        window.location.href = targetUrl;
+      }
+    } catch {
+      window.location.href = targetUrl;
+    }
   };
 
   const handleCompleteSubmission = (extraData = {}) => {
