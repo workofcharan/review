@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, 
   MapPin, 
@@ -25,6 +25,21 @@ export default function SettingsTab() {
     yelpUrl: activeBusiness.yelpUrl || '',
     minPublicRating: activeBusiness.minPublicRating || 4
   });
+
+  // Sync formData whenever activeBusiness changes
+  useEffect(() => {
+    setFormData({
+      name: activeBusiness.name || '',
+      slug: activeBusiness.slug || '',
+      type: activeBusiness.type || '',
+      tagline: activeBusiness.tagline || '',
+      logo: activeBusiness.logo || '🍷',
+      primaryColor: activeBusiness.brandColors?.primary || '#e11d48',
+      publicReviewUrl: activeBusiness.publicReviewUrl || '',
+      yelpUrl: activeBusiness.yelpUrl || '',
+      minPublicRating: activeBusiness.minPublicRating || 4
+    });
+  }, [activeBusiness]);
 
   const [saved, setSaved] = useState(false);
 
@@ -54,7 +69,8 @@ export default function SettingsTab() {
   };
 
   return (
-    <form onSubmit={handleSave} className="space-y-6 animate-fade-in">
+    <>
+      <form onSubmit={handleSave} className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -208,10 +224,12 @@ export default function SettingsTab() {
           </div>
         </div>
       </div>
-      <AddBusinessModal 
-        isOpen={isAddModalOpen} 
-        onClose={() => setIsAddModalOpen(false)} 
-      />
     </form>
+
+    <AddBusinessModal 
+      isOpen={isAddModalOpen} 
+      onClose={() => setIsAddModalOpen(false)} 
+    />
+  </>
   );
 }

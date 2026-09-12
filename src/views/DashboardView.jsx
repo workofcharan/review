@@ -14,7 +14,8 @@ import {
   X,
   ExternalLink,
   Smartphone,
-  Sparkles
+  Sparkles,
+  Plus
 } from 'lucide-react';
 import OverviewTab from '../components/dashboard/OverviewTab';
 import FeedbackInboxTab from '../components/dashboard/FeedbackInboxTab';
@@ -22,12 +23,14 @@ import QrStudioTab from '../components/dashboard/QrStudioTab';
 import FlowBuilderTab from '../components/dashboard/FlowBuilderTab';
 import AiIntelligenceTab from '../components/dashboard/AiIntelligenceTab';
 import SettingsTab from '../components/dashboard/SettingsTab';
+import AddBusinessModal from '../components/dashboard/AddBusinessModal';
 
 export default function DashboardView() {
   const { activeBusiness, feedbacks, navigateTo } = useApp();
   const [activeTab, setActiveTab] = useState('overview');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const bizFeedbacks = feedbacks.filter(f => f.businessId === activeBusiness.id);
   const pendingCount = bizFeedbacks.filter(f => f.recoveryStatus === 'pending_review').length;
@@ -200,8 +203,17 @@ export default function DashboardView() {
           {!isCollapsed ? (
             <>
               <button
+                type="button"
+                onClick={() => setIsAddModalOpen(true)}
+                className="w-full py-2.5 px-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-sky-200"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Add Business</span>
+              </button>
+
+              <button
                 onClick={() => navigateTo('/preview')}
-                className="w-full py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 text-xs font-bold flex items-center justify-between transition-colors shadow-2xs"
+                className="w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 text-xs font-bold flex items-center justify-between transition-colors shadow-2xs"
               >
                 <div className="flex items-center gap-2">
                   <SplitSquareVertical className="w-3.5 h-3.5 text-sky-600" />
@@ -212,7 +224,7 @@ export default function DashboardView() {
 
               <button
                 onClick={() => navigateTo(`/b/${activeBusiness.slug}`)}
-                className="w-full py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-98"
+                className="w-full py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-98"
               >
                 <Smartphone className="w-3.5 h-3.5" />
                 <span>Test Live QR</span>
@@ -220,6 +232,14 @@ export default function DashboardView() {
             </>
           ) : (
             <div className="space-y-1 flex flex-col items-center">
+              <button
+                type="button"
+                onClick={() => setIsAddModalOpen(true)}
+                title="Add New Business Profile"
+                className="p-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
               <button
                 onClick={() => navigateTo('/preview')}
                 title="Dual Screen Demo"
@@ -248,6 +268,12 @@ export default function DashboardView() {
         {activeTab === 'ai_intelligence' && <AiIntelligenceTab />}
         {activeTab === 'settings' && <SettingsTab />}
       </main>
+
+      {/* Add Business Modal */}
+      <AddBusinessModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+      />
     </div>
   );
 }

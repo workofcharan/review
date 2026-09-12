@@ -151,8 +151,21 @@ export function AppProvider({ children }) {
       id: `biz-${Date.now()}`,
       ...newBiz
     };
-    setBusinesses(prev => [...prev, biz]);
+    setBusinesses(prev => {
+      const updated = [...prev, biz];
+      try {
+        localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
     setSelectedBusinessId(biz.id);
+    try {
+      localStorage.setItem(STORAGE_KEYS.SELECTED_BIZ, biz.id);
+    } catch (e) {
+      console.error(e);
+    }
     return biz;
   };
 
