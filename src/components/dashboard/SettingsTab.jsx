@@ -4,12 +4,15 @@ import {
   MapPin, 
   Save, 
   Check, 
-  RotateCcw
+  RotateCcw,
+  Plus
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import AddBusinessModal from './AddBusinessModal';
 
 export default function SettingsTab() {
   const { activeBusiness, updateBusiness, resetDemoData } = useApp();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     name: activeBusiness.name || '',
@@ -61,7 +64,15 @@ export default function SettingsTab() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={() => setIsAddModalOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Add New Business</span>
+          </button>
           <button
             type="button"
             onClick={() => {
@@ -197,6 +208,10 @@ export default function SettingsTab() {
           </div>
         </div>
       </div>
+      <AddBusinessModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+      />
     </form>
   );
 }

@@ -15,6 +15,8 @@ import {
   CircleDot
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import AddBusinessModal from './dashboard/AddBusinessModal';
+import { Plus } from 'lucide-react';
 
 export default function Header() {
   const { 
@@ -27,6 +29,7 @@ export default function Header() {
   } = useApp();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   // Close dropdown on click outside
@@ -159,6 +162,21 @@ export default function Header() {
                     );
                   })}
                 </div>
+
+                {/* Add Business Profile Button */}
+                <div className="pt-1.5 mt-1.5 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDropdownOpen(false);
+                      setIsAddModalOpen(true);
+                    }}
+                    className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-extrabold text-xs transition-colors border border-sky-200/80"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add New Business Profile</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -173,6 +191,12 @@ export default function Header() {
           </button>
         </div>
       </div>
+
+      {/* Add Business Modal */}
+      <AddBusinessModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+      />
     </header>
   );
 }
