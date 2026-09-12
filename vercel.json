@@ -1,4 +1,16 @@
 {
+  "redirects": [
+    {
+      "source": "/review",
+      "destination": "https://g.page/r/CVfAf-zR7rBLEBE/review",
+      "permanent": false
+    },
+    {
+      "source": "/r",
+      "destination": "https://g.page/r/CVfAf-zR7rBLEBE/review",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ]

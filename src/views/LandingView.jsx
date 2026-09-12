@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { generateReviewDraft } from '../utils/aiReviewGenerator';
+import { copyTextToClipboard, redirectToReviewPage } from '../utils/mobileRedirectHelper';
 
 export default function LandingView() {
   const { businesses, setSelectedBusinessId, activeBusiness, navigateTo } = useApp();
@@ -86,13 +87,13 @@ export default function LandingView() {
     }
   };
 
-  const handleCopyHero = () => {
-    navigator.clipboard.writeText(heroGeneratedDraft);
+  const handleCopyHero = async () => {
+    await copyTextToClipboard(heroGeneratedDraft);
     setHeroCopied(true);
     const targetUrl = activeBusiness?.publicReviewUrl || 'https://g.page/r/CVfAf-zR7rBLEBE/review';
     setTimeout(() => {
-      window.open(targetUrl, '_blank', 'noopener,noreferrer');
-    }, 300);
+      redirectToReviewPage(targetUrl);
+    }, 200);
     setTimeout(() => setHeroCopied(false), 2000);
   };
 

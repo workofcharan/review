@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, Copy, Check, ExternalLink, RefreshCw, Star, Gift } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { generateReviewDraft } from '../../utils/aiReviewGenerator';
+import { copyTextToClipboard, redirectToReviewPage } from '../../utils/mobileRedirectHelper';
 
 const TONES = [
   { id: 'enthusiastic', label: '🤩 Enthusiastic', desc: 'Energetic & glowing' },
@@ -46,8 +47,8 @@ export default function PositiveReviewScreen({
     refreshDraft(toneId);
   };
 
-  const handleCopyAndRedirect = () => {
-    navigator.clipboard.writeText(draftText);
+  const handleCopyAndRedirect = async () => {
+    await copyTextToClipboard(draftText);
     setIsCopied(true);
 
     try {
@@ -73,9 +74,9 @@ export default function PositiveReviewScreen({
 
     const targetUrl = business.publicReviewUrl || 'https://g.page/r/CVfAf-zR7rBLEBE/review';
     setTimeout(() => {
-      window.location.href = targetUrl;
+      redirectToReviewPage(targetUrl);
       onOpenPerk();
-    }, 750);
+    }, 300);
   };
 
   const handleSkipToPerk = () => {

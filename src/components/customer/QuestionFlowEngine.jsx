@@ -7,6 +7,7 @@ import PrivateRecoveryScreen from './PrivateRecoveryScreen';
 import RewardModal from './RewardModal';
 import confetti from 'canvas-confetti';
 import { generateReviewDraft } from '../../utils/aiReviewGenerator';
+import { copyTextToClipboard, redirectToReviewPage } from '../../utils/mobileRedirectHelper';
 
 const DR_C_EXACT_REVIEW_PAGE = "https://g.page/r/CVfAf-zR7rBLEBE/review";
 
@@ -86,8 +87,8 @@ export default function QuestionFlowEngine({
     setCurrentNodeId(previous);
   };
 
-  // Direct Submit & Immediate Browser Redirect to the Exact Google Maps Review Page
-  const handleDirectGoogleSubmit = () => {
+  // Direct Submit & Immediate Browser Redirect to the Exact Google Maps Review Page (iOS & Android Compatible)
+  const handleDirectGoogleSubmit = async () => {
     setRedirecting(true);
 
     const highlights = answers.positive_highlights || [];
@@ -102,14 +103,8 @@ export default function QuestionFlowEngine({
       tone: 'enthusiastic'
     });
 
-    // 2. Copy draft text to clipboard
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(draftText);
-      }
-    } catch (e) {
-      console.error('Clipboard copy error:', e);
-    }
+    // 2. Copy draft text to clipboard (works on iOS Safari & Android WebViews)
+    await copyTextToClipboard(draftText);
 
     // 3. Fire celebration confetti
     try {
@@ -149,19 +144,11 @@ export default function QuestionFlowEngine({
       onFinishFeedback(fullPayload);
     }
 
-    // 5. Direct navigation to the requested Google Maps Review Page URL
+    // 5. Direct navigation to the requested Google Maps Review Page URL (Android & iOS)
     const targetUrl = business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE;
-
-    // Immediately redirect browser location
-    try {
-      if (window.top && window.top !== window.self) {
-        window.top.location.href = targetUrl;
-      } else {
-        window.location.href = targetUrl;
-      }
-    } catch {
-      window.location.href = targetUrl;
-    }
+    setTimeout(() => {
+      redirectToReviewPage(targetUrl);
+    }, 150);
   };
 
   const handleCompleteSubmission = (extraData = {}) => {
@@ -272,12 +259,14 @@ export default function QuestionFlowEngine({
             {/* Direct Google Review Redirection Button */}
             <button
               type="button"
-              disabled={redirecting}
               onClick={handleDirectGoogleSubmit}
               className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
             >
               {redirecting ? (
-                <span>Redirecting to Google Review Page...</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Opening Google Review Page...</span>
+                </div>
               ) : (
                 <>
                   <Copy className="w-4 h-4" />
@@ -286,6 +275,17 @@ export default function QuestionFlowEngine({
                 </>
               )}
             </button>
+
+            {redirecting && (
+              <a
+                href={business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE}
+                target="_top"
+                rel="noopener noreferrer"
+                className="block text-center text-xs text-sky-700 font-bold underline animate-pulse py-1"
+              >
+                Tap here if not opened automatically →
+              </a>
+            )}
           </div>
         )}
 
