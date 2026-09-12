@@ -211,24 +211,14 @@ export default function QuestionFlowEngine({
     }
 
     return (
-      <div className="space-y-5 animate-slide-up">
-        {/* Step Indicator Badge */}
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-extrabold uppercase tracking-wider text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
-            Step {currentStepNumber} of 2
-          </span>
-          <span className="text-[11px] font-semibold text-slate-400">
-            {progressPct}% Complete
-          </span>
-        </div>
-
+      <div className="space-y-6 animate-slide-up">
         {/* Question Title & Subtitle */}
-        <div className="space-y-1.5">
-          <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight leading-snug">
+        <div className="space-y-2">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
             {currentQuestion.title || currentQuestion.text}
           </h2>
           {currentQuestion.subtitle && (
-            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
               {currentQuestion.subtitle}
             </p>
           )}
@@ -268,25 +258,25 @@ export default function QuestionFlowEngine({
               />
 
               {/* Generated Review Live Preview Card */}
-              <div className="p-3.5 rounded-2xl bg-sky-50/70 border border-sky-200/80 space-y-2">
+              <div className="p-4 rounded-2xl bg-sky-50/80 border border-sky-200/90 space-y-2.5 shadow-2xs">
                 <div className="flex items-center justify-between text-[11px] text-sky-900 font-bold">
                   <div className="flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-sky-600" />
-                    <span>Your Ready-to-Paste Google Review:</span>
+                    <Sparkles className="w-4 h-4 text-sky-600" />
+                    <span className="font-extrabold">Your Ready-to-Paste Review:</span>
                   </div>
-                  <span className="text-[10px] bg-sky-200/60 text-sky-800 px-2 py-0.5 rounded-full font-semibold">
-                    Auto-Copied on Click
+                  <span className="text-[10px] bg-sky-200/70 text-sky-900 px-2.5 py-0.5 rounded-full font-bold">
+                    Auto-Copied
                   </span>
                 </div>
-                <p className="text-xs text-slate-700 italic leading-relaxed bg-white/90 p-2.5 rounded-xl border border-sky-100">
+                <p className="text-xs text-slate-700 italic leading-relaxed bg-white/95 p-3 rounded-xl border border-sky-100/80 shadow-2xs">
                   "{liveDraft}"
                 </p>
-                <div className="flex items-center gap-1.5 text-[10px] text-slate-600 font-medium">
+                <div className="flex items-center gap-2 text-[10px] text-slate-600 font-semibold pt-0.5">
                   <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[9px] shrink-0">1</span>
                   <span>Tap below to copy</span>
-                  <span className="text-slate-400">→</span>
+                  <span className="text-slate-300">→</span>
                   <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[9px] shrink-0">2</span>
-                  <span><strong>Paste</strong> directly on Google</span>
+                  <span>Paste on Google</span>
                 </div>
               </div>
 
@@ -294,7 +284,7 @@ export default function QuestionFlowEngine({
               <button
                 type="button"
                 onClick={handleDirectGoogleSubmit}
-                className="w-full py-4 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98"
+                className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black text-sm sm:text-base shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
               >
                 {redirecting ? (
                   <div className="flex items-center gap-2">
@@ -349,7 +339,7 @@ export default function QuestionFlowEngine({
               type="button"
               disabled={redirecting}
               onClick={handleDirectGoogleSubmit}
-              className="w-full py-3.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all transform active:scale-98"
+              className="w-full py-3.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
             >
               <span>Go to Google Review Page</span>
               <ExternalLink className="w-4 h-4" />
@@ -363,33 +353,35 @@ export default function QuestionFlowEngine({
   return (
     <div className="w-full max-w-md mx-auto relative">
       {/* Top Header Card */}
-      <div className="glass-card rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-xl relative overflow-hidden bg-white">
+      <div className="rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-2xl shadow-slate-200/60 relative overflow-hidden bg-white">
         {/* Top bar with back button & progress */}
         <div className="flex items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100">
           {history.length > 0 ? (
             <button
               type="button"
               onClick={handleBack}
-              className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 transition-colors flex items-center gap-1 text-xs font-bold"
+              className="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 transition-colors flex items-center gap-1.5 text-xs font-bold"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back</span>
             </button>
           ) : (
-            <div className="flex items-center gap-1.5 text-xs text-slate-600">
-              <span className="text-base">{business.logo}</span>
-              <span className="font-bold text-slate-900">{business.name}</span>
+            <div className="flex items-center gap-2 text-xs">
+              <div className="w-7 h-7 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center text-sm shrink-0">
+                {business.logo}
+              </div>
+              <span className="font-extrabold text-slate-900 truncate max-w-[170px]">{business.name}</span>
             </div>
           )}
 
-          {/* Location & Progress Bar */}
+          {/* Step & Progress Bar */}
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200 font-medium">
-              Step {currentStepNumber} of 2
+            <span className="text-[11px] font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
+              Step {currentStepNumber} of {totalEstimatedSteps}
             </span>
-            <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+            <div className="w-16 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
               <div 
-                className="h-full bg-gradient-to-r from-sky-500 to-indigo-600 transition-all duration-300"
+                className="h-full bg-gradient-to-r from-sky-500 to-indigo-600 transition-all duration-300 rounded-full"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
@@ -401,11 +393,11 @@ export default function QuestionFlowEngine({
 
         {/* Footer Guarantee */}
         <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-          <div className="flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="font-medium">Direct Google Review Redirect</span>
+          <div className="flex items-center gap-1.5 font-semibold text-slate-600">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span>Direct Google Review Redirect</span>
           </div>
-          <span className="text-slate-400">{business.name}</span>
+          <span className="text-slate-400 font-medium truncate max-w-[120px]">{business.name}</span>
         </div>
       </div>
 
