@@ -21,6 +21,7 @@ import {
   LayoutDashboard
 } from 'lucide-react';
 import AddBusinessModal from '../components/dashboard/AddBusinessModal';
+import BusinessQrModal from '../components/dashboard/BusinessQrModal';
 
 export default function AdminBusinessesHubView() {
   const { 
@@ -34,6 +35,7 @@ export default function AdminBusinessesHubView() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedQrBiz, setSelectedQrBiz] = useState(null);
 
   // Consolidated Aggregated Metrics
   const totalBusinesses = businesses.length;
@@ -262,6 +264,17 @@ export default function AdminBusinessesHubView() {
                         </p>
                       </div>
                     </div>
+
+                    {/* Quick QR badge button */}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedQrBiz(biz)}
+                      title="Click to display QR code"
+                      className="p-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200/80 text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs hover:scale-105 cursor-pointer shrink-0"
+                    >
+                      <QrCode className="w-4 h-4" />
+                      <span className="hidden sm:inline">QR</span>
+                    </button>
                   </div>
 
                   <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100">
@@ -311,23 +324,20 @@ export default function AdminBusinessesHubView() {
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
-                      onClick={() => navigateTo(`/b/${biz.slug}`)}
-                      className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      onClick={() => setSelectedQrBiz(biz)}
+                      className="py-2 px-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200/80 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >
-                      <ExternalLink className="w-3 h-3 text-slate-500" />
-                      <span>Customer QR</span>
+                      <QrCode className="w-3.5 h-3.5 text-sky-600" />
+                      <span>View QR Code</span>
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => {
-                        setSelectedBusinessId(biz.id);
-                        navigateTo('/dashboard');
-                      }}
+                      onClick={() => navigateTo(`/b/${biz.slug}`)}
                       className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >
-                      <QrCode className="w-3 h-3 text-sky-600" />
-                      <span>Print Studio</span>
+                      <ExternalLink className="w-3 h-3 text-slate-500" />
+                      <span>Test Flow</span>
                     </button>
                   </div>
                 </div>
@@ -341,6 +351,17 @@ export default function AdminBusinessesHubView() {
       <AddBusinessModal 
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
+      />
+
+      {/* Business QR Code View Modal */}
+      <BusinessQrModal
+        business={selectedQrBiz}
+        isOpen={!!selectedQrBiz}
+        onClose={() => setSelectedQrBiz(null)}
+        onOpenPrintStudio={(bizId) => {
+          setSelectedBusinessId(bizId);
+          navigateTo('/dashboard');
+        }}
       />
     </div>
   );

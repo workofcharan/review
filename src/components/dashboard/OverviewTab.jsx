@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Star, 
   TrendingUp, 
@@ -17,9 +17,11 @@ import {
   Award 
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import BusinessQrModal from './BusinessQrModal';
 
 export default function OverviewTab({ setActiveTab }) {
   const { activeBusiness, feedbacks, navigateTo } = useApp();
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
 
   const bizFeedbacks = feedbacks.filter(f => f.businessId === activeBusiness.id);
 
@@ -74,18 +76,25 @@ export default function OverviewTab({ setActiveTab }) {
 
         <div className="flex flex-wrap items-center gap-2.5">
           <button
+            onClick={() => setIsQrModalOpen(true)}
+            className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs flex items-center gap-2 shadow-xs transition-all transform active:scale-95 cursor-pointer"
+          >
+            <QrCode className="w-3.5 h-3.5" />
+            <span>Show QR Code</span>
+          </button>
+          <button
             onClick={() => navigateTo(`/b/${activeBusiness.slug}`)}
             className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all transform active:scale-95 cursor-pointer"
           >
             <ExternalLink className="w-3.5 h-3.5 text-slate-300" />
-            <span>Open Customer QR View</span>
+            <span>Customer View</span>
           </button>
           <button
             onClick={() => setActiveTab('qr_studio')}
             className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold text-xs flex items-center gap-2 shadow-2xs transition-all cursor-pointer"
           >
             <QrCode className="w-3.5 h-3.5 text-sky-600" />
-            <span>Generate Print Collateral</span>
+            <span>Print Studio</span>
           </button>
         </div>
       </div>
@@ -385,6 +394,14 @@ export default function OverviewTab({ setActiveTab }) {
           </button>
         </div>
       </div>
+
+      {/* Business QR Modal */}
+      <BusinessQrModal
+        business={activeBusiness}
+        isOpen={isQrModalOpen}
+        onClose={() => setIsQrModalOpen(false)}
+        onOpenPrintStudio={() => setActiveTab('qr_studio')}
+      />
     </div>
   );
 }
