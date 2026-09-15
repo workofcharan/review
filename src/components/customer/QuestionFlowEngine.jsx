@@ -24,14 +24,17 @@ export default function QuestionFlowEngine({
   const [redirecting, setRedirecting] = useState(false);
   const [showPasteGuideModal, setShowPasteGuideModal] = useState(false);
   const [activeDraftText, setActiveDraftText] = useState('');
-  const [scanSeed, setScanSeed] = useState(() => Date.now() + Math.floor(Math.random() * 10000));
+  const [scanSeed, setScanSeed] = useState(() => Date.now() + Math.floor(Math.random() * 10000000));
 
   const selectedRating = Number(answers.overall_experience || 5);
   const ratingThreeOptions = getThreeOptionsForRating(business, selectedRating, scanSeed);
 
   const handleSelectRating = (ratingVal) => {
     const num = Number(ratingVal);
-    const ratingOpts = getThreeOptionsForRating(business, num, scanSeed);
+    const newSeed = Date.now() + Math.floor(Math.random() * 10000000) + Math.floor(Math.random() * 9999);
+    setScanSeed(newSeed);
+
+    const ratingOpts = getThreeOptionsForRating(business, num, newSeed);
     const initialHighlight = ratingOpts.options[0]?.label || '';
     
     setAnswers(prev => ({
@@ -237,8 +240,26 @@ export default function QuestionFlowEngine({
 
         {/* Exactly 3 Tailored Options for this Star Rating */}
         <div className="space-y-2.5">
-          <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
-            Select Your Key Highlights / Feedback:
+          <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+            <span>Select Your Key Highlights / Feedback:</span>
+            <button
+              type="button"
+              onClick={() => {
+                const newSeed = Date.now() + Math.floor(Math.random() * 10000000) + Math.floor(Math.random() * 9999);
+                setScanSeed(newSeed);
+                const ratingOpts = getThreeOptionsForRating(business, selectedRating, newSeed);
+                if (ratingOpts.options[0]?.label) {
+                  setAnswers(prev => ({
+                    ...prev,
+                    selected_options: [ratingOpts.options[0].label]
+                  }));
+                }
+              }}
+              title="Show different options"
+              className="text-[10px] text-sky-600 hover:text-sky-800 font-bold flex items-center gap-1 hover:underline cursor-pointer transition-colors"
+            >
+              <span>↻ Shuffle Options</span>
+            </button>
           </div>
           <div className="grid grid-cols-1 gap-2">
             {ratingThreeOptions.options.map((opt) => {

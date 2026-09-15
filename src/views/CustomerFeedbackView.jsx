@@ -54,6 +54,7 @@ export default function CustomerFeedbackView({ forcedSlug }) {
       {/* Main Dynamic Flow Engine */}
       <main className="flex-1 flex items-center justify-center my-auto">
         <QuestionFlowEngine
+          key={`${business.slug}-${currentRoute}`}
           business={business}
           tableNumber={`Table ${Math.floor(Math.random() * 20) + 1}`}
           onFinishFeedback={(feedbackPayload) => {

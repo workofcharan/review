@@ -1,22 +1,30 @@
 // Smart AI Review Synthesis & Dynamic Feedback Intelligence Engine
 
 /**
- * Deterministic pseudo-random helper or random helper using a seed
+ * High-entropy pseudo-random generator supporting numeric or string seeds
  */
 function getSeedRandom(seed) {
-  if (!seed) return Math.random();
-  const num = typeof seed === 'number' ? seed : String(seed).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const x = Math.sin(num) * 10000;
-  return x - Math.floor(x);
+  if (seed === null || seed === undefined) return Math.random();
+  let t = typeof seed === 'number' 
+    ? (seed >>> 0) 
+    : String(seed).split('').reduce((acc, char) => ((acc << 5) - acc) + char.charCodeAt(0), 0);
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
 }
 
 /**
- * Shuffles an array with an optional seed or pure random
+ * Shuffles an array dynamically for each scan session
  */
 function shuffleArray(array, seed = null) {
   const arr = [...array];
+  let currentSeed = seed !== null 
+    ? (typeof seed === 'number' ? seed : String(seed).split('').reduce((a, c) => a + c.charCodeAt(0), 0))
+    : Math.floor(Math.random() * 1000000);
+  
   for (let i = arr.length - 1; i > 0; i--) {
-    const r = seed !== null ? getSeedRandom(seed + i * 17) : Math.random();
+    currentSeed = (currentSeed * 1664525 + 1013904223) % 4294967296;
+    const r = Math.abs(currentSeed) / 4294967296;
     const j = Math.floor(r * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
