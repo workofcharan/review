@@ -13,6 +13,7 @@ import {
   Clock, 
   ThumbsUp, 
   Layers,
+  BarChart3,
   Award 
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -30,6 +31,15 @@ export default function OverviewTab({ setActiveTab }) {
   const positiveCount = bizFeedbacks.filter(f => f.rating >= (activeBusiness.minPublicRating || 4)).length;
   const neutralCount = bizFeedbacks.filter(f => f.rating === 3).length;
   const negativeCount = bizFeedbacks.filter(f => f.rating < 3).length;
+
+  // 5-Star to 1-Star exact distribution
+  const starCounts = {
+    5: bizFeedbacks.filter(f => f.rating === 5).length,
+    4: bizFeedbacks.filter(f => f.rating === 4).length,
+    3: bizFeedbacks.filter(f => f.rating === 3).length,
+    2: bizFeedbacks.filter(f => f.rating === 2).length,
+    1: bizFeedbacks.filter(f => f.rating === 1).length,
+  };
 
   const googleReviewsCaptured = bizFeedbacks.filter(f => f.generatedReview?.wasPublishedPublicly).length;
   const interceptedComplaints = bizFeedbacks.filter(f => f.rating < 4).length;
@@ -158,10 +168,10 @@ export default function OverviewTab({ setActiveTab }) {
         </div>
       </div>
 
-      {/* Sentiment Funnel & Recent Feed */}
+      {/* Sentiment Funnel, Rating Distribution & Recent Feed */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Sentiment Routing Breakdown */}
-        <div className="lg:col-span-2 saas-card rounded-3xl p-6 space-y-5 bg-white">
+        {/* Sentiment Routing Breakdown & 5-Star Distribution Bars */}
+        <div className="lg:col-span-2 saas-card rounded-3xl p-6 space-y-6 bg-white">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <h3 className="text-sm font-extrabold text-slate-900">Sentiment Routing Breakdown</h3>
@@ -176,24 +186,36 @@ export default function OverviewTab({ setActiveTab }) {
             </button>
           </div>
 
-          {/* Visual Progress Bar */}
+          {/* Combined Visual Sentiment Segment Bar */}
           <div className="space-y-3">
-            <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden flex border border-slate-200">
-              <div 
-                style={{ width: `${(positiveCount / (total || 1)) * 100}%` }} 
-                className="bg-emerald-500 hover:bg-emerald-600 transition-all" 
-                title="Positive (5★ & 4★)"
-              />
-              <div 
-                style={{ width: `${(neutralCount / (total || 1)) * 100}%` }} 
-                className="bg-amber-400 hover:bg-amber-500 transition-all" 
-                title="Neutral (3★)"
-              />
-              <div 
-                style={{ width: `${(negativeCount / (total || 1)) * 100}%` }} 
-                className="bg-rose-500 hover:bg-rose-600 transition-all" 
-                title="Negative (1-2★)"
-              />
+            <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+              <span>Overall Sentiment Routing</span>
+              <span className="text-slate-400">{total} Total Submissions</span>
+            </div>
+            <div className="h-3.5 w-full bg-slate-100 rounded-full overflow-hidden flex border border-slate-200 shadow-inner">
+              {total === 0 ? (
+                <div className="w-full bg-slate-200 text-center text-[9px] text-slate-500 font-bold flex items-center justify-center">
+                  No ratings yet
+                </div>
+              ) : (
+                <>
+                  <div 
+                    style={{ width: `${(positiveCount / total) * 100}%` }} 
+                    className="bg-emerald-500 hover:bg-emerald-600 transition-all duration-500" 
+                    title={`Positive: ${positiveCount} (${Math.round((positiveCount / total) * 100)}%)`}
+                  />
+                  <div 
+                    style={{ width: `${(neutralCount / total) * 100}%` }} 
+                    className="bg-amber-400 hover:bg-amber-500 transition-all duration-500" 
+                    title={`Neutral: ${neutralCount} (${Math.round((neutralCount / total) * 100)}%)`}
+                  />
+                  <div 
+                    style={{ width: `${(negativeCount / total) * 100}%` }} 
+                    className="bg-rose-500 hover:bg-rose-600 transition-all duration-500" 
+                    title={`Negative: ${negativeCount} (${Math.round((negativeCount / total) * 100)}%)`}
+                  />
+                </>
+              )}
             </div>
             
             <div className="grid grid-cols-3 gap-2 pt-1">
@@ -223,6 +245,42 @@ export default function OverviewTab({ setActiveTab }) {
                 <div className="text-lg font-extrabold text-rose-800 mt-1">{negativeCount}</div>
                 <div className="text-[10px] text-rose-700 font-medium">Private GM resolution</div>
               </div>
+            </div>
+          </div>
+
+          {/* 5-Star to 1-Star Detailed Rating Bars */}
+          <div className="p-4 rounded-2xl bg-slate-50/80 border border-slate-200/80 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
+                <BarChart3 className="w-4 h-4 text-sky-600" />
+                <span>Star Rating Distribution</span>
+              </div>
+              <span className="text-[11px] text-slate-500 font-medium">Live sync</span>
+            </div>
+
+            <div className="space-y-2">
+              {[5, 4, 3, 2, 1].map((stars) => {
+                const count = starCounts[stars] || 0;
+                const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+                const barColor = stars >= 4 ? 'bg-emerald-500' : stars === 3 ? 'bg-amber-400' : 'bg-rose-500';
+
+                return (
+                  <div key={stars} className="flex items-center gap-3 text-xs">
+                    <span className="w-7 font-bold text-slate-700 shrink-0 flex items-center gap-0.5">
+                      {stars} <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    </span>
+                    <div className="flex-1 h-2 bg-slate-200/80 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full ${barColor} rounded-full transition-all duration-500`}
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                    <span className="w-12 text-right text-[11px] font-semibold text-slate-500 shrink-0">
+                      {count} ({percentage}%)
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
