@@ -364,7 +364,7 @@ export default function OverviewTab({ setActiveTab }) {
               <div className="p-3.5 rounded-xl bg-emerald-50/80 border border-emerald-200 text-xs text-emerald-950 space-y-1">
                 <div className="flex items-center gap-1.5 font-bold text-emerald-800 text-[11px] uppercase tracking-wider">
                   <ThumbsUp className="w-3 h-3 text-emerald-600" />
-                  <span>Top Customer Compliment</span>
+                  <span>Top Customer Review</span>
                 </div>
                 <div className="text-xs font-bold text-slate-900">{praiseTopic}</div>
                 <p className="text-xs text-slate-600 leading-relaxed font-normal">
