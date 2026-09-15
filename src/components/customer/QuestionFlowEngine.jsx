@@ -5,7 +5,8 @@ import {
   ShieldCheck, 
   Copy, 
   Check, 
-  ExternalLink
+  ExternalLink,
+  RefreshCw
 } from 'lucide-react';
 import EmojiScale from './EmojiScale';
 import confetti from 'canvas-confetti';
@@ -26,13 +27,14 @@ export default function QuestionFlowEngine({
   const [redirecting, setRedirecting] = useState(false);
   const [showPasteGuideModal, setShowPasteGuideModal] = useState(false);
   const [activeDraftText, setActiveDraftText] = useState('');
+  const [scanSeed, setScanSeed] = useState(() => Date.now() + Math.floor(Math.random() * 10000));
 
   const selectedRating = Number(answers.overall_experience || 5);
-  const ratingThreeOptions = getThreeOptionsForRating(business, selectedRating);
+  const ratingThreeOptions = getThreeOptionsForRating(business, selectedRating, scanSeed);
 
   const handleSelectRating = (ratingVal) => {
     const num = Number(ratingVal);
-    const ratingOpts = getThreeOptionsForRating(business, num);
+    const ratingOpts = getThreeOptionsForRating(business, num, scanSeed);
     const initialHighlight = ratingOpts.options[0]?.label || '';
     
     setAnswers(prev => ({
@@ -79,7 +81,8 @@ export default function QuestionFlowEngine({
       rating,
       highlights,
       staffShoutout: 'Dr. C',
-      tone: 'enthusiastic'
+      tone: 'enthusiastic',
+      scanSeed
     });
 
     setActiveDraftText(draftText);
@@ -141,12 +144,13 @@ export default function QuestionFlowEngine({
   const currentStepNumber = currentNodeId === 'step_1_rating' ? 1 : 2;
   const progressPct = Math.round((currentStepNumber / totalEstimatedSteps) * 100);
 
-  // Generate 3 review draft variations tailored to the selected emoji rating and highlights
+  // Generate 3 review draft variations tailored to the selected emoji rating and highlights dynamically per scan
   const threeReviewOptions = generateReviewOptions({
     business,
     rating: selectedRating,
     highlights: answers.selected_options || [ratingThreeOptions.options[0]?.label || ''],
-    staffShoutout: 'Dr. C'
+    staffShoutout: 'Dr. C',
+    scanSeed
   });
 
   const activeReviewDraft = threeReviewOptions[selectedReviewOptionIndex]?.text || threeReviewOptions[0]?.text || '';
@@ -260,11 +264,22 @@ export default function QuestionFlowEngine({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs text-sky-900 font-extrabold">
               <Sparkles className="w-4 h-4 text-sky-600" />
-              <span>3 Review Options (Choose One):</span>
+              <span>3 Review Options:</span>
             </div>
-            <span className="text-[10px] bg-sky-200/70 text-sky-900 px-2 py-0.5 rounded-full font-bold">
-              Auto-Copied on Click
-            </span>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  const newSeed = Date.now() + Math.floor(Math.random() * 10000);
+                  setScanSeed(newSeed);
+                }}
+                title="Generate fresh review variations"
+                className="px-2.5 py-1 rounded-full bg-white hover:bg-sky-100 text-sky-800 border border-sky-300/80 text-[10px] font-extrabold flex items-center gap-1 transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
+              >
+                <RefreshCw className="w-3 h-3 text-sky-600" />
+                <span>Shuffle Options</span>
+              </button>
+            </div>
           </div>
 
           {/* 3 Review Option Switcher Tabs */}
