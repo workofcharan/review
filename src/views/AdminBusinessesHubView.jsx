@@ -438,7 +438,7 @@ export default function AdminBusinessesHubView() {
                 className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
               >
                 <Trash2 className="w-4 h-4" />
-                <span>Yes, Remove Business</span>
+                <span>Yes, Delete Permanently</span>
               </button>
             </div>
           </div>

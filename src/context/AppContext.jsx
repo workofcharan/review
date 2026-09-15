@@ -4,55 +4,59 @@ import { INITIAL_BUSINESSES, INITIAL_FEEDBACKS, INITIAL_AI_INSIGHTS } from '../d
 const AppContext = createContext(null);
 
 const STORAGE_KEYS = {
-  BUSINESSES: 'revpulse_businesses_v4',
-  SELECTED_BIZ: 'revpulse_selected_biz_v4',
-  FEEDBACKS: 'revpulse_feedbacks_v4',
+  BUSINESSES: 'revpulse_businesses_v5',
+  SELECTED_BIZ: 'revpulse_selected_biz_v5',
+  FEEDBACKS: 'revpulse_feedbacks_v5',
+  DELETED_BIZ_IDS: 'revpulse_deleted_biz_ids_v5',
 };
 
 export function AppProvider({ children }) {
-  // Load businesses from localStorage or fallback to defaults (starting with Dr C Dental Clinic)
+  // Load businesses from localStorage or fallback to defaults (excluding permanently deleted ones)
   const [businesses, setBusinesses] = useState(() => {
     try {
+      const deletedSaved = localStorage.getItem(STORAGE_KEYS.DELETED_BIZ_IDS);
+      const deletedIds = new Set(deletedSaved ? JSON.parse(deletedSaved) : []);
       const saved = localStorage.getItem(STORAGE_KEYS.BUSINESSES);
+
       if (saved) {
         const parsed = JSON.parse(saved);
-        const existingIds = new Set(parsed.map(b => b.id));
-        const missingDefaults = INITIAL_BUSINESSES.filter(b => !existingIds.has(b.id));
-        const updated = parsed.map(b => {
-          if (b.id === 'biz-drc' && (!b.publicReviewUrl || b.publicReviewUrl.includes('place/Dr+C+Dental+Clinic'))) {
-            return { ...b, publicReviewUrl: 'https://g.page/r/CVfAf-zR7rBLEBE/review', yelpUrl: 'https://g.page/r/CVfAf-zR7rBLEBE/review' };
-          }
-          return b;
-        });
-        return [...updated, ...missingDefaults];
+        return parsed.filter(b => !deletedIds.has(b.id));
       }
-      return INITIAL_BUSINESSES;
+      return INITIAL_BUSINESSES.filter(b => !deletedIds.has(b.id));
     } catch {
       return INITIAL_BUSINESSES;
     }
   });
 
-  // Active business ID defaults to Dr C Dental Clinic
+  // Active business ID defaults to Dr C Dental Clinic or first available
   const [selectedBusinessId, setSelectedBusinessId] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SELECTED_BIZ);
-      return saved || INITIAL_BUSINESSES[0].id;
+      const deletedSaved = localStorage.getItem(STORAGE_KEYS.DELETED_BIZ_IDS);
+      const deletedIds = new Set(deletedSaved ? JSON.parse(deletedSaved) : []);
+
+      if (saved && !deletedIds.has(saved)) {
+        return saved;
+      }
+      const firstActive = INITIAL_BUSINESSES.find(b => !deletedIds.has(b.id));
+      return firstActive ? firstActive.id : INITIAL_BUSINESSES[0].id;
     } catch {
       return INITIAL_BUSINESSES[0].id;
     }
   });
 
-  // Feedbacks collection
+  // Feedbacks collection (excluding feedbacks from permanently deleted businesses)
   const [feedbacks, setFeedbacks] = useState(() => {
     try {
+      const deletedSaved = localStorage.getItem(STORAGE_KEYS.DELETED_BIZ_IDS);
+      const deletedIds = new Set(deletedSaved ? JSON.parse(deletedSaved) : []);
       const saved = localStorage.getItem(STORAGE_KEYS.FEEDBACKS);
+
       if (saved) {
         const parsed = JSON.parse(saved);
-        const existingIds = new Set(parsed.map(f => f.id));
-        const missingDefaults = INITIAL_FEEDBACKS.filter(f => !existingIds.has(f.id));
-        return [...parsed, ...missingDefaults];
+        return parsed.filter(f => !deletedIds.has(f.businessId));
       }
-      return INITIAL_FEEDBACKS;
+      return INITIAL_FEEDBACKS.filter(f => !deletedIds.has(f.businessId));
     } catch {
       return INITIAL_FEEDBACKS;
     }
@@ -178,8 +182,19 @@ export function AppProvider({ children }) {
     return biz;
   };
 
-  // Remove business and associated feedbacks
+  // Remove business and associated feedbacks permanently
   const removeBusiness = (businessId) => {
+    // Record in deleted IDs set in localStorage
+    try {
+      const deletedSaved = localStorage.getItem(STORAGE_KEYS.DELETED_BIZ_IDS);
+      const deletedArr = deletedSaved ? JSON.parse(deletedSaved) : [];
+      if (!deletedArr.includes(businessId)) {
+        localStorage.setItem(STORAGE_KEYS.DELETED_BIZ_IDS, JSON.stringify([...deletedArr, businessId]));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
     setBusinesses(prev => {
       const remaining = prev.filter(b => b.id !== businessId);
       try {
@@ -200,7 +215,7 @@ export function AppProvider({ children }) {
       return remaining;
     });
 
-    // Also clean up feedbacks belonging to this business
+    // Also permanently clean up feedbacks belonging to this business
     setFeedbacks(prev => {
       const remaining = prev.filter(f => f.businessId !== businessId);
       try {
@@ -214,12 +229,17 @@ export function AppProvider({ children }) {
 
   // Reset to initial demo state
   const resetDemoData = () => {
+    localStorage.removeItem(STORAGE_KEYS.DELETED_BIZ_IDS);
     setBusinesses(INITIAL_BUSINESSES);
     setSelectedBusinessId(INITIAL_BUSINESSES[0].id);
     setFeedbacks(INITIAL_FEEDBACKS);
-    localStorage.removeItem(STORAGE_KEYS.BUSINESSES);
-    localStorage.removeItem(STORAGE_KEYS.SELECTED_BIZ);
-    localStorage.removeItem(STORAGE_KEYS.FEEDBACKS);
+    try {
+      localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(INITIAL_BUSINESSES));
+      localStorage.setItem(STORAGE_KEYS.SELECTED_BIZ, INITIAL_BUSINESSES[0].id);
+      localStorage.setItem(STORAGE_KEYS.FEEDBACKS, JSON.stringify(INITIAL_FEEDBACKS));
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
