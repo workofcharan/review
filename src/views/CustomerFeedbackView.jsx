@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import QuestionFlowEngine from '../components/customer/QuestionFlowEngine';
-import { Sparkles, Utensils, Building2, Coffee, ShoppingBag, ArrowLeft } from 'lucide-react';
+import { Sparkles, Utensils, Building2, Coffee, ShoppingBag, ArrowLeft, Dumbbell, Car, Scissors, HeartPulse, PawPrint } from 'lucide-react';
 
 export default function CustomerFeedbackView({ forcedSlug }) {
   const { businesses, submitFeedback, currentRoute, navigateTo } = useApp();
@@ -15,11 +15,18 @@ export default function CustomerFeedbackView({ forcedSlug }) {
 
   const getCategoryIcon = (category) => {
     switch (category) {
-      case 'restaurant': return <Utensils className="w-4 h-4" />;
-      case 'hotel': return <Building2 className="w-4 h-4" />;
-      case 'cafe': return <Coffee className="w-4 h-4" />;
-      case 'retail': return <ShoppingBag className="w-4 h-4" />;
-      default: return <Sparkles className="w-4 h-4" />;
+      case 'gym':
+      case 'fitness': return <Dumbbell className="w-4 h-4 text-purple-600" />;
+      case 'restaurant': return <Utensils className="w-4 h-4 text-rose-600" />;
+      case 'hotel': return <Building2 className="w-4 h-4 text-teal-600" />;
+      case 'cafe': return <Coffee className="w-4 h-4 text-amber-600" />;
+      case 'salon':
+      case 'spa': return <Scissors className="w-4 h-4 text-pink-600" />;
+      case 'automotive': return <Car className="w-4 h-4 text-orange-600" />;
+      case 'retail': return <ShoppingBag className="w-4 h-4 text-indigo-600" />;
+      case 'pet': return <PawPrint className="w-4 h-4 text-emerald-600" />;
+      case 'healthcare': return <HeartPulse className="w-4 h-4 text-sky-600" />;
+      default: return <Sparkles className="w-4 h-4 text-sky-600" />;
     }
   };
 

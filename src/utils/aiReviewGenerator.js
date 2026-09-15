@@ -488,6 +488,203 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
     }
   }
 
+  // Gym & Fitness Category
+  if (category === 'gym' || category === 'fitness' || bizName.toLowerCase().includes('gym') || bizName.toLowerCase().includes('fitness') || bizName.toLowerCase().includes('crossfit') || bizName.toLowerCase().includes('apex')) {
+    switch (numRating) {
+      case 5:
+        return pickThree(
+          "What made your workout session exceptional?",
+          "Select your top highlights from today's workout",
+          [
+            { id: "opt_5_1", label: "State-of-the-Art Gym Equipment", emoji: "🏋️", desc: "Modern, clean, and top-tier workout machines" },
+            { id: "opt_5_2", label: "Motivating & Expert Personal Trainers", emoji: "🔥", desc: "Knowledgeable, encouraging coaches and form correction" },
+            { id: "opt_5_3", label: "Spotless Facility & Locker Rooms", emoji: "✨", desc: "Ultra-clean workout floor, showers, and saunas" },
+            { id: "opt_5_4", label: "High-Energy Workout Atmosphere", emoji: "⚡", desc: "Great playlist, inspiring vibe, and community" },
+            { id: "opt_5_5", label: "Dynamic Group Fitness Classes", emoji: "🥊", desc: "Intense, fun, and well-structured group workouts" },
+            { id: "opt_5_6", label: "Smooth Check-in & Welcoming Staff", emoji: "🤝", desc: "Friendly front desk and seamless entry" }
+          ]
+        );
+      case 4:
+        return pickThree(
+          "What did you like about your gym visit?",
+          "Select what went well today",
+          [
+            { id: "opt_4_1", label: "Well Maintained Equipment", emoji: "💪", desc: "Good variety of weights and cardio machines" },
+            { id: "opt_4_2", label: "Helpful Floor Staff & Trainers", emoji: "👥", desc: "Supportive and polite gym team" },
+            { id: "opt_4_3", label: "Clean Workout Environment", emoji: "🧼", desc: "Sanitized weights and tidy floor" },
+            { id: "opt_4_4", label: "Great Overall Value", emoji: "⭐", desc: "Solid facilities for membership price" }
+          ]
+        );
+      case 3:
+        return pickThree(
+          "What was your impression of today's session?",
+          "Select the main aspect of your workout",
+          [
+            { id: "opt_3_1", label: "Peak Hour Machine Waiting", emoji: "⏱️", desc: "Waited for popular squat racks or benches" },
+            { id: "opt_3_2", label: "Locker Room Rush & Cleanliness", emoji: "🚿", desc: "Locker room busy during peak hours" },
+            { id: "opt_3_3", label: "Music Volume & Sound System", emoji: "🔊", desc: "Sound volume or playlist balance" },
+            { id: "opt_3_4", label: "Class Booking Availability", emoji: "📅", desc: "Popular class slots fill up quickly" }
+          ]
+        );
+      case 2:
+        return pickThree(
+          "What was the main issue during your workout?",
+          "Select your primary concern",
+          [
+            { id: "opt_2_1", label: "Broken or Out-of-Order Equipment", emoji: "⚠️", desc: "Machines waiting on repair" },
+            { id: "opt_2_2", label: "Severe Floor Overcrowding", emoji: "⏳", desc: "Too crowded to complete full routine" },
+            { id: "opt_2_3", label: "Locker Room Hygiene Issue", emoji: "🚫", desc: "Restroom or shower cleanliness concern" },
+            { id: "opt_2_4", label: "Unresponsive Front Desk Staff", emoji: "👤", desc: "Unhelpful member support" }
+          ]
+        );
+      case 1:
+      default:
+        return pickThree(
+          "What was the primary issue with your gym experience?",
+          "Select your main concern",
+          [
+            { id: "opt_1_1", label: "Membership / Billing Dispute", emoji: "❌", desc: "Unexpected charges or cancellation barrier" },
+            { id: "opt_1_2", label: "Unsanitary Workout Environment", emoji: "🛑", desc: "Poor facility hygiene standards" },
+            { id: "opt_1_3", label: "Unprofessional Staff Interaction", emoji: "⚠️", desc: "Rude or dismissive staff behavior" }
+          ]
+        );
+    }
+  }
+
+  // Hotel & Resort Category
+  if (category === 'hotel' || category === 'resort' || bizName.toLowerCase().includes('hotel') || bizName.toLowerCase().includes('resort') || bizName.toLowerCase().includes('suites')) {
+    switch (numRating) {
+      case 5:
+        return pickThree(
+          "What made your hotel stay exceptional?",
+          "Select your top highlights from your stay",
+          [
+            { id: "opt_5_1", label: "Immaculate Room & Luxury Bedding", emoji: "🛏️", desc: "Pristine, quiet, and ultra-comfortable suite" },
+            { id: "opt_5_2", label: "Exceptional Concierge & Front Desk", emoji: "🏨", desc: "Warm, attentive, and helpful service" },
+            { id: "opt_5_3", label: "Stunning Views & Pool / Spa Amenities", emoji: "🌴", desc: "Breathtaking views and resort-style relaxation" },
+            { id: "opt_5_4", label: "Delicious Breakfast & Room Dining", emoji: "🍳", desc: "Gourmet buffet and prompt room service" },
+            { id: "opt_5_5", label: "Seamless Express Check-in", emoji: "⚡", desc: "Zero wait time and instant room access" }
+          ]
+        );
+      case 4:
+        return pickThree(
+          "What did you enjoy about your stay?",
+          "Select what went well",
+          [
+            { id: "opt_4_1", label: "Comfortable & Clean Room", emoji: "✨", desc: "Quiet room and tidy housekeeping" },
+            { id: "opt_4_2", label: "Polite & Helpful Staff", emoji: "🤝", desc: "Courteous team throughout the property" },
+            { id: "opt_4_3", label: "Convenient Location & Parking", emoji: "📍", desc: "Easy access to nearby attractions" }
+          ]
+        );
+      case 3:
+      case 2:
+      case 1:
+      default:
+        return pickThree(
+          "What was the main issue during your stay?",
+          "Select your primary concern",
+          [
+            { id: "opt_1_1", label: "Housekeeping or Room Cleanliness", emoji: "⚠️", desc: "Room was not properly prepped" },
+            { id: "opt_1_2", label: "Check-in Delay / Front Desk Wait", emoji: "⏳", desc: "Long wait for room key" },
+            { id: "opt_1_3", label: "Noise or Amenity Maintenance", emoji: "🔊", desc: "Noise disturbance or broken amenity" }
+          ]
+        );
+    }
+  }
+
+  // Auto Care & Automotive Category
+  if (category === 'automotive' || category === 'car' || bizName.toLowerCase().includes('auto') || bizName.toLowerCase().includes('car') || bizName.toLowerCase().includes('garage')) {
+    switch (numRating) {
+      case 5:
+        return pickThree(
+          "What made your auto service exceptional?",
+          "Select what stood out during your visit",
+          [
+            { id: "opt_5_1", label: "Fast Diagnostic & Expert Repair", emoji: "🔧", desc: "Precise troubleshooting and smooth driving result" },
+            { id: "opt_5_2", label: "Transparent & Honest Quote", emoji: "📋", desc: "Clear explanations with no surprise fees" },
+            { id: "opt_5_3", label: "Spotless Detailing & Wash Finish", emoji: "✨", desc: "Car returned clean and sparkling" },
+            { id: "opt_5_4", label: "On-Time Vehicle Delivery", emoji: "⚡", desc: "Completed exactly when promised" }
+          ]
+        );
+      case 4:
+      case 3:
+      case 2:
+      case 1:
+      default:
+        return pickThree(
+          "What did you notice about your vehicle service?",
+          "Select your primary observation",
+          [
+            { id: "opt_1_1", label: "Turnaround Time & Service Speed", emoji: "⏱️", desc: "Repair timeline and turnaround" },
+            { id: "opt_1_2", label: "Estimate Clarity & Pricing", emoji: "💵", desc: "Clear breakdown of labor and parts" },
+            { id: "opt_1_3", label: "Customer Communication Updates", emoji: "📱", desc: "Timely status updates on progress" }
+          ]
+        );
+    }
+  }
+
+  // Retail & Boutique Category
+  if (category === 'retail' || category === 'store' || category === 'boutique' || bizName.toLowerCase().includes('store') || bizName.toLowerCase().includes('boutique')) {
+    switch (numRating) {
+      case 5:
+        return pickThree(
+          "What made your shopping experience great?",
+          "Select your top shopping highlights",
+          [
+            { id: "opt_5_1", label: "Curated & Trendy Fashion Selection", emoji: "👗", desc: "High quality, unique, and stylish pieces" },
+            { id: "opt_5_2", label: "Attentive & Helpful Styling Staff", emoji: "🛍️", desc: "Friendly recommendations without being pushy" },
+            { id: "opt_5_3", label: "Clean, Spacious Fitting Rooms", emoji: "✨", desc: "Comfortable mirrors and good lighting" },
+            { id: "opt_5_4", label: "Fast & Effortless Checkout", emoji: "⚡", desc: "Quick payment and lovely packaging" }
+          ]
+        );
+      case 4:
+      case 3:
+      case 2:
+      case 1:
+      default:
+        return pickThree(
+          "What was your impression of your shopping visit?",
+          "Select your primary takeaway",
+          [
+            { id: "opt_1_1", label: "Product Sizing & Stock Availability", emoji: "🏷️", desc: "Availability of sizes or desired items" },
+            { id: "opt_1_2", label: "Staff Assistance & Helpfulness", emoji: "🤝", desc: "Assistance on the sales floor" },
+            { id: "opt_1_3", label: "Pricing & Promotion Clarity", emoji: "💳", desc: "Discount and tag pricing clarity" }
+          ]
+        );
+    }
+  }
+
+  // Pet Care & Vet Category
+  if (category === 'pet' || category === 'vet' || bizName.toLowerCase().includes('pet') || bizName.toLowerCase().includes('vet') || bizName.toLowerCase().includes('paws')) {
+    switch (numRating) {
+      case 5:
+        return pickThree(
+          "What made your pet's visit exceptional?",
+          "Select what made your pet comfortable",
+          [
+            { id: "opt_5_1", label: "Gentle & Compassionate Veterinarians", emoji: "🩺", desc: "Super kind and reassuring care with my pet" },
+            { id: "opt_5_2", label: "Stress-Free & Calming Handling", emoji: "🐾", desc: "Pet felt safe and relaxed the entire time" },
+            { id: "opt_5_3", label: "Spotless & Odor-Free Clinic", emoji: "✨", desc: "Pristine exam rooms and waiting area" },
+            { id: "opt_5_4", label: "Clear Treatment & Medication Advice", emoji: "📋", desc: "Thorough explanation of wellness plan" }
+          ]
+        );
+      case 4:
+      case 3:
+      case 2:
+      case 1:
+      default:
+        return pickThree(
+          "What was your impression of the veterinary visit?",
+          "Select your primary takeaway",
+          [
+            { id: "opt_1_1", label: "Appointment Wait Time", emoji: "⏱️", desc: "Time spent in waiting area" },
+            { id: "opt_1_2", label: "Treatment Cost Transparency", emoji: "💵", desc: "Clarity on medication and exam fees" },
+            { id: "opt_1_3", label: "Gentle Handling & Care", emoji: "🐕", desc: "Comfort level for the pet during exam" }
+          ]
+        );
+    }
+  }
+
   // Default Fallback Category
   switch (numRating) {
     case 5:

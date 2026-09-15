@@ -13,32 +13,181 @@ import {
   Hotel, 
   Scissors, 
   Car,
-  Heart
+  Heart,
+  Dumbbell,
+  PawPrint
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 const CATEGORIES = [
-  { id: 'healthcare', label: 'Healthcare & Dental', icon: '🦷', defaultType: 'Advanced Dental & Healthcare' },
-  { id: 'restaurant', label: 'Restaurant & Dining', icon: '🍽️', defaultType: 'Fine Dining & Hospitality' },
-  { id: 'cafe', label: 'Café & Bakery', icon: '☕', defaultType: 'Artisanal Coffee & Bakery' },
-  { id: 'hotel', label: 'Hotel & Resort', icon: '🏨', defaultType: 'Boutique Hotel & Resort' },
-  { id: 'retail', label: 'Retail & Store', icon: '🛍️', defaultType: 'Boutique Retail & Lifestyle' },
-  { id: 'salon', label: 'Salon & Spa', icon: '💇', defaultType: 'Hair, Beauty & Wellness Spa' },
-  { id: 'automotive', label: 'Auto & Services', icon: '🚗', defaultType: 'Professional Auto Care' }
+  { 
+    id: 'gym', 
+    label: 'Gym & Fitness', 
+    icon: '🏋️', 
+    defaultType: 'Modern Fitness Club & Personal Training',
+    defaultTagline: 'State-of-the-Art Equipment, Inspiring Coaches & Peak Energy',
+    defaultColor: '#8b5cf6',
+    step1Greeting: 'How was your workout session at',
+    defaultHighlights: [
+      'State-of-the-Art Gym Equipment',
+      'Motivating & Expert Personal Trainers',
+      'Spotless Clean Facility & Locker Rooms',
+      'High-Energy Group Fitness Classes',
+      'Welcoming & Supportive Atmosphere',
+      'Great Music & Workout Vibe',
+      'Smooth Check-in & Helpful Staff'
+    ]
+  },
+  { 
+    id: 'healthcare', 
+    label: 'Healthcare & Dental', 
+    icon: '🦷', 
+    defaultType: 'Advanced Dental & Healthcare Clinic',
+    defaultTagline: 'Gentle, State-of-the-Art Care & Reassuring Doctors',
+    defaultColor: '#0284c7',
+    step1Greeting: 'How was your care experience at',
+    defaultHighlights: [
+      'Painless & Gentle Procedure',
+      'Dr. & Team Clear Guidance',
+      'Spotless & Modern Sterile Equipment',
+      'Prompt Zero-Wait Time',
+      'Friendly Front Desk Team',
+      'Transparent & Fair Pricing'
+    ]
+  },
+  { 
+    id: 'restaurant', 
+    label: 'Restaurant & Dining', 
+    icon: '🍽️', 
+    defaultType: 'Fine Dining & Hospitality',
+    defaultTagline: 'Exquisite Culinary Flavors & Exceptional Table Service',
+    defaultColor: '#e11d48',
+    step1Greeting: 'How was your dining experience at',
+    defaultHighlights: [
+      'Delicious & Flavorful Dishes',
+      'Warm & Attentive Table Service',
+      'Beautiful Ambiance & Cozy Vibe',
+      'Fast & Fresh Kitchen Delivery',
+      'Handcrafted Cocktails & Drinks',
+      'Great Value & Portion Sizes'
+    ]
+  },
+  { 
+    id: 'cafe', 
+    label: 'Café & Bakery', 
+    icon: '☕', 
+    defaultType: 'Artisanal Coffee & Bakery',
+    defaultTagline: 'Single-Origin Brews, Fresh Pastries & Cozy Workspaces',
+    defaultColor: '#d97706',
+    step1Greeting: 'How was your visit at',
+    defaultHighlights: [
+      'Signature Specialty Coffee & Latte Art',
+      'Fresh Flaky Artisanal Pastries',
+      'Warm & Welcoming Barista Team',
+      'Relaxing Music & Aesthetic Ambiance',
+      'Fast Wi-Fi & Laptop-Friendly Seating',
+      'Quick Service & Prompt Order Delivery'
+    ]
+  },
+  { 
+    id: 'hotel', 
+    label: 'Hotel & Resort', 
+    icon: '🏨', 
+    defaultType: 'Boutique Hotel & Luxury Suites',
+    defaultTagline: 'Exceptional Comfort, World-Class Concierge & Unforgettable Stays',
+    defaultColor: '#0d9488',
+    step1Greeting: 'How was your stay experience at',
+    defaultHighlights: [
+      'Immaculate Room & Luxury Bedding',
+      'Exceptional Concierge & Front Desk',
+      'Stunning Views & Relaxing Pool Deck',
+      'Delicious Breakfast & Room Service',
+      'Fast & Smooth Check-in Experience',
+      'Pristine Spa & Fitness Amenities'
+    ]
+  },
+  { 
+    id: 'salon', 
+    label: 'Salon & Spa', 
+    icon: '💇', 
+    defaultType: 'Hair, Beauty & Wellness Spa',
+    defaultTagline: 'Couture Styling, Rejuvenating Facials & Radiant Looks',
+    defaultColor: '#db2777',
+    step1Greeting: 'How was your styling & spa experience at',
+    defaultHighlights: [
+      'Flawless Haircut & Expert Styling',
+      'Vibrant Color & Seamless Balayage',
+      'Relaxing Scalp Massage & Treatment',
+      'Knowledgeable & Attentive Stylist',
+      'Spotless, Chic & Luxurious Salon Vibe',
+      'Zero Waiting Time & Prompt Appointment'
+    ]
+  },
+  { 
+    id: 'automotive', 
+    label: 'Auto & Car Care', 
+    icon: '🚗', 
+    defaultType: 'Auto Care & Performance Detailing',
+    defaultTagline: 'Master Technicians, Transparent Pricing & Fast Turnaround',
+    defaultColor: '#ea580c',
+    step1Greeting: 'How was your vehicle service at',
+    defaultHighlights: [
+      'Fast Diagnostic & Expert Repair',
+      'Spotless Ceramic Coating & Detailing',
+      'Transparent & Honest Quote',
+      'Polite & Knowledgeable Service Advisor',
+      'On-Time Vehicle Delivery',
+      'Clean & Comfortable Customer Lounge'
+    ]
+  },
+  { 
+    id: 'retail', 
+    label: 'Retail & Store', 
+    icon: '🛍️', 
+    defaultType: 'Boutique Fashion & Lifestyle Store',
+    defaultTagline: 'Curated Collections, Premium Brands & Personalized Styling',
+    defaultColor: '#7c3aed',
+    step1Greeting: 'How was your shopping experience at',
+    defaultHighlights: [
+      'Curated & Trendy Selection',
+      'Helpful & Attentive Sales Staff',
+      'Seamless Checkout & Packaging',
+      'Spacious & Clean Fitting Rooms',
+      'Great Quality Products',
+      'Hassle-Free Return & Exchange Policy'
+    ]
+  },
+  { 
+    id: 'pet', 
+    label: 'Pet Care & Vet', 
+    icon: '🐾', 
+    defaultType: 'Veterinary Clinic & Pet Wellness Center',
+    defaultTagline: 'Gentle Veterinary Medicine & Loving Care for Your Pets',
+    defaultColor: '#10b981',
+    step1Greeting: 'How was your pet\'s visit at',
+    defaultHighlights: [
+      'Gentle & Caring Veterinarians',
+      'Stress-Free Pet Handling',
+      'Thorough Checkup & Clear Guidance',
+      'Clean & Odor-Free Clinic',
+      'Affordable Wellness Packages',
+      'Compassionate Front Desk Staff'
+    ]
+  }
 ];
 
-const PRESET_EMOJIS = ['🦷', '🍽️', '🍷', '☕', '🏨', '🛍️', '💇', '🚗', '⚡', '✨', '🩺', '🍕', '🍔', '💆', '🏋️'];
+const PRESET_EMOJIS = ['🏋️', '🦷', '🍽️', '☕', '🏨', '💇', '🚗', '🛍️', '🐾', '🧘', '⚡', '✨', '🩺', '🍕', '💆', '💈', '🥗', '🚲'];
 
 export default function AddBusinessModal({ isOpen, onClose }) {
   const { addBusiness, navigateTo } = useApp();
 
   const [name, setName] = useState('');
-  const [category, setCategory] = useState('healthcare');
-  const [type, setType] = useState('Advanced Dental & Healthcare');
-  const [tagline, setTagline] = useState('Exceptional care and outstanding customer service');
-  const [logo, setLogo] = useState('🦷');
+  const [category, setCategory] = useState('gym');
+  const [type, setType] = useState('Modern Fitness Club & Personal Training');
+  const [tagline, setTagline] = useState('State-of-the-Art Equipment, Inspiring Coaches & Peak Energy');
+  const [logo, setLogo] = useState('🏋️');
   const [publicReviewUrl, setPublicReviewUrl] = useState('');
-  const [primaryColor, setPrimaryColor] = useState('#0284c7');
+  const [primaryColor, setPrimaryColor] = useState('#8b5cf6');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
@@ -52,6 +201,8 @@ export default function AddBusinessModal({ isOpen, onClose }) {
     setCategory(cat.id);
     setLogo(cat.icon);
     setType(cat.defaultType);
+    if (cat.defaultTagline) setTagline(cat.defaultTagline);
+    if (cat.defaultColor) setPrimaryColor(cat.defaultColor);
   };
 
   const handleSubmit = (e) => {
@@ -60,6 +211,8 @@ export default function AddBusinessModal({ isOpen, onClose }) {
 
     setIsSubmitting(true);
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || `business-${Date.now()}`;
+    const selectedCatConfig = CATEGORIES.find(c => c.id === category) || CATEGORIES[0];
+    const greetingPrefix = selectedCatConfig.step1Greeting || 'How was your visit at';
 
     const newBusinessPayload = {
       name: name.trim(),
@@ -84,7 +237,7 @@ export default function AddBusinessModal({ isOpen, onClose }) {
           overall_experience: {
             id: 'overall_experience',
             type: 'emoji_scale',
-            title: `How was your visit at ${name.trim()}?`,
+            title: `${greetingPrefix} ${name.trim()}?`,
             subtitle: 'Tap an emoji to rate your experience (Step 1 of 2)',
             options: [
               { value: 1, label: 'Poor', emoji: '😣', sentiment: 'negative' },
@@ -106,7 +259,7 @@ export default function AddBusinessModal({ isOpen, onClose }) {
             type: 'chips_multiselect',
             title: 'What did you enjoy most today?',
             subtitle: 'Select all highlights that made your visit great (Step 2 of 2)',
-            options: [
+            options: selectedCatConfig.defaultHighlights || [
               'Outstanding Customer Service',
               'Quick & Efficient Service',
               'Clean & Comfortable Environment',

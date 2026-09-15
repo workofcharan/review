@@ -16,12 +16,15 @@ export function AppProvider({ children }) {
       const saved = localStorage.getItem(STORAGE_KEYS.BUSINESSES);
       if (saved) {
         const parsed = JSON.parse(saved);
-        return parsed.map(b => {
+        const existingIds = new Set(parsed.map(b => b.id));
+        const missingDefaults = INITIAL_BUSINESSES.filter(b => !existingIds.has(b.id));
+        const updated = parsed.map(b => {
           if (b.id === 'biz-drc' && (!b.publicReviewUrl || b.publicReviewUrl.includes('place/Dr+C+Dental+Clinic'))) {
             return { ...b, publicReviewUrl: 'https://g.page/r/CVfAf-zR7rBLEBE/review', yelpUrl: 'https://g.page/r/CVfAf-zR7rBLEBE/review' };
           }
           return b;
         });
+        return [...updated, ...missingDefaults];
       }
       return INITIAL_BUSINESSES;
     } catch {
@@ -43,7 +46,13 @@ export function AppProvider({ children }) {
   const [feedbacks, setFeedbacks] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.FEEDBACKS);
-      return saved ? JSON.parse(saved) : INITIAL_FEEDBACKS;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const existingIds = new Set(parsed.map(f => f.id));
+        const missingDefaults = INITIAL_FEEDBACKS.filter(f => !existingIds.has(f.id));
+        return [...parsed, ...missingDefaults];
+      }
+      return INITIAL_FEEDBACKS;
     } catch {
       return INITIAL_FEEDBACKS;
     }

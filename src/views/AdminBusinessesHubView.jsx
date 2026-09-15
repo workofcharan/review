@@ -53,17 +53,24 @@ export default function AdminBusinessesHubView() {
 
   const categories = [
     { id: 'all', label: 'All Businesses' },
-    { id: 'healthcare', label: 'Healthcare & Dental' },
-    { id: 'cafe', label: 'Café & Restaurant' },
-    { id: 'salon', label: 'Salon & Spa' }
+    { id: 'gym', label: '🏋️ Gym & Fitness' },
+    { id: 'healthcare', label: '🦷 Healthcare & Dental' },
+    { id: 'cafe', label: '☕ Café & Restaurant' },
+    { id: 'salon', label: '💇 Salon & Spa' },
+    { id: 'hotel', label: '🏨 Hotel & Resort' },
+    { id: 'automotive', label: '🚗 Auto & Car Care' },
+    { id: 'retail', label: '🛍️ Retail & Store' },
+    { id: 'pet', label: '🐾 Pet Care & Vet' }
   ];
 
   const filteredBusinesses = businesses.filter(b => {
     const matchesSearch = b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          b.type.toLowerCase().includes(searchTerm.toLowerCase());
+                          b.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          (b.category && b.category.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesCategory = selectedCategory === 'all' || 
                             b.category === selectedCategory || 
-                            (selectedCategory === 'cafe' && (b.category === 'cafe' || b.category === 'restaurant'));
+                            (selectedCategory === 'cafe' && (b.category === 'cafe' || b.category === 'restaurant')) ||
+                            (selectedCategory === 'gym' && (b.category === 'gym' || b.category === 'fitness'));
     return matchesSearch && matchesCategory;
   });
 

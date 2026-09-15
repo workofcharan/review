@@ -158,11 +158,38 @@ export default function QuestionFlowEngine({
   const renderQuestionContent = () => {
     // STEP 1: Star Rating Selection (5 Emojis)
     if (currentNodeId === 'step_1_rating') {
+      const getGreetingTitle = () => {
+        if (business.questionFlow?.questions?.overall_experience?.title) {
+          return business.questionFlow.questions.overall_experience.title;
+        }
+        switch (business.category) {
+          case 'gym':
+          case 'fitness':
+            return `How was your workout session at ${business.name}?`;
+          case 'hotel':
+            return `How was your stay experience at ${business.name}?`;
+          case 'salon':
+          case 'spa':
+            return `How was your styling & spa visit at ${business.name}?`;
+          case 'automotive':
+            return `How was your vehicle service at ${business.name}?`;
+          case 'retail':
+            return `How was your shopping experience at ${business.name}?`;
+          case 'pet':
+            return `How was your pet's visit to ${business.name}?`;
+          case 'restaurant':
+          case 'cafe':
+            return `How was your dining experience at ${business.name}?`;
+          case 'healthcare':
+            return `How was your care experience at ${business.name}?`;
+          default:
+            return `How was your visit at ${business.name}?`;
+        }
+      };
+
       const step1Question = {
-        title: business.category === 'restaurant' || business.category === 'cafe'
-          ? `How was your visit at ${business.name}?`
-          : `How was your care experience at ${business.name}?`,
-        subtitle: "Tap an emoji to rate your visit today",
+        title: getGreetingTitle(),
+        subtitle: business.questionFlow?.questions?.overall_experience?.subtitle || "Tap an emoji to rate your experience today",
         options: [
           { value: 1, label: "Poor", emoji: "😣", sentiment: "negative" },
           { value: 2, label: "Fair", emoji: "🙁", sentiment: "negative" },
