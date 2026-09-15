@@ -89,7 +89,7 @@ export default function AdminBusinessesHubView() {
               className="px-5 py-3 rounded-2xl bg-sky-500 hover:bg-sky-400 text-white font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-sky-500/25 transition-all transform active:scale-95 cursor-pointer"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
-              <span>+ Register New Business</span>
+              <span>Register New Business</span>
             </button>
           </div>
         </div>
