@@ -264,17 +264,6 @@ export default function AdminBusinessesHubView() {
                         </p>
                       </div>
                     </div>
-
-                    {/* Quick QR badge button */}
-                    <button
-                      type="button"
-                      onClick={() => setSelectedQrBiz(biz)}
-                      title="Click to display QR code"
-                      className="p-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200/80 text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs hover:scale-105 cursor-pointer shrink-0"
-                    >
-                      <QrCode className="w-4 h-4" />
-                      <span className="hidden sm:inline">QR</span>
-                    </button>
                   </div>
 
                   <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100">
