@@ -1,7 +1,6 @@
 import React from 'react';
 import { 
   QrCode, 
-  LayoutDashboard, 
   Layers
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -13,7 +12,6 @@ export default function Header() {
   } = useApp();
 
   const isAdminRoute = currentRoute === '/admin' || currentRoute === '/businesses';
-  const isDashboardRoute = currentRoute === '/' || currentRoute === '' || currentRoute === '/dashboard';
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
@@ -50,19 +48,6 @@ export default function Header() {
             >
               <Layers className="w-3.5 h-3.5 text-sky-600" />
               <span>Admin Multi-Business Hub</span>
-            </button>
-
-            {/* Business Command Center Link */}
-            <button
-              onClick={() => navigateTo('/dashboard')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                isDashboardRoute
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200/70'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-              }`}
-            >
-              <LayoutDashboard className="w-3.5 h-3.5 text-indigo-600" />
-              <span>Business Workspace</span>
             </button>
           </nav>
         </div>
