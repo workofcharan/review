@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Sparkles, ShieldCheck, Copy, Check, ExternalLink, HeartHandshake, Send, Mail, CheckCircle2 } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  Sparkles, 
+  ShieldCheck, 
+  Copy, 
+  Check, 
+  ExternalLink, 
+  HeartHandshake, 
+  Send, 
+  Mail, 
+  CheckCircle2,
+  Lock,
+  MessageSquare
+} from 'lucide-react';
 import EmojiScale from './EmojiScale';
-import ChipsQuestion from './ChipsQuestion';
-import TextQuestion from './TextQuestion';
-import PrivateRecoveryScreen from './PrivateRecoveryScreen';
 import confetti from 'canvas-confetti';
 import { generateReviewDraft, generateReviewOptions, getThreeOptionsForRating } from '../../utils/aiReviewGenerator';
 import { copyTextToClipboard, redirectToReviewPage } from '../../utils/mobileRedirectHelper';
@@ -15,11 +25,11 @@ export default function QuestionFlowEngine({
   tableNumber = 'Reception / Operatory',
   onFinishFeedback
 }) {
-  const flow = business.questionFlow || {};
   const [currentNodeId, setCurrentNodeId] = useState('step_1_rating');
   const [history, setHistory] = useState([]);
   const [answers, setAnswers] = useState({});
   const [selectedReviewOptionIndex, setSelectedReviewOptionIndex] = useState(0);
+  const [showPrivateMode, setShowPrivateMode] = useState(false);
   const [privateDetails, setPrivateDetails] = useState('');
   const [privateContact, setPrivateContact] = useState('');
   const [isSubmittingPrivate, setIsSubmittingPrivate] = useState(false);
@@ -31,16 +41,8 @@ export default function QuestionFlowEngine({
   const selectedRating = Number(answers.overall_experience || 5);
   const ratingThreeOptions = getThreeOptionsForRating(business, selectedRating);
 
-  const handleAnswerChange = (key, val) => {
-    setAnswers(prev => ({
-      ...prev,
-      [key]: val
-    }));
-  };
-
   const handleSelectRating = (ratingVal) => {
     const num = Number(ratingVal);
-    // Default to the first option of the 3 tailored options for that rating
     const ratingOpts = getThreeOptionsForRating(business, num);
     const initialHighlight = ratingOpts.options[0]?.label || '';
     
@@ -50,6 +52,7 @@ export default function QuestionFlowEngine({
       selected_options: [initialHighlight]
     }));
     setSelectedReviewOptionIndex(0);
+    setShowPrivateMode(false);
 
     // Advance to Step 2
     setHistory(['step_1_rating']);
@@ -75,9 +78,10 @@ export default function QuestionFlowEngine({
     if (history.length === 0) return;
     setHistory([]);
     setCurrentNodeId('step_1_rating');
+    setShowPrivateMode(false);
   };
 
-  // Direct Submit & Immediate Browser Redirect to the Exact Google Maps Review Page (iOS & Android Compatible)
+  // Direct Submit & Browser Redirect to Google Maps Review Page
   const handleDirectGoogleSubmit = async (chosenDraft) => {
     const highlights = answers.selected_options || [];
     const rating = selectedRating;
@@ -95,19 +99,21 @@ export default function QuestionFlowEngine({
     setRedirecting(true);
     setShowPasteGuideModal(true);
 
-    // Copy draft text to clipboard (works on iOS Safari & Android WebViews)
+    // Copy draft text to clipboard (iOS Safari & Android WebViews)
     await copyTextToClipboard(draftText);
 
-    // Fire celebration confetti
-    try {
-      confetti({
-        particleCount: 90,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#0284c7', '#0ea5e9', '#10b981', '#f59e0b', '#6366f1']
-      });
-    } catch (e) {
-      console.error(e);
+    // Fire celebration confetti for 4 or 5 stars
+    if (rating >= 4) {
+      try {
+        confetti({
+          particleCount: 90,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#0284c7', '#0ea5e9', '#10b981', '#f59e0b', '#6366f1']
+        });
+      } catch (e) {
+        console.error(e);
+      }
     }
 
     // Save feedback in dashboard
@@ -115,7 +121,7 @@ export default function QuestionFlowEngine({
       businessId: business.id,
       businessSlug: business.slug,
       rating,
-      sentiment: 'positive',
+      sentiment: rating >= 4 ? 'positive' : rating === 3 ? 'neutral' : 'negative',
       tableOrLocation: tableNumber,
       channel: 'QR Scan (Mobile)',
       answers: {
@@ -123,12 +129,12 @@ export default function QuestionFlowEngine({
         positive_highlights: highlights
       },
       generatedReview: {
-        tone: 'enthusiastic',
+        tone: rating >= 4 ? 'enthusiastic' : rating === 3 ? 'balanced' : 'constructive',
         draft: draftText,
         wasPublishedPublicly: true,
         platform: 'Google Reviews'
       },
-      recoveryStatus: 'none_needed',
+      recoveryStatus: rating >= 4 ? 'none_needed' : 'pending_review',
       customerContact: '',
       managerNotes: ''
     };
@@ -137,7 +143,7 @@ export default function QuestionFlowEngine({
       onFinishFeedback(fullPayload);
     }
 
-    // Direct navigation to the requested Google Maps Review Page URL (Android & iOS)
+    // Direct navigation to Google Maps Review Page URL
     const targetUrl = business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE;
     setTimeout(() => {
       redirectToReviewPage(targetUrl);
@@ -152,7 +158,7 @@ export default function QuestionFlowEngine({
       businessId: business.id,
       businessSlug: business.slug,
       rating: selectedRating,
-      sentiment: selectedRating === 3 ? 'neutral' : 'negative',
+      sentiment: selectedRating >= 4 ? 'positive' : selectedRating === 3 ? 'neutral' : 'negative',
       tableOrLocation: tableNumber,
       channel: 'QR Scan (Mobile)',
       answers: {
@@ -179,7 +185,7 @@ export default function QuestionFlowEngine({
   const currentStepNumber = currentNodeId === 'step_1_rating' ? 1 : 2;
   const progressPct = Math.round((currentStepNumber / totalEstimatedSteps) * 100);
 
-  // Generate 3 review draft variations when rating is 4 or 5
+  // Generate 3 review draft variations tailored to the selected emoji rating and highlights
   const threeReviewOptions = generateReviewOptions({
     business,
     rating: selectedRating,
@@ -190,12 +196,12 @@ export default function QuestionFlowEngine({
   const activeReviewDraft = threeReviewOptions[selectedReviewOptionIndex]?.text || threeReviewOptions[0]?.text || '';
 
   const renderQuestionContent = () => {
-    // STEP 1: Star Rating Selection
+    // STEP 1: Star Rating Selection (5 Emojis)
     if (currentNodeId === 'step_1_rating') {
       const step1Question = {
-        title: business.category === 'restaurant'
-          ? `How was your dining experience at ${business.name}?`
-          : `How was your dental care experience at ${business.name}?`,
+        title: business.category === 'restaurant' || business.category === 'cafe'
+          ? `How was your visit at ${business.name}?`
+          : `How was your care experience at ${business.name}?`,
         subtitle: "Tap an emoji to rate your visit today",
         options: [
           { value: 1, label: "Poor", emoji: "😣", sentiment: "negative" },
@@ -228,168 +234,21 @@ export default function QuestionFlowEngine({
       );
     }
 
-    // STEP 2: 3 TAILORED OPTIONS FOR CHOSEN STAR RATING
-    // Positive Ratings: 4 or 5 Stars
-    if (selectedRating >= 4) {
-      const selectedList = Array.isArray(answers.selected_options) ? answers.selected_options : [];
-
-      return (
-        <div className="space-y-5 animate-slide-up">
-          {/* Question Title & Subtitle */}
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-amber-500">
-              <span>{'★'.repeat(selectedRating)}</span>
-              <span className="text-slate-500 font-medium">({selectedRating} Stars Selected)</span>
-            </div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
-              {ratingThreeOptions.title}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
-              {ratingThreeOptions.subtitle}
-            </p>
-          </div>
-
-          {/* Exactly 3 Tailored Options for this Star Rating */}
-          <div className="space-y-2.5">
-            <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
-              3 Highlights (Tap to select):
-            </div>
-            <div className="grid grid-cols-1 gap-2">
-              {ratingThreeOptions.options.map((opt) => {
-                const isSelected = selectedList.includes(opt.label);
-                return (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => handleToggleOption(opt.label)}
-                    className={`w-full flex items-center justify-between p-3 sm:p-3.5 rounded-2xl border text-left transition-all duration-200 transform active:scale-[0.99] cursor-pointer ${
-                      isSelected
-                        ? 'bg-sky-50/90 border-sky-500 text-sky-950 shadow-sm ring-1 ring-sky-400/50'
-                        : 'bg-white border-slate-200/90 text-slate-700 hover:border-sky-300 hover:bg-sky-50/30'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 transition-transform ${
-                        isSelected ? 'bg-sky-200/60 scale-105' : 'bg-slate-100'
-                      }`}>
-                        {opt.emoji}
-                      </div>
-                      <div>
-                        <div className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-                          {opt.label}
-                        </div>
-                        <div className="text-[11px] text-slate-500 leading-tight">
-                          {opt.desc}
-                        </div>
-                      </div>
-                    </div>
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ml-2 transition-all ${
-                      isSelected ? 'bg-sky-600 text-white' : 'border border-slate-300'
-                    }`}>
-                      {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 3 AI Review Draft Options */}
-          <div className="p-4 rounded-2xl bg-sky-50/80 border border-sky-200/90 space-y-3 shadow-2xs">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs text-sky-900 font-extrabold">
-                <Sparkles className="w-4 h-4 text-sky-600" />
-                <span>3 Review Options (Choose One):</span>
-              </div>
-              <span className="text-[10px] bg-sky-200/70 text-sky-900 px-2 py-0.5 rounded-full font-bold">
-                Auto-Copied on Click
-              </span>
-            </div>
-
-            {/* 3 Review Option Switcher Tabs */}
-            <div className="grid grid-cols-3 gap-1.5">
-              {threeReviewOptions.map((option, idx) => (
-                <button
-                  key={option.id}
-                  type="button"
-                  onClick={() => setSelectedReviewOptionIndex(idx)}
-                  className={`py-1.5 px-2 rounded-xl text-[11px] font-bold text-center transition-all cursor-pointer ${
-                    selectedReviewOptionIndex === idx
-                      ? 'bg-sky-600 text-white shadow-xs'
-                      : 'bg-white/90 text-slate-700 hover:bg-white border border-sky-200/60'
-                  }`}
-                >
-                  <div className="truncate">{option.title.split(':')[0]}</div>
-                  <div className={`text-[9px] font-medium opacity-85 truncate ${selectedReviewOptionIndex === idx ? 'text-sky-100' : 'text-slate-400'}`}>
-                    {option.badge}
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            {/* Live Review Draft Preview */}
-            <p className="text-xs text-slate-700 italic leading-relaxed bg-white/95 p-3 rounded-xl border border-sky-100/80 shadow-2xs">
-              "{activeReviewDraft}"
-            </p>
-
-            <div className="flex items-center gap-2 text-[10px] text-slate-600 font-semibold pt-0.5">
-              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[9px] shrink-0">1</span>
-              <span>Tap below to copy chosen review</span>
-              <span className="text-slate-300">→</span>
-              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[9px] shrink-0">2</span>
-              <span>Paste on Google Maps</span>
-            </div>
-          </div>
-
-          {/* Direct Google Review Redirection Button */}
-          <button
-            type="button"
-            onClick={() => handleDirectGoogleSubmit(activeReviewDraft)}
-            className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black text-sm sm:text-base shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
-          >
-            {redirecting ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Opening Google Review Page...</span>
-              </div>
-            ) : (
-              <>
-                <Copy className="w-4 h-4" />
-                <span>Copy Review & Open Google Maps</span>
-                <ExternalLink className="w-4 h-4 opacity-85" />
-              </>
-            )}
-          </button>
-
-          {redirecting && (
-            <a
-              href={business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE}
-              target="_top"
-              rel="noopener noreferrer"
-              className="block text-center text-xs text-sky-700 font-bold underline animate-pulse py-1"
-            >
-              Tap here if not opened automatically →
-            </a>
-          )}
-        </div>
-      );
-    }
-
-    // Neutral / Negative Ratings: 1, 2, or 3 Stars (Private Recovery)
+    // Confirmation if submitted privately
     if (privateSubmitted) {
       return (
         <div className="text-center py-8 space-y-4 animate-fade-in">
           <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-bold">
             <CheckCircle2 className="w-8 h-8" />
           </div>
-          <h3 className="text-xl font-extrabold text-slate-900">Feedback Received Privately</h3>
+          <h3 className="text-xl font-extrabold text-slate-900">Feedback Sent Privately</h3>
           <p className="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
-            Thank you for letting us know. Your message and selected concerns have been escalated directly to management for immediate resolution.
+            Thank you for sharing your thoughts. Your feedback and notes have been delivered confidentially to our management team for prompt follow-up.
           </p>
           <button
             type="button"
             onClick={handleBack}
-            className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-200 transition-colors"
+            className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-200 transition-colors cursor-pointer"
           >
             Submit Another Feedback
           </button>
@@ -397,62 +256,132 @@ export default function QuestionFlowEngine({
       );
     }
 
+    // Optional Private Message Mode for any rating
+    if (showPrivateMode) {
+      return (
+        <form onSubmit={handlePrivateSubmit} className="space-y-4 animate-slide-up">
+          <div className="space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-amber-600">
+                {'★'.repeat(selectedRating)} ({selectedRating} Star Rating)
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowPrivateMode(false)}
+                className="text-xs text-sky-600 font-bold hover:underline"
+              >
+                ← Back to Review Options
+              </button>
+            </div>
+            <h2 className="text-lg font-black text-slate-900 tracking-tight">
+              Send Private Message to Management
+            </h2>
+            <p className="text-xs text-slate-500">
+              Your message will be kept 100% confidential and sent directly to clinic leadership.
+            </p>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700">
+              Your Confidential Message:
+            </label>
+            <textarea
+              rows={3}
+              required
+              value={privateDetails}
+              onChange={(e) => setPrivateDetails(e.target.value)}
+              placeholder="Please describe what happened so management can review and follow up with you directly..."
+              className="w-full rounded-xl bg-slate-50 border border-slate-200 p-3 text-slate-900 text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+              <span>Your Contact Info (Optional):</span>
+              <span className="text-[10px] text-slate-400">100% Private</span>
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={privateContact}
+                onChange={(e) => setPrivateContact(e.target.value)}
+                placeholder="Email or phone number for direct follow-up"
+                className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              />
+              <Mail className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isSubmittingPrivate || !privateDetails.trim()}
+            className="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-extrabold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+          >
+            <Send className="w-4 h-4" />
+            <span>{isSubmittingPrivate ? 'Sending to Management...' : 'Send Privately to Management'}</span>
+          </button>
+        </form>
+      );
+    }
+
+    // STEP 2: RELEVANT 3 OPTIONS + RELEVANT 3 AI REVIEW DRAFTS FOR ALL RATINGS (1, 2, 3, 4, 5)
     const selectedList = Array.isArray(answers.selected_options) ? answers.selected_options : [];
+    const ratingColor = selectedRating >= 4 ? 'text-amber-500' : selectedRating === 3 ? 'text-amber-600' : 'text-rose-500';
 
     return (
-      <form onSubmit={handlePrivateSubmit} className="space-y-4 animate-slide-up">
-        {/* Empathetic Header */}
-        <div className="space-y-1">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-600">
+      <div className="space-y-5 animate-slide-up">
+        {/* Question Title & Subtitle */}
+        <div className="space-y-1.5">
+          <div className={`flex items-center gap-1.5 text-xs font-bold ${ratingColor}`}>
             <span>{'★'.repeat(selectedRating)}</span>
-            <span className="text-slate-500 font-medium">({selectedRating} Star Rating)</span>
+            <span className="text-slate-500 font-medium">({selectedRating} {selectedRating === 1 ? 'Star' : 'Stars'} Selected)</span>
           </div>
-          <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight">
+          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
             {ratingThreeOptions.title}
           </h2>
-          <p className="text-xs text-slate-500 font-medium leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
             {ratingThreeOptions.subtitle}
           </p>
         </div>
 
-        {/* 3 Options for 1, 2, or 3 Stars */}
-        <div className="space-y-2">
+        {/* Exactly 3 Tailored Options for this Star Rating */}
+        <div className="space-y-2.5">
           <div className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
-            3 Primary Issues (Select one):
+            Select Your Key Highlights / Feedback:
           </div>
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 gap-2">
             {ratingThreeOptions.options.map((opt) => {
               const isSelected = selectedList.includes(opt.label);
               return (
                 <button
                   key={opt.id}
                   type="button"
-                  onClick={() => setAnswers(prev => ({ ...prev, selected_options: [opt.label] }))}
-                  className={`w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  onClick={() => handleToggleOption(opt.label)}
+                  className={`w-full flex items-center justify-between p-3 sm:p-3.5 rounded-2xl border text-left transition-all duration-200 transform active:scale-[0.99] cursor-pointer ${
                     isSelected
-                      ? 'bg-amber-50/90 border-amber-500 text-amber-950 shadow-xs ring-1 ring-amber-400/50'
-                      : 'bg-white border-slate-200/90 text-slate-700 hover:border-amber-300 hover:bg-amber-50/30'
+                      ? 'bg-sky-50/90 border-sky-500 text-sky-950 shadow-sm ring-1 ring-sky-400/50'
+                      : 'bg-white border-slate-200/90 text-slate-700 hover:border-sky-300 hover:bg-sky-50/30'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-base shrink-0 ${
-                      isSelected ? 'bg-amber-200/60' : 'bg-slate-100'
+                  <div className="flex items-center gap-3">
+                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 transition-transform ${
+                      isSelected ? 'bg-sky-200/60 scale-105' : 'bg-slate-100'
                     }`}>
                       {opt.emoji}
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-900 leading-tight">
+                      <div className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
                         {opt.label}
                       </div>
-                      <div className="text-[10px] text-slate-500 leading-tight">
+                      <div className="text-[11px] text-slate-500 leading-tight">
                         {opt.desc}
                       </div>
                     </div>
                   </div>
-                  <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ml-2 ${
-                    isSelected ? 'bg-amber-600 text-white' : 'border border-slate-300'
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ml-2 transition-all ${
+                    isSelected ? 'bg-sky-600 text-white' : 'border border-slate-300'
                   }`}>
-                    {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                    {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                   </div>
                 </button>
               );
@@ -460,54 +389,96 @@ export default function QuestionFlowEngine({
           </div>
         </div>
 
-        {/* Optional Details Box */}
-        <div className="space-y-1">
-          <label className="text-xs font-bold text-slate-700">
-            Additional Details (Optional)
-          </label>
-          <textarea
-            rows={2}
-            value={privateDetails}
-            onChange={(e) => setPrivateDetails(e.target.value)}
-            placeholder="Please share any specifics so management can investigate and follow up..."
-            className="w-full rounded-xl bg-white border border-slate-200 p-2.5 text-slate-900 text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
-          />
-        </div>
+        {/* 3 AI Review Draft Options */}
+        <div className="p-4 rounded-2xl bg-sky-50/80 border border-sky-200/90 space-y-3 shadow-2xs">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs text-sky-900 font-extrabold">
+              <Sparkles className="w-4 h-4 text-sky-600" />
+              <span>3 Review Options (Choose One):</span>
+            </div>
+            <span className="text-[10px] bg-sky-200/70 text-sky-900 px-2 py-0.5 rounded-full font-bold">
+              Auto-Copied on Click
+            </span>
+          </div>
 
-        {/* Optional Contact info for manager resolution */}
-        <div className="space-y-1">
-          <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
-            <span>Contact Info for Follow-up (Optional)</span>
-            <span className="text-[10px] text-slate-400">100% Private</span>
-          </label>
-          <div className="relative">
-            <input
-              type="text"
-              value={privateContact}
-              onChange={(e) => setPrivateContact(e.target.value)}
-              placeholder="Email or phone for manager resolution"
-              className="w-full pl-8 pr-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
-            />
-            <Mail className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+          {/* 3 Review Option Switcher Tabs */}
+          <div className="grid grid-cols-3 gap-1.5">
+            {threeReviewOptions.map((option, idx) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => setSelectedReviewOptionIndex(idx)}
+                className={`py-1.5 px-2 rounded-xl text-[11px] font-bold text-center transition-all cursor-pointer ${
+                  selectedReviewOptionIndex === idx
+                    ? 'bg-sky-600 text-white shadow-xs'
+                    : 'bg-white/90 text-slate-700 hover:bg-white border border-sky-200/60'
+                }`}
+              >
+                <div className="truncate">{option.title.split(':')[0]}</div>
+                <div className={`text-[9px] font-medium opacity-85 truncate ${selectedReviewOptionIndex === idx ? 'text-sky-100' : 'text-slate-400'}`}>
+                  {option.badge}
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Live Review Draft Preview */}
+          <p className="text-xs text-slate-700 italic leading-relaxed bg-white/95 p-3 rounded-xl border border-sky-100/80 shadow-2xs">
+            "{activeReviewDraft}"
+          </p>
+
+          <div className="flex items-center gap-2 text-[10px] text-slate-600 font-semibold pt-0.5">
+            <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[9px] shrink-0">1</span>
+            <span>Tap below to copy chosen review</span>
+            <span className="text-slate-300">→</span>
+            <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-[9px] shrink-0">2</span>
+            <span>Paste on Google Maps</span>
           </div>
         </div>
 
-        {/* Privacy Note */}
-        <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-          <span>Kept 100% confidential. Will not be posted publicly.</span>
-        </div>
-
-        {/* Submit Button */}
+        {/* Direct Google Review Redirection Button */}
         <button
-          type="submit"
-          disabled={isSubmittingPrivate}
-          className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-500 hover:to-rose-500 text-white font-extrabold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
+          type="button"
+          onClick={() => handleDirectGoogleSubmit(activeReviewDraft)}
+          className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black text-sm sm:text-base shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
         >
-          <Send className="w-4 h-4" />
-          <span>{isSubmittingPrivate ? 'Submitting to Management...' : 'Send Privately to Management'}</span>
+          {redirecting ? (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Opening Google Review Page...</span>
+            </div>
+          ) : (
+            <>
+              <Copy className="w-4 h-4" />
+              <span>Copy Review & Open Google Maps</span>
+              <ExternalLink className="w-4 h-4 opacity-85" />
+            </>
+          )}
         </button>
-      </form>
+
+        {redirecting && (
+          <a
+            href={business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE}
+            target="_top"
+            rel="noopener noreferrer"
+            className="block text-center text-xs text-sky-700 font-bold underline animate-pulse py-1"
+          >
+            Tap here if not opened automatically →
+          </a>
+        )}
+
+        {/* Confidential alternative option */}
+        <div className="text-center pt-1">
+          <button
+            type="button"
+            onClick={() => setShowPrivateMode(true)}
+            className="text-xs text-slate-500 hover:text-slate-800 font-semibold underline inline-flex items-center gap-1 cursor-pointer"
+          >
+            <Lock className="w-3 h-3 text-slate-400" />
+            <span>Prefer to send private feedback to management instead?</span>
+          </button>
+        </div>
+      </div>
     );
   };
 
@@ -521,7 +492,7 @@ export default function QuestionFlowEngine({
             <button
               type="button"
               onClick={handleBack}
-              className="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 transition-colors flex items-center gap-1.5 text-xs font-bold"
+              className="px-2.5 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 transition-colors flex items-center gap-1.5 text-xs font-bold cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back</span>
@@ -578,7 +549,7 @@ export default function QuestionFlowEngine({
                 Opening Google Review Page
               </h3>
               <p className="text-xs text-slate-500">
-                Your 5-star review has been copied. Complete it on Google in 2 quick steps:
+                Your tailored review has been copied. Complete it on Google in 2 quick steps:
               </p>
             </div>
 
@@ -586,7 +557,7 @@ export default function QuestionFlowEngine({
             <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2 text-left text-xs">
               <div className="flex items-center gap-2 text-slate-800 font-semibold">
                 <span className="w-5 h-5 rounded-full bg-sky-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0">1</span>
-                <span>Select <strong>5 Stars</strong> rating on Google</span>
+                <span>Select <strong>{selectedRating} Star{selectedRating > 1 ? 's' : ''}</strong> on Google</span>
               </div>
               <div className="flex items-center gap-2 text-slate-800 font-semibold">
                 <span className="w-5 h-5 rounded-full bg-sky-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0">2</span>
@@ -597,7 +568,7 @@ export default function QuestionFlowEngine({
             <button
               type="button"
               onClick={() => redirectToReviewPage(business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE)}
-              className="w-full py-3.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-98"
+              className="w-full py-3.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-md transition-all active:scale-98 cursor-pointer"
             >
               <span>Continue to Google Review Now</span>
               <ExternalLink className="w-3.5 h-3.5" />
