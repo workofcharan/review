@@ -45,7 +45,7 @@ export default function AdminBusinessesHubView() {
   // Consolidated Aggregated Metrics
   const totalBusinesses = businesses.length;
   const totalFeedbacks = feedbacks.length;
-  const avgPortfolioCsat = totalFeedbacks > 0 
+  const avgCsat = totalFeedbacks > 0 
     ? (feedbacks.reduce((acc, curr) => acc + curr.rating, 0) / totalFeedbacks).toFixed(1)
     : '5.0';
   const totalGoogleConverted = feedbacks.filter(f => f.generatedReview?.wasPublishedPublicly).length;
@@ -83,7 +83,7 @@ export default function AdminBusinessesHubView() {
               <span>Admin Multi-Business Master Hub</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-              Business Operations Portfolio
+              Business Operations Command
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               Select any handled business to open its dedicated command center, inspect live QR feedback streams, configure adaptive question flows, and manage private complaint resolution.
@@ -105,7 +105,7 @@ export default function AdminBusinessesHubView() {
         <div className="absolute -right-12 -top-12 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
       </div>
 
-      {/* Portfolio Aggregate KPI Metrics */}
+      {/* Aggregate KPI Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         {/* Metric 1 */}
         <div className="saas-card rounded-2xl p-4 sm:p-5 space-y-2 bg-white">
@@ -125,11 +125,11 @@ export default function AdminBusinessesHubView() {
         {/* Metric 2 */}
         <div className="saas-card rounded-2xl p-4 sm:p-5 space-y-2 bg-white">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
-            <span>Portfolio CSAT</span>
+            <span>Overall CSAT</span>
             <Star className="w-4 h-4 fill-amber-400 text-amber-500" />
           </div>
           <div className="flex items-baseline gap-1.5 text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-            <span>{avgPortfolioCsat}</span>
+            <span>{avgCsat}</span>
             <span className="text-xs text-slate-400 font-medium">/ 5.0</span>
           </div>
           <div className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
