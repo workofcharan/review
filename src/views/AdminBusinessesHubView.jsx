@@ -38,8 +38,6 @@ export default function AdminBusinessesHubView() {
     setIsAddModalOpen
   } = useApp();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedQrBiz, setSelectedQrBiz] = useState(null);
   const [bizToDelete, setBizToDelete] = useState(null);
 
@@ -51,29 +49,6 @@ export default function AdminBusinessesHubView() {
     : '5.0';
   const totalGoogleConverted = feedbacks.filter(f => f.generatedReview?.wasPublishedPublicly).length;
   const totalShielded = feedbacks.filter(f => f.rating < 4).length;
-
-  const categories = [
-    { id: 'all', label: 'All Businesses' },
-    { id: 'gym', label: '🏋️ Gym & Fitness' },
-    { id: 'healthcare', label: '🦷 Healthcare & Dental' },
-    { id: 'cafe', label: '☕ Café & Restaurant' },
-    { id: 'salon', label: '💇 Salon & Spa' },
-    { id: 'hotel', label: '🏨 Hotel & Resort' },
-    { id: 'automotive', label: '🚗 Auto & Car Care' },
-    { id: 'retail', label: '🛍️ Retail & Store' },
-    { id: 'pet', label: '🐾 Pet Care & Vet' }
-  ];
-
-  const filteredBusinesses = businesses.filter(b => {
-    const matchesSearch = b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          b.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (b.category && b.category.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === 'all' || 
-                            b.category === selectedCategory || 
-                            (selectedCategory === 'cafe' && (b.category === 'cafe' || b.category === 'restaurant')) ||
-                            (selectedCategory === 'gym' && (b.category === 'gym' || b.category === 'fitness'));
-    return matchesSearch && matchesCategory;
-  });
 
   const handleOpenBusinessWorkspace = (bizId) => {
     setSelectedBusinessId(bizId);
@@ -189,45 +164,13 @@ export default function AdminBusinessesHubView() {
         </div>
       </div>
 
-      {/* Filter & Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-2xs">
-        {/* Search */}
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search handled businesses by name or type..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
-          />
-        </div>
-
-        {/* Category Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                selectedCategory === cat.id
-                  ? 'bg-slate-900 text-white shadow-2xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Handled Businesses Grid */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
           <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-600 flex items-center gap-2">
             <span>Handled Businesses</span>
             <span className="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[11px] font-bold">
-              {filteredBusinesses.length}
+              {businesses.length}
             </span>
           </h2>
           <span className="text-xs text-slate-500">
@@ -236,7 +179,7 @@ export default function AdminBusinessesHubView() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredBusinesses.map((biz, idx) => {
+          {businesses.map((biz, idx) => {
             const bizFeedbacks = feedbacks.filter(f => f.businessId === biz.id);
             const count = bizFeedbacks.length;
             const avg = count > 0 
