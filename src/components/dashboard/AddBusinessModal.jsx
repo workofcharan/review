@@ -235,7 +235,7 @@ export default function AddBusinessModal({ isOpen, onClose }) {
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
               <span>5. Google Maps / Review URL:</span>
-              <span className="text-[10px] text-sky-600 font-semibold">Where 5★ reviews will redirect</span>
+              <span className="text-[10px] text-sky-600 font-semibold">Where reviews will redirect</span>
             </label>
             <div className="relative">
               <input
