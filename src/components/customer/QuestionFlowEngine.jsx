@@ -5,13 +5,7 @@ import {
   ShieldCheck, 
   Copy, 
   Check, 
-  ExternalLink, 
-  HeartHandshake, 
-  Send, 
-  Mail, 
-  CheckCircle2,
-  Lock,
-  MessageSquare
+  ExternalLink
 } from 'lucide-react';
 import EmojiScale from './EmojiScale';
 import confetti from 'canvas-confetti';
@@ -29,11 +23,6 @@ export default function QuestionFlowEngine({
   const [history, setHistory] = useState([]);
   const [answers, setAnswers] = useState({});
   const [selectedReviewOptionIndex, setSelectedReviewOptionIndex] = useState(0);
-  const [showPrivateMode, setShowPrivateMode] = useState(false);
-  const [privateDetails, setPrivateDetails] = useState('');
-  const [privateContact, setPrivateContact] = useState('');
-  const [isSubmittingPrivate, setIsSubmittingPrivate] = useState(false);
-  const [privateSubmitted, setPrivateSubmitted] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [showPasteGuideModal, setShowPasteGuideModal] = useState(false);
   const [activeDraftText, setActiveDraftText] = useState('');
@@ -52,7 +41,6 @@ export default function QuestionFlowEngine({
       selected_options: [initialHighlight]
     }));
     setSelectedReviewOptionIndex(0);
-    setShowPrivateMode(false);
 
     // Advance to Step 2
     setHistory(['step_1_rating']);
@@ -78,10 +66,9 @@ export default function QuestionFlowEngine({
     if (history.length === 0) return;
     setHistory([]);
     setCurrentNodeId('step_1_rating');
-    setShowPrivateMode(false);
   };
 
-  // Direct Submit & Browser Redirect to Google Maps Review Page
+  // Direct Submit & Immediate Browser Redirect to Google Maps Review Page for all ratings
   const handleDirectGoogleSubmit = async (chosenDraft) => {
     const highlights = answers.selected_options || [];
     const rating = selectedRating;
@@ -134,7 +121,7 @@ export default function QuestionFlowEngine({
         wasPublishedPublicly: true,
         platform: 'Google Reviews'
       },
-      recoveryStatus: rating >= 4 ? 'none_needed' : 'pending_review',
+      recoveryStatus: 'none_needed',
       customerContact: '',
       managerNotes: ''
     };
@@ -148,37 +135,6 @@ export default function QuestionFlowEngine({
     setTimeout(() => {
       redirectToReviewPage(targetUrl);
     }, 1200);
-  };
-
-  const handlePrivateSubmit = (e) => {
-    if (e) e.preventDefault();
-    setIsSubmittingPrivate(true);
-
-    const fullPayload = {
-      businessId: business.id,
-      businessSlug: business.slug,
-      rating: selectedRating,
-      sentiment: selectedRating >= 4 ? 'positive' : selectedRating === 3 ? 'neutral' : 'negative',
-      tableOrLocation: tableNumber,
-      channel: 'QR Scan (Mobile)',
-      answers: {
-        ...answers,
-        private_manager_alert: privateDetails,
-        selected_concerns: answers.selected_options || []
-      },
-      generatedReview: null,
-      recoveryStatus: 'pending_review',
-      customerContact: privateContact,
-      managerNotes: ''
-    };
-
-    setTimeout(() => {
-      if (onFinishFeedback) {
-        onFinishFeedback(fullPayload);
-      }
-      setIsSubmittingPrivate(false);
-      setPrivateSubmitted(true);
-    }, 400);
   };
 
   const totalEstimatedSteps = 2;
@@ -234,97 +190,7 @@ export default function QuestionFlowEngine({
       );
     }
 
-    // Confirmation if submitted privately
-    if (privateSubmitted) {
-      return (
-        <div className="text-center py-8 space-y-4 animate-fade-in">
-          <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-bold">
-            <CheckCircle2 className="w-8 h-8" />
-          </div>
-          <h3 className="text-xl font-extrabold text-slate-900">Feedback Sent Privately</h3>
-          <p className="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
-            Thank you for sharing your thoughts. Your feedback and notes have been delivered confidentially to our management team for prompt follow-up.
-          </p>
-          <button
-            type="button"
-            onClick={handleBack}
-            className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-200 transition-colors cursor-pointer"
-          >
-            Submit Another Feedback
-          </button>
-        </div>
-      );
-    }
-
-    // Optional Private Message Mode for any rating
-    if (showPrivateMode) {
-      return (
-        <form onSubmit={handlePrivateSubmit} className="space-y-4 animate-slide-up">
-          <div className="space-y-1">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-amber-600">
-                {'★'.repeat(selectedRating)} ({selectedRating} Star Rating)
-              </span>
-              <button
-                type="button"
-                onClick={() => setShowPrivateMode(false)}
-                className="text-xs text-sky-600 font-bold hover:underline"
-              >
-                ← Back to Review Options
-              </button>
-            </div>
-            <h2 className="text-lg font-black text-slate-900 tracking-tight">
-              Send Private Message to Management
-            </h2>
-            <p className="text-xs text-slate-500">
-              Your message will be kept 100% confidential and sent directly to clinic leadership.
-            </p>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700">
-              Your Confidential Message:
-            </label>
-            <textarea
-              rows={3}
-              required
-              value={privateDetails}
-              onChange={(e) => setPrivateDetails(e.target.value)}
-              placeholder="Please describe what happened so management can review and follow up with you directly..."
-              className="w-full rounded-xl bg-slate-50 border border-slate-200 p-3 text-slate-900 text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
-              <span>Your Contact Info (Optional):</span>
-              <span className="text-[10px] text-slate-400">100% Private</span>
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={privateContact}
-                onChange={(e) => setPrivateContact(e.target.value)}
-                placeholder="Email or phone number for direct follow-up"
-                className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
-              />
-              <Mail className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmittingPrivate || !privateDetails.trim()}
-            className="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-extrabold text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
-          >
-            <Send className="w-4 h-4" />
-            <span>{isSubmittingPrivate ? 'Sending to Management...' : 'Send Privately to Management'}</span>
-          </button>
-        </form>
-      );
-    }
-
-    // STEP 2: RELEVANT 3 OPTIONS + RELEVANT 3 AI REVIEW DRAFTS FOR ALL RATINGS (1, 2, 3, 4, 5)
+    // STEP 2: RELEVANT 3 OPTIONS + RELEVANT 3 AI REVIEW DRAFTS DIRECTLY TO GOOGLE REVIEWS
     const selectedList = Array.isArray(answers.selected_options) ? answers.selected_options : [];
     const ratingColor = selectedRating >= 4 ? 'text-amber-500' : selectedRating === 3 ? 'text-amber-600' : 'text-rose-500';
 
@@ -466,18 +332,6 @@ export default function QuestionFlowEngine({
             Tap here if not opened automatically →
           </a>
         )}
-
-        {/* Confidential alternative option */}
-        <div className="text-center pt-1">
-          <button
-            type="button"
-            onClick={() => setShowPrivateMode(true)}
-            className="text-xs text-slate-500 hover:text-slate-800 font-semibold underline inline-flex items-center gap-1 cursor-pointer"
-          >
-            <Lock className="w-3 h-3 text-slate-400" />
-            <span>Prefer to send private feedback to management instead?</span>
-          </button>
-        </div>
       </div>
     );
   };
@@ -549,7 +403,7 @@ export default function QuestionFlowEngine({
                 Opening Google Review Page
               </h3>
               <p className="text-xs text-slate-500">
-                Your tailored review has been copied. Complete it on Google in 2 quick steps:
+                Your review has been copied. Complete it on Google in 2 quick steps:
               </p>
             </div>
 
