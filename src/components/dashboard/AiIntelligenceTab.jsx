@@ -45,7 +45,7 @@ export default function AiIntelligenceTab() {
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center gap-2 text-emerald-600">
               <ThumbsUp className="w-5 h-5" />
-              <h3 className="text-base font-bold text-slate-900">Top Praise Drivers</h3>
+              <h3 className="text-base font-bold text-slate-900">Top Customer Compliments</h3>
             </div>
             <span className="text-xs text-emerald-700 font-bold bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
               98% CSAT Impact
