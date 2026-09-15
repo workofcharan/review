@@ -7,7 +7,6 @@ import {
   ExternalLink
 } from 'lucide-react';
 import EmojiScale from './EmojiScale';
-import confetti from 'canvas-confetti';
 import { generateReviewDraft, getThreeOptionsForRating } from '../../utils/aiReviewGenerator';
 import { copyTextToClipboard, redirectToReviewPage } from '../../utils/mobileRedirectHelper';
 
@@ -89,20 +88,6 @@ export default function QuestionFlowEngine({
     // Copy draft text to clipboard (iOS Safari & Android WebViews)
     await copyTextToClipboard(draftText);
 
-    // Fire celebration confetti for 4 or 5 stars
-    if (rating >= 4) {
-      try {
-        confetti({
-          particleCount: 90,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#0284c7', '#0ea5e9', '#10b981', '#f59e0b', '#6366f1']
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    }
-
     // Save feedback in dashboard
     const fullPayload = {
       businessId: business.id,
@@ -130,11 +115,9 @@ export default function QuestionFlowEngine({
       onFinishFeedback(fullPayload);
     }
 
-    // Direct navigation to Google Maps Review Page URL
+    // Immediate direct navigation to Google Maps Review Page URL
     const targetUrl = business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE;
-    setTimeout(() => {
-      redirectToReviewPage(targetUrl);
-    }, 600);
+    redirectToReviewPage(targetUrl);
   };
 
   const totalEstimatedSteps = 2;
