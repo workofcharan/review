@@ -33,12 +33,13 @@ export default function AdminBusinessesHubView() {
     setSelectedBusinessId, 
     feedbacks, 
     navigateTo,
-    removeBusiness
+    removeBusiness,
+    isAddModalOpen,
+    setIsAddModalOpen
   } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedQrBiz, setSelectedQrBiz] = useState(null);
   const [bizToDelete, setBizToDelete] = useState(null);
 
@@ -360,12 +361,6 @@ export default function AdminBusinessesHubView() {
           })}
         </div>
       </div>
-
-      {/* Add Business Modal */}
-      <AddBusinessModal 
-        isOpen={isAddModalOpen} 
-        onClose={() => setIsAddModalOpen(false)} 
-      />
 
       {/* Business QR Code View Modal */}
       <BusinessQrModal

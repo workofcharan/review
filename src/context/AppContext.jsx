@@ -242,6 +242,8 @@ export function AppProvider({ children }) {
     }
   };
 
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   return (
     <AppContext.Provider
       value={{
@@ -258,6 +260,8 @@ export function AppProvider({ children }) {
         addBusiness,
         removeBusiness,
         resetDemoData,
+        isAddModalOpen,
+        setIsAddModalOpen,
         aiInsights: INITIAL_AI_INSIGHTS
       }}
     >

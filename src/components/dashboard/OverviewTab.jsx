@@ -134,10 +134,6 @@ export default function OverviewTab({ setActiveTab }) {
             <span className="text-3xl font-extrabold text-slate-900 tracking-tight">{googleReviewsCaptured}</span>
             <span className="text-xs text-emerald-700 font-bold">{positivePercent}% happy guests</span>
           </div>
-          <div className="flex items-center justify-between text-[11px] pt-1 border-t border-slate-100">
-            <span className="text-slate-500 font-medium">Draft conversion:</span>
-            <span className="text-emerald-700 font-bold">{conversionRate}% converted</span>
-          </div>
         </div>
 
         {/* Card 3: Intercepted Issues */}

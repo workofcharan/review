@@ -6,9 +6,10 @@ import DashboardView from './views/DashboardView';
 import CustomerFeedbackView from './views/CustomerFeedbackView';
 import SplitScreenView from './views/SplitScreenView';
 import AdminBusinessesHubView from './views/AdminBusinessesHubView';
+import AddBusinessModal from './components/dashboard/AddBusinessModal';
 
 export default function App() {
-  const { currentRoute } = useApp();
+  const { currentRoute, isAddModalOpen, setIsAddModalOpen } = useApp();
 
   // If customer QR feedback mode is active, render clean mobile view without main header
   if (currentRoute.startsWith('/b/')) {
@@ -30,6 +31,12 @@ export default function App() {
         {isTourView && <LandingView />}
         {!isDashboardView && !isPreviewView && !isTourView && <AdminBusinessesHubView />}
       </main>
+
+      {/* Global Add Business Modal */}
+      <AddBusinessModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+      />
 
       {/* Global Footer */}
       <footer className="border-t border-slate-200 bg-white py-8 px-4 sm:px-6 text-center text-xs text-slate-500 shadow-sm">

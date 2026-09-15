@@ -12,11 +12,9 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import AddBusinessModal from './AddBusinessModal';
 
 export default function SettingsTab() {
-  const { activeBusiness, updateBusiness, resetDemoData, removeBusiness, navigateTo } = useApp();
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const { activeBusiness, updateBusiness, resetDemoData, removeBusiness, navigateTo, setIsAddModalOpen } = useApp();
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -256,11 +254,6 @@ export default function SettingsTab() {
         </div>
       </div>
     </form>
-
-    <AddBusinessModal 
-      isOpen={isAddModalOpen} 
-      onClose={() => setIsAddModalOpen(false)} 
-    />
 
     {/* Delete Confirmation Modal */}
     {isDeleteConfirmOpen && (
