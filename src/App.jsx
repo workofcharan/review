@@ -15,17 +15,20 @@ export default function App() {
     return <CustomerFeedbackView />;
   }
 
-  const isAdminView = currentRoute === '/admin' || currentRoute === '/businesses';
+  // Admin Hub is the default landing view for the application
+  const isDashboardView = currentRoute === '/dashboard' || currentRoute.startsWith('/workspace');
+  const isPreviewView = currentRoute === '/preview';
+  const isTourView = currentRoute === '/tour';
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-sky-500 selection:text-white">
       <Header />
       
       <main className="flex-1">
-        {isAdminView && <AdminBusinessesHubView />}
-        {currentRoute === '/preview' && <SplitScreenView />}
-        {currentRoute === '/tour' && <LandingView />}
-        {!isAdminView && currentRoute !== '/preview' && currentRoute !== '/tour' && <DashboardView />}
+        {isDashboardView && <DashboardView />}
+        {isPreviewView && <SplitScreenView />}
+        {isTourView && <LandingView />}
+        {!isDashboardView && !isPreviewView && !isTourView && <AdminBusinessesHubView />}
       </main>
 
       {/* Global Footer */}
