@@ -3,12 +3,23 @@ import {
   ThumbsUp, 
   ShieldAlert, 
   Lightbulb, 
-  BrainCircuit
+  BrainCircuit,
+  Sparkles
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export default function AiIntelligenceTab() {
   const { activeBusiness, aiInsights } = useApp();
+
+  const businessPraise = activeBusiness.aiPraise || {
+    topic: "Exceptional Staff Attention & High-Quality Care",
+    quote: "Guests consistently praise the polite, gentle, and transparent service."
+  };
+
+  const businessBottleneck = activeBusiness.aiBottleneck || {
+    topic: "Peak Hour Waiting Room Delays",
+    quote: "Occasional wait time spikes during busy peak weekend windows."
+  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -20,7 +31,7 @@ export default function AiIntelligenceTab() {
             <span>Natural Language Intelligence Engine</span>
           </div>
           <h2 className="text-2xl font-extrabold tracking-tight">
-            AI Sentiment & Complaint Clustering
+            {activeBusiness.name} AI Sentiment & Topic Clustering
           </h2>
           <p className="text-xs sm:text-sm text-sky-100">
             Unsupervised clustering of qualitative guest feedback, root-cause diagnostics, and actionable recommendations.
@@ -30,7 +41,7 @@ export default function AiIntelligenceTab() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Praise Clusters */}
-        <div className="glass-card rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
+        <div className="glass-card rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4 bg-white">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center gap-2 text-emerald-600">
               <ThumbsUp className="w-5 h-5" />
@@ -42,6 +53,25 @@ export default function AiIntelligenceTab() {
           </div>
 
           <div className="space-y-3">
+            {/* Primary Business Praise */}
+            <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-300 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-extrabold text-sm text-emerald-950">{businessPraise.topic}</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
+                  Top mention
+                </span>
+              </div>
+              <p className="text-xs text-slate-700 italic">
+                "{businessPraise.quote}"
+              </p>
+              <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                <div 
+                  className="bg-emerald-500 h-full rounded-full" 
+                  style={{ width: `98%` }} 
+                />
+              </div>
+            </div>
+
             {aiInsights.praiseClusters.map((cluster, idx) => (
               <div
                 key={idx}
@@ -68,7 +98,7 @@ export default function AiIntelligenceTab() {
         </div>
 
         {/* Top Intercepted Complaints Clusters */}
-        <div className="glass-card rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4">
+        <div className="glass-card rounded-3xl p-6 border border-slate-200 shadow-xs space-y-4 bg-white">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center gap-2 text-rose-600">
               <ShieldAlert className="w-5 h-5" />
@@ -80,6 +110,31 @@ export default function AiIntelligenceTab() {
           </div>
 
           <div className="space-y-3">
+            {/* Primary Business Bottleneck */}
+            <div className="p-4 rounded-2xl bg-rose-50/70 border border-rose-300 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-sm text-rose-950 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+                  <span>{businessBottleneck.topic}</span>
+                </span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 font-bold">
+                  Primary Risk
+                </span>
+              </div>
+
+              <p className="text-xs text-slate-700 italic">
+                "{businessBottleneck.quote}"
+              </p>
+
+              <div className="p-2.5 rounded-xl bg-sky-50 border border-sky-100 text-[11px] text-sky-900 flex items-start gap-2">
+                <Lightbulb className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-slate-900">AI Suggested Action: </strong>
+                  Optimize appointment buffers during peak rush hours to ensure zero customer wait time.
+                </div>
+              </div>
+            </div>
+
             {aiInsights.complaintClusters.map((complaint, idx) => (
               <div
                 key={idx}

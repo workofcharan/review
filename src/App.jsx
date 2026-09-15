@@ -5,6 +5,7 @@ import LandingView from './views/LandingView';
 import DashboardView from './views/DashboardView';
 import CustomerFeedbackView from './views/CustomerFeedbackView';
 import SplitScreenView from './views/SplitScreenView';
+import AdminBusinessesHubView from './views/AdminBusinessesHubView';
 
 export default function App() {
   const { currentRoute } = useApp();
@@ -14,14 +15,17 @@ export default function App() {
     return <CustomerFeedbackView />;
   }
 
+  const isAdminView = currentRoute === '/admin' || currentRoute === '/businesses';
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-sky-500 selection:text-white">
       <Header />
       
       <main className="flex-1">
+        {isAdminView && <AdminBusinessesHubView />}
         {currentRoute === '/preview' && <SplitScreenView />}
         {currentRoute === '/tour' && <LandingView />}
-        {(currentRoute === '/' || currentRoute === '' || currentRoute === '/dashboard') && <DashboardView />}
+        {!isAdminView && currentRoute !== '/preview' && currentRoute !== '/tour' && <DashboardView />}
       </main>
 
       {/* Global Footer */}

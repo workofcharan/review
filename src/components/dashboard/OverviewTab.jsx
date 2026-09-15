@@ -7,12 +7,13 @@ import {
   Sparkles, 
   ArrowUpRight, 
   QrCode, 
-  ExternalLink,
-  ShieldCheck,
-  CheckCircle2,
-  Clock,
-  ThumbsUp,
-  Award
+  ExternalLink, 
+  ShieldCheck, 
+  CheckCircle2, 
+  Clock, 
+  ThumbsUp, 
+  Layers,
+  Award 
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -36,10 +37,16 @@ export default function OverviewTab({ setActiveTab }) {
   const positivePercent = total > 0 ? Math.round((positiveCount / total) * 100) : 100;
   const conversionRate = total > 0 ? Math.round((googleReviewsCaptured / (positiveCount || 1)) * 100) : 100;
 
+  // Business-tailored praise & bottleneck insights
+  const praiseTopic = activeBusiness.aiPraise?.topic || "Exceptional Service & Caring Staff";
+  const praiseQuote = activeBusiness.aiPraise?.quote || "Guests love the attentive service, quick responses, and spotless environment.";
+  const bottleneckTopic = activeBusiness.aiBottleneck?.topic || "Peak Hour Wait Times";
+  const bottleneckQuote = activeBusiness.aiBottleneck?.quote || "Occasional slight delay during peak hours intercepted before reaching public reviews.";
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Top Banner with Quick Actions */}
-      <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
             <span className="text-xl leading-none">{activeBusiness.logo}</span>
@@ -58,14 +65,14 @@ export default function OverviewTab({ setActiveTab }) {
         <div className="flex flex-wrap items-center gap-2.5">
           <button
             onClick={() => navigateTo(`/b/${activeBusiness.slug}`)}
-            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all transform active:scale-95"
+            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all transform active:scale-95 cursor-pointer"
           >
             <ExternalLink className="w-3.5 h-3.5 text-slate-300" />
             <span>Open Customer QR View</span>
           </button>
           <button
             onClick={() => setActiveTab('qr_studio')}
-            className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold text-xs flex items-center gap-2 shadow-2xs transition-all"
+            className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold text-xs flex items-center gap-2 shadow-2xs transition-all cursor-pointer"
           >
             <QrCode className="w-3.5 h-3.5 text-sky-600" />
             <span>Generate Print Collateral</span>
@@ -76,7 +83,7 @@ export default function OverviewTab({ setActiveTab }) {
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: CSAT Rating */}
-        <div className="saas-card rounded-2xl p-5 space-y-3">
+        <div className="saas-card rounded-2xl p-5 space-y-3 bg-white">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Average CSAT</span>
             <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
@@ -97,7 +104,7 @@ export default function OverviewTab({ setActiveTab }) {
         </div>
 
         {/* Card 2: Google Reviews Generated */}
-        <div className="saas-card rounded-2xl p-5 space-y-3">
+        <div className="saas-card rounded-2xl p-5 space-y-3 bg-white">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">5★ Google Reviews</span>
             <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
@@ -115,7 +122,7 @@ export default function OverviewTab({ setActiveTab }) {
         </div>
 
         {/* Card 3: Intercepted Issues */}
-        <div className="saas-card rounded-2xl p-5 space-y-3">
+        <div className="saas-card rounded-2xl p-5 space-y-3 bg-white">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Shielded Complaints</span>
             <div className="w-8 h-8 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
@@ -133,7 +140,7 @@ export default function OverviewTab({ setActiveTab }) {
         </div>
 
         {/* Card 4: Total QR Submissions */}
-        <div className="saas-card rounded-2xl p-5 space-y-3">
+        <div className="saas-card rounded-2xl p-5 space-y-3 bg-white">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Feedback Scans</span>
             <div className="w-8 h-8 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600">
@@ -154,7 +161,7 @@ export default function OverviewTab({ setActiveTab }) {
       {/* Sentiment Funnel & Recent Feed */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Sentiment Routing Breakdown */}
-        <div className="lg:col-span-2 saas-card rounded-2xl p-6 space-y-5">
+        <div className="lg:col-span-2 saas-card rounded-3xl p-6 space-y-5 bg-white">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
               <h3 className="text-sm font-extrabold text-slate-900">Sentiment Routing Breakdown</h3>
@@ -162,7 +169,7 @@ export default function OverviewTab({ setActiveTab }) {
             </div>
             <button
               onClick={() => setActiveTab('feedback_inbox')}
-              className="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1"
+              className="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1 cursor-pointer"
             >
               <span>View Feed</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -222,53 +229,59 @@ export default function OverviewTab({ setActiveTab }) {
           {/* Recent Feed List */}
           <div className="pt-2 space-y-3">
             <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider">Latest Live Submissions</h4>
-            <div className="space-y-2">
-              {bizFeedbacks.slice(0, 3).map((fb) => (
-                <div 
-                  key={fb.id}
-                  onClick={() => setActiveTab('feedback_inbox')}
-                  className="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 cursor-pointer flex items-center justify-between gap-3 transition-all"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${
-                      fb.rating >= 4 
-                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
-                        : fb.rating === 3 
-                          ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                          : 'bg-rose-100 text-rose-800 border border-rose-200'
-                    }`}>
-                      {fb.rating}★
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                        <span>{fb.tableOrLocation}</span>
-                        <span className="text-[10px] text-slate-400 font-normal">• {fb.channel}</span>
+            {bizFeedbacks.length === 0 ? (
+              <div className="p-4 rounded-xl bg-slate-50 text-center text-xs text-slate-500">
+                No feedback submissions yet for {activeBusiness.name}. Test the customer QR flow above to see live updates!
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {bizFeedbacks.slice(0, 3).map((fb) => (
+                  <div 
+                    key={fb.id}
+                    onClick={() => setActiveTab('feedback_inbox')}
+                    className="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 cursor-pointer flex items-center justify-between gap-3 transition-all"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${
+                        fb.rating >= 4 
+                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' 
+                          : fb.rating === 3 
+                            ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                            : 'bg-rose-100 text-rose-800 border border-rose-200'
+                      }`}>
+                        {fb.rating}★
                       </div>
-                      <p className="text-xs text-slate-600 line-clamp-1">
-                        {fb.generatedReview?.draft || fb.answers.private_manager_alert || 'Completed feedback flow.'}
-                      </p>
+                      <div>
+                        <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
+                          <span>{fb.tableOrLocation}</span>
+                          <span className="text-[10px] text-slate-400 font-normal">• {fb.channel}</span>
+                        </div>
+                        <p className="text-xs text-slate-600 line-clamp-1">
+                          {fb.generatedReview?.draft || fb.answers?.private_manager_alert || 'Completed feedback flow.'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold ${
+                        fb.recoveryStatus === 'none_needed'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : fb.recoveryStatus === 'resolved'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-rose-100 text-rose-800 border border-rose-200'
+                      }`}>
+                        {fb.recoveryStatus === 'none_needed' ? 'Google 5★' : fb.recoveryStatus === 'resolved' ? 'Resolved' : 'Alert'}
+                      </span>
                     </div>
                   </div>
-
-                  <div className="text-right shrink-0">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-md font-bold ${
-                      fb.recoveryStatus === 'none_needed'
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : fb.recoveryStatus === 'resolved'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-rose-100 text-rose-800 border border-rose-200'
-                    }`}>
-                      {fb.recoveryStatus === 'none_needed' ? 'Google 5★' : fb.recoveryStatus === 'resolved' ? 'Resolved' : 'Alert'}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
         {/* AI Intelligence Summary Card */}
-        <div className="saas-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
+        <div className="saas-card rounded-3xl p-6 flex flex-col justify-between space-y-4 bg-white">
           <div className="space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2 text-sky-600 font-bold text-sm">
@@ -286,8 +299,9 @@ export default function OverviewTab({ setActiveTab }) {
                   <ThumbsUp className="w-3 h-3 text-emerald-600" />
                   <span>Top Praise Driver</span>
                 </div>
-                <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                  <strong>Truffle Tagliatelle & Maya's wine pairings</strong> drive 98% of positive mentions.
+                <div className="text-xs font-bold text-slate-900">{praiseTopic}</div>
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                  "{praiseQuote}"
                 </p>
               </div>
 
@@ -296,16 +310,17 @@ export default function OverviewTab({ setActiveTab }) {
                   <ShieldAlert className="w-3 h-3 text-rose-600" />
                   <span>Primary Risk Bottleneck</span>
                 </div>
-                  <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                    <strong>Friday night main course delay (&gt;35 min)</strong> accounted for 62% of negative feedback.
-                  </p>
+                <div className="text-xs font-bold text-slate-900">{bottleneckTopic}</div>
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                  "{bottleneckQuote}"
+                </p>
               </div>
             </div>
           </div>
 
           <button
             onClick={() => setActiveTab('ai_intelligence')}
-            className="w-full py-2.5 px-4 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold text-xs border border-slate-200 flex items-center justify-center gap-2 transition-all shadow-2xs"
+            className="w-full py-2.5 px-4 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold text-xs border border-slate-200 flex items-center justify-center gap-2 transition-all shadow-2xs cursor-pointer"
           >
             <span>Explore AI Complaint Clusters</span>
             <ArrowUpRight className="w-3.5 h-3.5 text-slate-500" />

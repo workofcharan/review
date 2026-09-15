@@ -15,7 +15,11 @@ import {
   ExternalLink,
   Smartphone,
   Sparkles,
-  Plus
+  Plus,
+  ArrowLeft,
+  Layers,
+  ChevronDown,
+  Building2
 } from 'lucide-react';
 import OverviewTab from '../components/dashboard/OverviewTab';
 import FeedbackInboxTab from '../components/dashboard/FeedbackInboxTab';
@@ -26,11 +30,20 @@ import SettingsTab from '../components/dashboard/SettingsTab';
 import AddBusinessModal from '../components/dashboard/AddBusinessModal';
 
 export default function DashboardView() {
-  const { activeBusiness, feedbacks, navigateTo } = useApp();
+  const { 
+    businesses, 
+    selectedBusinessId, 
+    setSelectedBusinessId, 
+    activeBusiness, 
+    feedbacks, 
+    navigateTo 
+  } = useApp();
+
   const [activeTab, setActiveTab] = useState('overview');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [bizPickerOpen, setBizPickerOpen] = useState(false);
 
   const bizFeedbacks = feedbacks.filter(f => f.businessId === activeBusiness.id);
   const pendingCount = bizFeedbacks.filter(f => f.recoveryStatus === 'pending_review').length;
@@ -61,7 +74,7 @@ export default function DashboardView() {
               if (isMobile) setMobileDrawerOpen(false);
             }}
             title={isCollapsed && !isMobile ? tab.label : undefined}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all relative group ${
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all relative group cursor-pointer ${
               isActive
                 ? 'bg-sky-600 text-white shadow-sm shadow-sky-600/25'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -92,130 +105,211 @@ export default function DashboardView() {
   );
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] max-w-[1600px] mx-auto px-3 sm:px-6 py-4 flex flex-col md:flex-row gap-5 items-start bg-slate-50">
-      {/* Mobile Slide Bar Toggle Button */}
-      <div className="md:hidden w-full flex items-center justify-between p-3 bg-white border border-slate-200 rounded-2xl shadow-2xs">
-        <button
-          type="button"
-          onClick={() => setMobileDrawerOpen(true)}
-          className="flex items-center gap-2 text-xs font-bold text-slate-800 hover:text-sky-600"
-        >
-          <Menu className="w-4 h-4 text-sky-600" />
-          <span>Slide Menu ({tabs.find(t => t.id === activeTab)?.label})</span>
-        </button>
-      </div>
-
-      {/* Mobile Slide-Out Drawer Overlay */}
-      {mobileDrawerOpen && (
-        <div className="fixed inset-0 z-50 md:hidden bg-slate-900/60 backdrop-blur-xs flex animate-fade-in">
-          <div className="w-72 max-w-[85vw] h-full bg-white p-4 shadow-2xl flex flex-col justify-between animate-slide-in">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">{activeBusiness.logo}</span>
-                  <div>
-                    <div className="font-extrabold text-xs text-slate-900">{activeBusiness.name}</div>
-                    <div className="text-[10px] text-slate-500">Navigation Drawer</div>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setMobileDrawerOpen(false)}
-                  className="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {renderNavButtons(true)}
-            </div>
-
-            <div className="pt-4 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileDrawerOpen(false);
-                  setIsAddModalOpen(true);
-                }}
-                className="w-full py-2.5 px-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-sky-200"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>+ Add Business Profile</span>
-              </button>
-            </div>
+    <div className="min-h-[calc(100vh-4rem)] max-w-[1600px] mx-auto px-3 sm:px-6 py-4 flex flex-col gap-4 bg-slate-50">
+      {/* Top Admin Breadcrumb Bar */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-3.5 px-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+        <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={() => navigateTo('/admin')}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 text-xs font-bold transition-colors cursor-pointer"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Admin Multi-Business Hub</span>
+          </button>
+          <span className="text-slate-300 font-bold hidden sm:inline">/</span>
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-base">{activeBusiness.logo}</span>
+            <span className="font-extrabold text-slate-900">{activeBusiness.name}</span>
+            <span className="hidden md:inline px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 text-[10px] font-bold border border-sky-200">
+              Workspace Active
+            </span>
           </div>
-          <div className="flex-1" onClick={() => setMobileDrawerOpen(false)} />
         </div>
-      )}
 
-      {/* Desktop Slide Bar (Collapsible Sidebar) */}
-      <aside 
-        className={`hidden md:flex flex-col justify-between shrink-0 sticky top-20 rounded-3xl bg-white border border-slate-200/90 shadow-sm p-3 transition-all duration-300 ease-in-out ${
-          isCollapsed ? 'w-18' : 'w-64'
-        }`}
-        style={{ minHeight: 'calc(100vh - 6rem)' }}
-      >
-        {/* Top Header inside Slide Bar */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100 px-1">
-            {!isCollapsed && (
-              <div className="flex items-center gap-2 overflow-hidden">
-                <span className="text-lg">{activeBusiness.logo}</span>
-                <div className="truncate">
-                  <div className="font-extrabold text-xs text-slate-900 truncate">{activeBusiness.name}</div>
-                  <div className="text-[10px] text-slate-500 font-medium">Command Slide Bar</div>
+        {/* Quick Business Switcher inside workspace */}
+        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+          <span className="text-[11px] text-slate-500 font-medium hidden md:inline">Switch Business:</span>
+          <div className="relative">
+            <button
+              onClick={() => setBizPickerOpen(!bizPickerOpen)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-800 transition-colors shadow-2xs"
+            >
+              <span>{activeBusiness.logo}</span>
+              <span className="truncate max-w-[130px]">{activeBusiness.name}</span>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${bizPickerOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {bizPickerOpen && (
+              <div className="absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-slate-200 shadow-xl p-2 z-50 animate-scale-in">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1 border-b border-slate-100 mb-1">
+                  Handled Businesses
+                </div>
+                <div className="space-y-1">
+                  {businesses.map((b) => (
+                    <button
+                      key={b.id}
+                      onClick={() => {
+                        setSelectedBusinessId(b.id);
+                        setBizPickerOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-2.5 p-2 rounded-xl text-left text-xs font-bold transition-all ${
+                        b.id === activeBusiness.id
+                          ? 'bg-sky-50 text-sky-900 border border-sky-200'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <span className="text-base">{b.logo}</span>
+                      <div className="truncate">
+                        <div className="truncate">{b.name}</div>
+                        <div className="text-[10px] text-slate-400 font-normal">{b.type}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                <div className="pt-2 mt-2 border-t border-slate-100">
+                  <button
+                    onClick={() => {
+                      setBizPickerOpen(false);
+                      navigateTo('/admin');
+                    }}
+                    className="w-full py-1.5 text-center text-xs font-bold text-sky-600 hover:text-sky-700"
+                  >
+                    View All in Admin Hub →
+                  </button>
                 </div>
               </div>
             )}
-            <button
-              type="button"
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              title={isCollapsed ? "Expand Slide Bar" : "Collapse Slide Bar"}
-              className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors mx-auto"
-            >
-              {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-            </button>
           </div>
+        </div>
+      </div>
 
-          {/* Nav List */}
-          {renderNavButtons(false)}
+      {/* Main Container: Slide Bar + Content */}
+      <div className="flex flex-col md:flex-row gap-5 items-start">
+        {/* Mobile Slide Bar Toggle Button */}
+        <div className="md:hidden w-full flex items-center justify-between p-3 bg-white border border-slate-200 rounded-2xl shadow-2xs">
+          <button
+            type="button"
+            onClick={() => setMobileDrawerOpen(true)}
+            className="flex items-center gap-2 text-xs font-bold text-slate-800 hover:text-sky-600 cursor-pointer"
+          >
+            <Menu className="w-4 h-4 text-sky-600" />
+            <span>Slide Menu ({tabs.find(t => t.id === activeTab)?.label})</span>
+          </button>
         </div>
 
-        {/* Bottom Shortcuts inside Slide Bar */}
-        <div className="pt-3 border-t border-slate-100">
-          {!isCollapsed ? (
-            <button
-              type="button"
-              onClick={() => setIsAddModalOpen(true)}
-              className="w-full py-2.5 px-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-sky-200"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>+ Add Business</span>
-            </button>
-          ) : (
-            <div className="flex justify-center">
+        {/* Mobile Slide-Out Drawer Overlay */}
+        {mobileDrawerOpen && (
+          <div className="fixed inset-0 z-50 md:hidden bg-slate-900/60 backdrop-blur-xs flex animate-fade-in">
+            <div className="w-72 max-w-[85vw] h-full bg-white p-4 shadow-2xl flex flex-col justify-between animate-slide-in">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">{activeBusiness.logo}</span>
+                    <div>
+                      <div className="font-extrabold text-xs text-slate-900">{activeBusiness.name}</div>
+                      <div className="text-[10px] text-slate-500">Command Slide Bar</div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:text-slate-900"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {renderNavButtons(true)}
+              </div>
+
+              <div className="pt-4 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileDrawerOpen(false);
+                    setIsAddModalOpen(true);
+                  }}
+                  className="w-full py-2.5 px-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-sky-200"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ Add Business Profile</span>
+                </button>
+              </div>
+            </div>
+            <div className="flex-1" onClick={() => setMobileDrawerOpen(false)} />
+          </div>
+        )}
+
+        {/* Desktop Slide Bar (Collapsible Sidebar matching Image 2) */}
+        <aside 
+          className={`hidden md:flex flex-col justify-between shrink-0 sticky top-20 rounded-3xl bg-white border border-slate-200/90 shadow-sm p-3 transition-all duration-300 ease-in-out ${
+            isCollapsed ? 'w-18' : 'w-64'
+          }`}
+          style={{ minHeight: 'calc(100vh - 10rem)' }}
+        >
+          {/* Top Header inside Slide Bar */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 px-1">
+              {!isCollapsed && (
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <span className="text-lg">{activeBusiness.logo}</span>
+                  <div className="truncate">
+                    <div className="font-extrabold text-xs text-slate-900 truncate">{activeBusiness.name}</div>
+                    <div className="text-[10px] text-slate-500 font-medium">Command Slide Bar</div>
+                  </div>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                title={isCollapsed ? "Expand Slide Bar" : "Collapse Slide Bar"}
+                className="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors mx-auto cursor-pointer"
+              >
+                {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+              </button>
+            </div>
+
+            {/* Nav List */}
+            {renderNavButtons(false)}
+          </div>
+
+          {/* Bottom Shortcuts inside Slide Bar */}
+          <div className="pt-3 border-t border-slate-100">
+            {!isCollapsed ? (
               <button
                 type="button"
                 onClick={() => setIsAddModalOpen(true)}
-                title="Add New Business Profile"
-                className="p-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 transition-colors"
+                className="w-full py-2.5 px-3 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-extrabold text-xs flex items-center justify-center gap-1.5 transition-colors border border-sky-200 cursor-pointer"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Add Business</span>
               </button>
-            </div>
-          )}
-        </div>
-      </aside>
+            ) : (
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(true)}
+                  title="Add New Business Profile"
+                  className="p-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 transition-colors cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
+        </aside>
 
-      {/* Main Tab Render View */}
-      <main className="flex-1 w-full min-w-0">
-        {activeTab === 'overview' && <OverviewTab setActiveTab={setActiveTab} />}
-        {activeTab === 'feedback_inbox' && <FeedbackInboxTab />}
-        {activeTab === 'qr_studio' && <QrStudioTab />}
-        {activeTab === 'flow_builder' && <FlowBuilderTab />}
-        {activeTab === 'ai_intelligence' && <AiIntelligenceTab />}
-        {activeTab === 'settings' && <SettingsTab />}
-      </main>
+        {/* Main Tab Render View */}
+        <main className="flex-1 w-full min-w-0">
+          {activeTab === 'overview' && <OverviewTab setActiveTab={setActiveTab} />}
+          {activeTab === 'feedback_inbox' && <FeedbackInboxTab />}
+          {activeTab === 'qr_studio' && <QrStudioTab />}
+          {activeTab === 'flow_builder' && <FlowBuilderTab />}
+          {activeTab === 'ai_intelligence' && <AiIntelligenceTab />}
+          {activeTab === 'settings' && <SettingsTab />}
+        </main>
+      </div>
 
       {/* Add Business Modal */}
       <AddBusinessModal 
