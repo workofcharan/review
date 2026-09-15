@@ -320,7 +320,7 @@ export default function AddBusinessModal({ isOpen, onClose }) {
 
   return (
     <div 
-      className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto overscroll-contain animate-fade-in"
+      className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-4 overflow-y-auto overscroll-contain animate-fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
