@@ -169,6 +169,40 @@ export function AppProvider({ children }) {
     return biz;
   };
 
+  // Remove business and associated feedbacks
+  const removeBusiness = (businessId) => {
+    setBusinesses(prev => {
+      const remaining = prev.filter(b => b.id !== businessId);
+      try {
+        localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(remaining));
+      } catch (e) {
+        console.error(e);
+      }
+      
+      // If active business was deleted, switch to the first remaining one
+      if (selectedBusinessId === businessId && remaining.length > 0) {
+        setSelectedBusinessId(remaining[0].id);
+        try {
+          localStorage.setItem(STORAGE_KEYS.SELECTED_BIZ, remaining[0].id);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      return remaining;
+    });
+
+    // Also clean up feedbacks belonging to this business
+    setFeedbacks(prev => {
+      const remaining = prev.filter(f => f.businessId !== businessId);
+      try {
+        localStorage.setItem(STORAGE_KEYS.FEEDBACKS, JSON.stringify(remaining));
+      } catch (e) {
+        console.error(e);
+      }
+      return remaining;
+    });
+  };
+
   // Reset to initial demo state
   const resetDemoData = () => {
     setBusinesses(INITIAL_BUSINESSES);
@@ -193,6 +227,7 @@ export function AppProvider({ children }) {
         updateFeedbackStatus,
         updateBusiness,
         addBusiness,
+        removeBusiness,
         resetDemoData,
         aiInsights: INITIAL_AI_INSIGHTS
       }}
