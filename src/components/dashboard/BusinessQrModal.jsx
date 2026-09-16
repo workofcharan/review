@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, 
   Download, 
@@ -83,9 +84,9 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
     }
   };
 
-  return (
+  return createPortal(
     <div 
-      className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-[9999] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -229,6 +230,7 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

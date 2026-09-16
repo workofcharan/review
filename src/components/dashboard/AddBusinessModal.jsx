@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Building2, 
   X, 
@@ -318,9 +319,9 @@ export default function AddBusinessModal({ isOpen, onClose }) {
     navigateTo('/dashboard');
   };
 
-  return (
+  return createPortal(
     <div 
-      className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-4 overflow-y-auto overscroll-contain animate-fade-in"
+      className="fixed inset-0 z-[9999] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center p-4 overflow-y-auto overscroll-contain animate-fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -349,95 +350,169 @@ export default function AddBusinessModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Form */}
+        {/* Form Body */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Industry Archetype */}
+          {/* Quick Category Templates */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700">1. Select Industry / Category:</label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
-              {CATEGORIES.map((cat) => (
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Auto-Fill Category Preset:</span>
+            </label>
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
+              {CATEGORIES.map(cat => (
                 <button
-                  key={cat.id}
                   type="button"
-                  onClick={() => handleCategorySelect(cat)}
-                  className={`p-2 rounded-xl text-left border text-xs font-bold flex items-center gap-2 transition-all ${
-                    category === cat.id
-                      ? 'bg-sky-50 border-sky-500 text-sky-900 ring-1 ring-sky-400'
-                      : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-white'
+                  key={cat.id}
+                  onClick={() => handleSelectCategory(cat)}
+                  className={`p-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
+                    selectedCategory === cat.id
+                      ? 'bg-sky-50 border-sky-500 text-sky-700 font-bold ring-1 ring-sky-500/20 shadow-xs'
+                      : 'bg-slate-50/80 hover:bg-slate-100 border-slate-200 text-slate-700'
                   }`}
                 >
-                  <span className="text-base">{cat.icon}</span>
-                  <span className="truncate">{cat.label}</span>
+                  <span className="text-base leading-none">{cat.icon}</span>
+                  <span className="text-[9px] truncate w-full">{cat.id}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Business Name */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700">2. Business / Clinic Name:</label>
-            <input
-              type="text"
-              required
-              value={name}
-              onChange={handleNameChange}
-              placeholder="e.g. Dr C Dental Clinic, Luxe Hair Studio..."
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
-            />
-          </div>
-
-          {/* Subtitle / Type */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700">3. Business Subtitle / Type:</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {/* Business Name */}
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                Business Name *
+              </label>
               <input
                 type="text"
-                value={type}
-                onChange={(e) => setType(e.target.value)}
-                placeholder="e.g. Advanced Dental Care"
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-800"
+                required
+                value={name}
+                onChange={(e) => handleNameChange(e.target.value)}
+                placeholder="e.g., Summit Dental Studio"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-xs text-slate-900"
               />
             </div>
 
-            {/* Emoji Logo Picker */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700">4. Emoji Icon / Logo:</label>
-              <div className="flex items-center gap-1.5 overflow-x-auto p-1 bg-slate-50 rounded-xl border border-slate-300">
-                {PRESET_EMOJIS.slice(0, 7).map((emoji) => (
+            {/* Logo Emoji */}
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1">
+                <Smile className="w-3.5 h-3.5 text-slate-400" />
+                <span>Logo Emoji</span>
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  maxLength={4}
+                  value={logo}
+                  onChange={(e) => setLogo(e.target.value)}
+                  className="w-14 px-2 py-2 text-center text-lg rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                />
+                <div className="flex gap-1 overflow-x-auto py-1">
+                  {['🦷', '☕', '🏋️', '🍽️', '💇', '🚗', '🛍️', '🐾'].map(em => (
+                    <button
+                      key={em}
+                      type="button"
+                      onClick={() => setLogo(em)}
+                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm cursor-pointer"
+                    >
+                      {em}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Subtitle / Type */}
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+              Category / Subtitle
+            </label>
+            <input
+              type="text"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              placeholder="e.g., Advanced Dental & Implantology"
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-xs text-slate-900"
+            />
+          </div>
+
+          {/* Tagline */}
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+              Tagline & Promise
+            </label>
+            <input
+              type="text"
+              value={tagline}
+              onChange={(e) => setTagline(e.target.value)}
+              placeholder="e.g., Painless Dentistry & Sparkling Smiles"
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-xs text-slate-900"
+            />
+          </div>
+
+          {/* URL Slug */}
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1">
+              <LinkIcon className="w-3.5 h-3.5 text-slate-400" />
+              <span>Feedback Route Slug</span>
+            </label>
+            <div className="flex items-center px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 text-xs">
+              <span className="text-slate-400 font-mono">/b/</span>
+              <input
+                type="text"
+                required
+                value={slug}
+                onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                placeholder="summit-dental"
+                className="bg-transparent flex-1 font-mono text-xs text-slate-900 focus:outline-none pl-1"
+              />
+            </div>
+          </div>
+
+          {/* Public Google Review URL */}
+          <div className="space-y-1">
+            <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Google Maps / Review Destination URL</span>
+            </label>
+            <input
+              type="url"
+              value={publicReviewUrl}
+              onChange={(e) => setPublicReviewUrl(e.target.value)}
+              placeholder="https://g.page/r/YOUR_BUSINESS_ID/review"
+              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-xs text-slate-900"
+            />
+          </div>
+
+          {/* Primary Brand Color */}
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1">
+              <Palette className="w-3.5 h-3.5 text-slate-400" />
+              <span>Primary Brand Accent Color</span>
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                value={primaryColor}
+                onChange={(e) => setPrimaryColor(e.target.value)}
+                className="w-8 h-8 rounded-lg cursor-pointer border-0 p-0"
+              />
+              <div className="flex gap-2">
+                {['#0284c7', '#059669', '#7c3aed', '#db2777', '#ea580c', '#d97706'].map(c => (
                   <button
-                    key={emoji}
+                    key={c}
                     type="button"
-                    onClick={() => setLogo(emoji)}
-                    className={`w-7 h-7 rounded-lg flex items-center justify-center text-sm ${
-                      logo === emoji ? 'bg-sky-600 text-white font-bold' : 'hover:bg-slate-200'
-                    }`}
-                  >
-                    {emoji}
-                  </button>
+                    onClick={() => setPrimaryColor(c)}
+                    className="w-6 h-6 rounded-full border border-white/50 shadow-xs cursor-pointer hover:scale-110 transition-transform"
+                    style={{ backgroundColor: c }}
+                  />
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Google Review URL */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
-              <span>5. Google Maps / Review URL:</span>
-              <span className="text-[10px] text-sky-600 font-semibold">Where reviews will redirect</span>
-            </label>
-            <div className="relative">
-              <input
-                type="url"
-                value={publicReviewUrl}
-                onChange={(e) => setPublicReviewUrl(e.target.value)}
-                placeholder="https://g.page/r/CVfAf-zR7rBLEBE/review"
-                className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-800 font-mono focus:outline-none focus:ring-2 focus:ring-sky-500"
-              />
-              <LinkIcon className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
-            </div>
-          </div>
-
-          {/* Actions */}
+          {/* Modal Actions */}
           <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
             <button
               type="button"
@@ -457,6 +532,7 @@ export default function AddBusinessModal({ isOpen, onClose }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

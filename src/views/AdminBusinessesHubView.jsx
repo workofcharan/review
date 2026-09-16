@@ -319,7 +319,7 @@ export default function AdminBusinessesHubView() {
       {/* Delete Business Confirmation Modal */}
       {bizToDelete && (
         <div 
-          className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in"
+          className="fixed inset-0 z-[9999] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in"
           onClick={(e) => {
             if (e.target === e.currentTarget) setBizToDelete(null);
           }}
