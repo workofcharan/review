@@ -38,23 +38,25 @@ export default function App() {
         onClose={() => setIsAddModalOpen(false)} 
       />
 
-      {/* Global Footer */}
-      <footer className="border-t border-slate-200 bg-white py-8 px-4 sm:px-6 text-center text-xs text-slate-500 shadow-sm">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800">RevPulse AI</span>
-            <span>•</span>
-            <span>Smart QR Feedback & Review Acceleration Engine</span>
+      {/* Global Footer (only on landing / hub views) */}
+      {!isDashboardView && (
+        <footer className="border-t border-slate-200 bg-white py-8 px-4 sm:px-6 text-center text-xs text-slate-500 shadow-sm">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-slate-800">RevPulse AI</span>
+              <span>•</span>
+              <span>Smart QR Feedback & Review Acceleration Engine</span>
+            </div>
+            <div className="flex items-center gap-4 text-slate-600">
+              <span>Adaptive State Machines</span>
+              <span>•</span>
+              <span>Google Review Converter</span>
+              <span>•</span>
+              <span>Private Escalation Shield</span>
+            </div>
           </div>
-          <div className="flex items-center gap-4 text-slate-600">
-            <span>Adaptive State Machines</span>
-            <span>•</span>
-            <span>Google Review Converter</span>
-            <span>•</span>
-            <span>Private Escalation Shield</span>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }
