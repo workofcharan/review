@@ -91,9 +91,9 @@ export default function DashboardView() {
   );
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] max-w-[1600px] mx-auto px-3 sm:px-6 py-4 flex flex-col md:flex-row gap-5 items-start bg-slate-50 relative">
+    <div className="h-full max-w-[1600px] w-full mx-auto px-3 sm:px-6 py-4 flex flex-col md:flex-row gap-5 items-start bg-slate-50 overflow-hidden">
       {/* Mobile Slide Bar Toggle Button */}
-      <div className="md:hidden w-full flex items-center justify-between p-3 bg-white border border-slate-200 rounded-2xl shadow-2xs">
+      <div className="md:hidden w-full flex items-center justify-between p-3 bg-white border border-slate-200 rounded-2xl shadow-2xs shrink-0">
         <button
           type="button"
           onClick={() => setMobileDrawerOpen(true)}
@@ -133,9 +133,9 @@ export default function DashboardView() {
         </div>
       )}
 
-      {/* Desktop Slide Bar (Collapsible Sidebar) - Frozen in Place from Top */}
+      {/* Desktop Slide Bar (Collapsible Sidebar) - 100% FROZEN IN PLACE */}
       <aside 
-        className={`hidden md:flex flex-col justify-between shrink-0 sticky top-[5rem] self-start h-[calc(100vh-6rem)] overflow-y-auto rounded-3xl bg-white border border-slate-200/90 shadow-sm p-3 transition-all duration-300 ease-in-out z-30 ${
+        className={`hidden md:flex flex-col justify-between shrink-0 h-full overflow-y-auto rounded-3xl bg-white border border-slate-200/90 shadow-sm p-3 transition-all duration-300 ease-in-out select-none ${
           isCollapsed ? 'w-18' : 'w-64'
         }`}
       >
@@ -166,10 +166,10 @@ export default function DashboardView() {
         </div>
       </aside>
 
-      {/* Right Column: Sticky Breadcrumbs + Main Tab Content */}
-      <div className="flex-1 w-full min-w-0 flex flex-col gap-4">
+      {/* Right Column: Independent Scroll Container (Background & Content Scroll Here) */}
+      <div className="flex-1 w-full h-full overflow-y-auto pr-1 flex flex-col gap-4 pb-8">
         {/* Top Admin Breadcrumb Bar */}
-        <div className="sticky top-[4.5rem] z-20 flex items-center justify-between gap-3 bg-white/95 backdrop-blur-md p-3.5 px-4 rounded-2xl border border-slate-200/90 shadow-sm">
+        <div className="sticky top-0 z-20 flex items-center justify-between gap-3 bg-white/95 backdrop-blur-md p-3.5 px-4 rounded-2xl border border-slate-200/90 shadow-sm shrink-0">
           <div className="flex items-center gap-2.5">
             <button
               type="button"
@@ -191,7 +191,7 @@ export default function DashboardView() {
         </div>
 
         {/* Main Tab Render View */}
-        <main className="w-full min-w-0">
+        <main className="w-full min-w-0 flex-1">
           {activeTab === 'overview' && <OverviewTab setActiveTab={setActiveTab} />}
           {activeTab === 'feedback_inbox' && <FeedbackInboxTab />}
           {activeTab === 'qr_studio' && <QrStudioTab />}
