@@ -1,13 +1,18 @@
 import React from 'react';
 import { 
-  QrCode 
+  QrCode, 
+  Plus
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function Header() {
   const { 
-    navigateTo 
+    currentRoute,
+    navigateTo, 
+    setIsAddModalOpen 
   } = useApp();
+
+  const isAdminHub = currentRoute === '/' || currentRoute === '/admin';
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/95 backdrop-blur-md shadow-2xs">
@@ -33,6 +38,20 @@ export default function Header() {
             </p>
           </div>
         </div>
+
+        {/* Right: + Add Business CTA (Only visible on Admin Business Hub) */}
+        {isAdminHub && (
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => setIsAddModalOpen(true)}
+              className="flex items-center gap-1.5 py-2 px-4 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-extrabold shadow-sm shadow-sky-600/20 transition-all transform active:scale-95 cursor-pointer"
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              <span>Add Business</span>
+            </button>
+          </div>
+        )}
 
       </div>
     </header>

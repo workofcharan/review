@@ -86,20 +86,12 @@ export default function SettingsTab() {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             type="button"
-            onClick={() => setIsAddModalOpen(true)}
-            className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Add New Business</span>
-          </button>
-          <button
-            type="button"
             onClick={() => {
               if (confirm('Reset all demo businesses and feedbacks to factory state?')) {
                 resetDemoData();
               }
             }}
-            className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors"
+            className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5 text-amber-600" />
             <span>Reset Demo Data</span>
