@@ -1,14 +1,12 @@
 import React from 'react';
 import { 
-  QrCode, 
-  Plus
+  QrCode 
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function Header() {
   const { 
-    navigateTo, 
-    setIsAddModalOpen 
+    navigateTo 
   } = useApp();
 
   return (
@@ -34,18 +32,6 @@ export default function Header() {
               Smart Feedback & Review Accelerator
             </p>
           </div>
-        </div>
-
-        {/* Right: + Add Business CTA */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            type="button"
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-1.5 py-2 px-4 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-extrabold shadow-sm shadow-sky-600/20 transition-all transform active:scale-95 cursor-pointer"
-          >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            <span>Add Business</span>
-          </button>
         </div>
 
       </div>
