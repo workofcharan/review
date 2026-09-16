@@ -113,9 +113,6 @@ export default function AdminBusinessesHubView() {
           <div className="text-2xl sm:text-3xl font-extrabold text-emerald-700 tracking-tight">
             {totalGoogleConverted}
           </div>
-          <div className="text-[11px] text-emerald-700 font-bold">
-            100% 5★ Converted
-          </div>
         </div>
 
         {/* Metric 5 */}
