@@ -92,8 +92,8 @@ export default function DashboardView() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] max-w-[1600px] mx-auto px-3 sm:px-6 py-4 flex flex-col gap-4 bg-slate-50">
-      {/* Top Admin Breadcrumb Bar */}
-      <div className="flex items-center justify-between gap-3 bg-white p-3.5 px-4 rounded-2xl border border-slate-200/90 shadow-2xs">
+      {/* Top Admin Breadcrumb Bar - Frozen Sticky */}
+      <div className="sticky top-[4.25rem] z-30 flex items-center justify-between gap-3 bg-white/95 backdrop-blur-md p-3.5 px-4 rounded-2xl border border-slate-200/90 shadow-sm">
         <div className="flex items-center gap-2.5">
           <button
             type="button"
@@ -159,7 +159,7 @@ export default function DashboardView() {
 
         {/* Desktop Slide Bar (Collapsible Sidebar) - Frozen / Sticky */}
         <aside 
-          className={`hidden md:flex flex-col justify-between shrink-0 sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto rounded-3xl bg-white border border-slate-200/90 shadow-sm p-3 transition-all duration-300 ease-in-out z-20 ${
+          className={`hidden md:flex flex-col justify-between shrink-0 sticky top-[8.25rem] self-start max-h-[calc(100vh-9.5rem)] overflow-y-auto rounded-3xl bg-white border border-slate-200/90 shadow-sm p-3 transition-all duration-300 ease-in-out z-20 ${
             isCollapsed ? 'w-18' : 'w-64'
           }`}
         >
