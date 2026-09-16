@@ -56,38 +56,7 @@ export default function AdminBusinessesHubView() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-8 animate-fade-in">
-      {/* Top Banner: Admin Multi-Business Control Center */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-sky-950 to-indigo-950 p-6 sm:p-8 text-white shadow-xl border border-slate-800">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-bold uppercase tracking-wider">
-              <Layers className="w-3.5 h-3.5" />
-              <span>Admin Multi-Business Master Hub</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-              Business Operations Command
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Select any handled business to open its dedicated command center, inspect live QR feedback streams, configure adaptive question flows, and manage private complaint resolution.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="px-5 py-3 rounded-2xl bg-sky-500 hover:bg-sky-400 text-white font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-sky-500/25 transition-all transform active:scale-95 cursor-pointer"
-            >
-              <Plus className="w-4 h-4 stroke-[3]" />
-              <span>Register New Business</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Subtle decorative glow */}
-        <div className="absolute -right-12 -top-12 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      </div>
-
+    <div className="min-h-[calc(100vh-4rem)] max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6 animate-fade-in">
       {/* Aggregate KPI Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         {/* Metric 1 */}
@@ -166,16 +135,28 @@ export default function AdminBusinessesHubView() {
 
       {/* Handled Businesses Grid */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-sm font-extrabold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-            <span>Handled Businesses</span>
-            <span className="px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 text-[11px] font-bold">
-              {businesses.length}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-base font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
+              <span>Handled Businesses</span>
+              <span className="px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 text-xs font-extrabold">
+                {businesses.length}
+              </span>
+            </h2>
+            <span className="text-xs text-slate-400 font-medium hidden sm:inline">•</span>
+            <span className="text-xs text-slate-500 hidden sm:inline">
+              Select a business to open its Command Center
             </span>
-          </h2>
-          <span className="text-xs text-slate-500">
-            Click any business to enter its Command Center
-          </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsAddModalOpen(true)}
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-sm shadow-sky-600/20 transition-all transform active:scale-95 cursor-pointer self-start sm:self-auto"
+          >
+            <Plus className="w-4 h-4 stroke-[3]" />
+            <span>Register New Business</span>
+          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

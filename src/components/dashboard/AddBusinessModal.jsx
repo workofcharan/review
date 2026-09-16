@@ -60,59 +60,59 @@ const CATEGORIES = [
     id: 'restaurant', 
     label: 'Restaurant & Dining', 
     icon: '🍽️', 
-    defaultType: 'Fine Dining & Hospitality',
-    defaultTagline: 'Exquisite Culinary Flavors & Exceptional Table Service',
+    defaultType: 'Fine Dining & Craft Kitchen',
+    defaultTagline: 'Artisanal Flavors, Fresh Local Ingredients & Warm Hospitality',
     defaultColor: '#e11d48',
-    step1Greeting: 'How was your dining experience at',
+    step1Greeting: 'How was your meal and visit at',
     defaultHighlights: [
-      'Delicious & Flavorful Dishes',
-      'Warm & Attentive Table Service',
-      'Beautiful Ambiance & Cozy Vibe',
-      'Fast & Fresh Kitchen Delivery',
-      'Handcrafted Cocktails & Drinks',
-      'Great Value & Portion Sizes'
+      'Delicious & Exquisite Flavors',
+      'Attentive & Friendly Table Service',
+      'Prompt Kitchen Turnaround',
+      'Cozy & Stylish Dining Ambience',
+      'Craft Drinks & Fresh Pairings',
+      'Generous Portions & Great Presentation'
     ]
   },
   { 
     id: 'cafe', 
-    label: 'Café & Bakery', 
+    label: 'Cafe & Bakery', 
     icon: '☕', 
-    defaultType: 'Artisanal Coffee & Bakery',
-    defaultTagline: 'Single-Origin Brews, Fresh Pastries & Cozy Workspaces',
+    defaultType: 'Specialty Coffee & Artisan Roastery',
+    defaultTagline: 'Single-Origin Brews, Fresh Pastries & Cozy Community Space',
     defaultColor: '#d97706',
-    step1Greeting: 'How was your visit at',
+    step1Greeting: 'How was your coffee & pastry at',
     defaultHighlights: [
-      'Signature Specialty Coffee & Latte Art',
-      'Fresh Flaky Artisanal Pastries',
-      'Warm & Welcoming Barista Team',
-      'Relaxing Music & Aesthetic Ambiance',
-      'Fast Wi-Fi & Laptop-Friendly Seating',
-      'Quick Service & Prompt Order Delivery'
+      'Exceptional Specialty Coffee',
+      'Fresh & Flaky Artisan Pastries',
+      'Fast & Friendly Baristas',
+      'Chill Ambience & Comfortable Seating',
+      'Reliable Wi-Fi & Work Vibe',
+      'Smooth Mobile Ordering'
     ]
   },
   { 
-    id: 'hotel', 
+    id: 'hospitality', 
     label: 'Hotel & Resort', 
     icon: '🏨', 
     defaultType: 'Boutique Hotel & Luxury Suites',
-    defaultTagline: 'Exceptional Comfort, World-Class Concierge & Unforgettable Stays',
-    defaultColor: '#0d9488',
+    defaultTagline: 'Unmatched Comfort, Impeccable Concierge & Stunning Views',
+    defaultColor: '#059669',
     step1Greeting: 'How was your stay experience at',
     defaultHighlights: [
-      'Immaculate Room & Luxury Bedding',
-      'Exceptional Concierge & Front Desk',
-      'Stunning Views & Relaxing Pool Deck',
-      'Delicious Breakfast & Room Service',
-      'Fast & Smooth Check-in Experience',
-      'Pristine Spa & Fitness Amenities'
+      'Luxurious & Spotless Suites',
+      'Warm & Attentive Concierge Staff',
+      'Fast Check-In & Departure',
+      'Delicious Gourmet Breakfast',
+      'Serene & Relaxing Amenities',
+      'Prime Central Location'
     ]
   },
   { 
     id: 'salon', 
     label: 'Salon & Spa', 
     icon: '💇', 
-    defaultType: 'Hair, Beauty & Wellness Spa',
-    defaultTagline: 'Couture Styling, Rejuvenating Facials & Radiant Looks',
+    defaultType: 'Luxury Hair Salon & Day Spa',
+    defaultTagline: 'Bespoke Hair Transformations, Rejuvenating Treatments & Radiance',
     defaultColor: '#db2777',
     step1Greeting: 'How was your styling & spa experience at',
     defaultHighlights: [
@@ -157,32 +157,14 @@ const CATEGORIES = [
       'Great Quality Products',
       'Hassle-Free Return & Exchange Policy'
     ]
-  },
-  { 
-    id: 'pet', 
-    label: 'Pet Care & Vet', 
-    icon: '🐾', 
-    defaultType: 'Veterinary Clinic & Pet Wellness Center',
-    defaultTagline: 'Gentle Veterinary Medicine & Loving Care for Your Pets',
-    defaultColor: '#10b981',
-    step1Greeting: 'How was your pet\'s visit at',
-    defaultHighlights: [
-      'Gentle & Caring Veterinarians',
-      'Stress-Free Pet Handling',
-      'Thorough Checkup & Clear Guidance',
-      'Clean & Odor-Free Clinic',
-      'Affordable Wellness Packages',
-      'Compassionate Front Desk Staff'
-    ]
   }
 ];
-
-const PRESET_EMOJIS = ['🏋️', '🦷', '🍽️', '☕', '🏨', '💇', '🚗', '🛍️', '🐾', '🧘', '⚡', '✨', '🩺', '🍕', '💆', '💈', '🥗', '🚲'];
 
 export default function AddBusinessModal({ isOpen, onClose }) {
   const { addBusiness, navigateTo } = useApp();
 
   const [name, setName] = useState('');
+  const [slug, setSlug] = useState('');
   const [category, setCategory] = useState('gym');
   const [type, setType] = useState('Modern Fitness Club & Personal Training');
   const [tagline, setTagline] = useState('State-of-the-Art Equipment, Inspiring Coaches & Peak Energy');
@@ -220,9 +202,10 @@ export default function AddBusinessModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const handleNameChange = (e) => {
-    const val = e.target.value;
+  const handleNameChange = (val) => {
     setName(val);
+    const autoSlug = val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    setSlug(autoSlug);
   };
 
   const handleCategorySelect = (cat) => {
@@ -238,13 +221,13 @@ export default function AddBusinessModal({ isOpen, onClose }) {
     if (!name.trim()) return;
 
     setIsSubmitting(true);
-    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || `business-${Date.now()}`;
+    const finalSlug = slug.trim() || name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || `biz-${Date.now()}`;
     const selectedCatConfig = CATEGORIES.find(c => c.id === category) || CATEGORIES[0];
     const greetingPrefix = selectedCatConfig.step1Greeting || 'How was your visit at';
 
     const newBusinessPayload = {
       name: name.trim(),
-      slug,
+      slug: finalSlug,
       category,
       type,
       tagline,
@@ -316,6 +299,8 @@ export default function AddBusinessModal({ isOpen, onClose }) {
     addBusiness(newBusinessPayload);
     setIsSubmitting(false);
     onClose();
+    setName('');
+    setSlug('');
     navigateTo('/dashboard');
   };
 
@@ -344,7 +329,7 @@ export default function AddBusinessModal({ isOpen, onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-colors"
+            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -363,15 +348,15 @@ export default function AddBusinessModal({ isOpen, onClose }) {
                 <button
                   type="button"
                   key={cat.id}
-                  onClick={() => handleSelectCategory(cat)}
+                  onClick={() => handleCategorySelect(cat)}
                   className={`p-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
-                    selectedCategory === cat.id
+                    category === cat.id
                       ? 'bg-sky-50 border-sky-500 text-sky-700 font-bold ring-1 ring-sky-500/20 shadow-xs'
                       : 'bg-slate-50/80 hover:bg-slate-100 border-slate-200 text-slate-700'
                   }`}
                 >
                   <span className="text-base leading-none">{cat.icon}</span>
-                  <span className="text-[9px] truncate w-full">{cat.id}</span>
+                  <span className="text-[9px] truncate w-full">{cat.label.split(' ')[0]}</span>
                 </button>
               ))}
             </div>
@@ -517,14 +502,14 @@ export default function AddBusinessModal({ isOpen, onClose }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+              className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || !name.trim()}
-              className="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm transition-all"
+              className="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 disabled:opacity-50 text-white text-xs font-extrabold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Create Business Profile</span>
