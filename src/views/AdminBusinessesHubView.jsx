@@ -135,7 +135,7 @@ export default function AdminBusinessesHubView() {
 
       {/* Handled Businesses Grid */}
       <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
+        <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2.5">
             <h2 className="text-base font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
               <span>Handled Businesses</span>
@@ -148,15 +148,6 @@ export default function AdminBusinessesHubView() {
               Select a business to open its Command Center
             </span>
           </div>
-
-          <button
-            type="button"
-            onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-sm shadow-sky-600/20 transition-all transform active:scale-95 cursor-pointer self-start sm:self-auto"
-          >
-            <Plus className="w-4 h-4 stroke-[3]" />
-            <span>Register New Business</span>
-          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
