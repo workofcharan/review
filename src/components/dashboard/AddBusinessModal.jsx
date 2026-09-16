@@ -337,31 +337,6 @@ export default function AddBusinessModal({ isOpen, onClose }) {
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Quick Category Templates */}
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Auto-Fill Category Preset:</span>
-            </label>
-            <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
-              {CATEGORIES.map(cat => (
-                <button
-                  type="button"
-                  key={cat.id}
-                  onClick={() => handleCategorySelect(cat)}
-                  className={`p-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
-                    category === cat.id
-                      ? 'bg-sky-50 border-sky-500 text-sky-700 font-bold ring-1 ring-sky-500/20 shadow-xs'
-                      : 'bg-slate-50/80 hover:bg-slate-100 border-slate-200 text-slate-700'
-                  }`}
-                >
-                  <span className="text-base leading-none">{cat.icon}</span>
-                  <span className="text-[9px] truncate w-full">{cat.label.split(' ')[0]}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {/* Business Name */}
             <div className="space-y-1">
