@@ -60,7 +60,7 @@ When you open the application, you land directly on the **Admin Multi-Business M
 ## 📊 2. Dedicated Business Workspace (`/dashboard`)
 
 When you click **"Open Business Workspace"** on any business card, you enter its dedicated Command Center with its collapsible **Command Slide Bar** on the left:
-
+   
 ### Slide Bar Navigation Tabs:
 
 | Tab | Purpose & Features |

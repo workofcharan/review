@@ -62,7 +62,7 @@ export default function AdminBusinessesHubView() {
         {/* Metric 1 */}
         <div className="saas-card rounded-2xl p-4 sm:p-5 space-y-2 bg-white">
           <div className="flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
-            <span>Businesses Handled</span>
+            <span>Businesses Onboarded</span>
             <Building2 className="w-4 h-4 text-sky-600" />
           </div>
           <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -130,12 +130,12 @@ export default function AdminBusinessesHubView() {
         </div>
       </div>
 
-      {/* Handled Businesses Grid */}
+      {/* Onboarded Businesses Grid */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2.5">
             <h2 className="text-base font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-              <span>Handled Businesses</span>
+              <span>Onboarded Businesses</span>
               <span className="px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 text-xs font-extrabold">
                 {businesses.length}
               </span>
