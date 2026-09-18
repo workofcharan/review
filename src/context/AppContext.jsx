@@ -4,10 +4,10 @@ import { INITIAL_BUSINESSES, INITIAL_FEEDBACKS, INITIAL_AI_INSIGHTS } from '../d
 const AppContext = createContext(null);
 
 const STORAGE_KEYS = {
-  BUSINESSES: 'revpulse_businesses_v5',
-  SELECTED_BIZ: 'revpulse_selected_biz_v5',
-  FEEDBACKS: 'revpulse_feedbacks_v5',
-  DELETED_BIZ_IDS: 'revpulse_deleted_biz_ids_v5',
+  BUSINESSES: 'revpulse_businesses_v6',
+  SELECTED_BIZ: 'revpulse_selected_biz_v6',
+  FEEDBACKS: 'revpulse_feedbacks_v6',
+  DELETED_BIZ_IDS: 'revpulse_deleted_biz_ids_v6',
 };
 
 export function AppProvider({ children }) {
