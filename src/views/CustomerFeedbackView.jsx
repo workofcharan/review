@@ -4,14 +4,25 @@ import QuestionFlowEngine from '../components/customer/QuestionFlowEngine';
 import { Sparkles, Utensils, Building2, Coffee, ShoppingBag, ArrowLeft, Dumbbell, Car, Scissors, HeartPulse, PawPrint } from 'lucide-react';
 
 export default function CustomerFeedbackView({ forcedSlug }) {
-  const { businesses, submitFeedback, currentRoute, navigateTo } = useApp();
+  const { businesses, submitFeedback, currentRoute, navigateTo, activeBusiness } = useApp();
 
   let slug = forcedSlug;
-  if (!slug && currentRoute.startsWith('/b/')) {
-    slug = currentRoute.replace('/b/', '').split('?')[0];
+  if (!slug) {
+    if (currentRoute.includes('/b/')) {
+      slug = currentRoute.substring(currentRoute.indexOf('/b/') + 3).split('?')[0].split('#')[0].replace(/\/$/, '');
+    }
   }
 
-  const business = businesses.find(b => b.slug === slug) || businesses[0];
+  // Check URL query parameters or window.location if not set
+  if (!slug && typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    slug = params.get('b') || params.get('biz') || params.get('slug') || '';
+    if (!slug && window.location.hash.includes('/b/')) {
+      slug = window.location.hash.substring(window.location.hash.indexOf('/b/') + 3).split('?')[0].replace(/\/$/, '');
+    }
+  }
+
+  const business = businesses.find(b => b.slug === slug || b.id === slug) || activeBusiness || businesses[0];
 
   const getCategoryIcon = (category) => {
     switch (category) {

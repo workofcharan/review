@@ -8,14 +8,18 @@ import {
   Sparkles,
   Eye,
   Palette,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Star
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { generateQrDataUrl } from '../../utils/qrHelper';
+import { generateQrDataUrl, buildFeedbackUrl } from '../../utils/qrHelper';
+
+const DEFAULT_REVIEW_URL = "https://g.page/r/CVfAf-zR7rBLEBE/review";
 
 export default function QrStudioTab() {
   const { activeBusiness } = useApp();
 
+  const [qrMode, setQrMode] = useState('feedback_flow'); // 'feedback_flow' or 'direct_google'
   const [cardFormat, setCardFormat] = useState('table_tent');
   const [tabletopBg, setTabletopBg] = useState('studio'); // studio, wood, marble
   const [headline, setHeadline] = useState('How was your visit today?');
@@ -25,14 +29,16 @@ export default function QrStudioTab() {
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [isCopied, setIsCopied] = useState(false);
 
-  const baseUrl = window.location.origin + window.location.pathname;
-  const targetFeedbackUrl = `${baseUrl}#/b/${activeBusiness.slug}`;
+  const feedbackFlowUrl = buildFeedbackUrl(activeBusiness.slug);
+  const directGoogleUrl = activeBusiness.publicReviewUrl || DEFAULT_REVIEW_URL;
+  const targetFeedbackUrl = qrMode === 'direct_google' ? directGoogleUrl : feedbackFlowUrl;
 
   useEffect(() => {
     async function loadQr() {
       const url = await generateQrDataUrl(targetFeedbackUrl, {
         darkColor: qrColor,
-        lightColor: '#ffffff'
+        lightColor: '#ffffff',
+        width: 600
       });
       setQrDataUrl(url || '');
     }
@@ -49,7 +55,7 @@ export default function QrStudioTab() {
     if (!qrDataUrl) return;
     const link = document.createElement('a');
     link.href = qrDataUrl;
-    link.download = `${activeBusiness.slug}-qr-code.png`;
+    link.download = `${activeBusiness.slug}-${qrMode}-qr.png`;
     link.click();
   };
 
@@ -71,14 +77,14 @@ export default function QrStudioTab() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleCopyLink}
-            className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors"
+            className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
           >
             {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
-            <span>{isCopied ? 'Link Copied!' : 'Copy Direct URL'}</span>
+            <span>{isCopied ? 'Link Copied!' : 'Copy Scanned URL'}</span>
           </button>
           <button
             onClick={handlePrint}
-            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all"
+            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
           >
             <Printer className="w-3.5 h-3.5" />
             <span>Print Table Flyer</span>
@@ -93,6 +99,44 @@ export default function QrStudioTab() {
             <div className="flex items-center gap-2 text-sky-600 border-b border-slate-100 pb-3">
               <Sliders className="w-4 h-4" />
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Design & Layout Settings</h3>
+            </div>
+
+            {/* QR Destination Mode Selector */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-700">QR Scan Destination Mode:</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setQrMode('feedback_flow')}
+                  className={`p-2.5 rounded-xl text-left border transition-all text-xs cursor-pointer ${
+                    qrMode === 'feedback_flow'
+                      ? 'bg-sky-50 border-sky-500 text-sky-900 ring-1 ring-sky-400 font-bold'
+                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    <span>Smart 2-Step Flow</span>
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-normal mt-0.5">Rates & AI Review Drafter</div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setQrMode('direct_google')}
+                  className={`p-2.5 rounded-xl text-left border transition-all text-xs cursor-pointer ${
+                    qrMode === 'direct_google'
+                      ? 'bg-emerald-50 border-emerald-500 text-emerald-900 ring-1 ring-emerald-400 font-bold'
+                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+                    <span>Direct Google Link</span>
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-normal mt-0.5">Instant Google Maps Page</div>
+                </button>
+              </div>
             </div>
 
             {/* Template Format Selector */}

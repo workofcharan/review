@@ -62,11 +62,44 @@ export function AppProvider({ children }) {
     }
   });
 
-  // URL Hash routing state
-  const [currentRoute, setCurrentRoute] = useState(() => {
-    const hash = window.location.hash.replace('#', '') || '/';
-    return hash;
-  });
+  // Helper function to resolve route from hash, search params, or pathname
+  const resolveRoute = () => {
+    try {
+      const hash = (window.location.hash || '').replace(/^#\/?/, '').trim();
+      if (hash === 'review' || hash === 'google' || hash === 'r') {
+        window.location.href = 'https://g.page/r/CVfAf-zR7rBLEBE/review';
+        return '/review';
+      }
+      if (hash) {
+        return hash.startsWith('/') ? hash : `/${hash}`;
+      }
+
+      // Check search params (e.g. ?b=dr-c-dental-clinic or ?biz=...)
+      const params = new URLSearchParams(window.location.search);
+      const bizParam = params.get('b') || params.get('biz') || params.get('slug');
+      if (bizParam) {
+        return `/b/${bizParam}`;
+      }
+
+      // Check pathname (e.g. /b/dr-c-dental-clinic or /dashboard)
+      const pathname = window.location.pathname || '';
+      if (pathname.includes('/b/')) {
+        const slugPart = pathname.substring(pathname.indexOf('/b/'));
+        return slugPart;
+      }
+      if (pathname === '/review' || pathname === '/google' || pathname === '/r') {
+        window.location.href = 'https://g.page/r/CVfAf-zR7rBLEBE/review';
+        return '/review';
+      }
+
+      return '/';
+    } catch {
+      return '/';
+    }
+  };
+
+  // URL routing state
+  const [currentRoute, setCurrentRoute] = useState(resolveRoute);
 
   // Sync state to localStorage
   useEffect(() => {
@@ -95,29 +128,23 @@ export function AppProvider({ children }) {
 
   // Handle browser hash changes & direct review redirect routes
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '') || '/';
-      if (hash === '/review' || hash === '/google' || hash === '/r' || hash === 'review') {
-        window.location.href = 'https://g.page/r/CVfAf-zR7rBLEBE/review';
-        return;
-      }
-      setCurrentRoute(hash);
+    const handleUrlChange = () => {
+      const resolved = resolveRoute();
+      setCurrentRoute(resolved);
     };
 
-    // Check initial hash on load
-    const initialHash = window.location.hash.replace('#', '') || '/';
-    if (initialHash === '/review' || initialHash === '/google' || initialHash === '/r' || initialHash === 'review') {
-      window.location.href = 'https://g.page/r/CVfAf-zR7rBLEBE/review';
-      return;
-    }
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('hashchange', handleUrlChange);
+    window.addEventListener('popstate', handleUrlChange);
+    return () => {
+      window.removeEventListener('hashchange', handleUrlChange);
+      window.removeEventListener('popstate', handleUrlChange);
+    };
   }, []);
 
   const navigateTo = (route) => {
-    window.location.hash = route;
-    setCurrentRoute(route);
+    const formatted = route.startsWith('/') ? route : `/${route}`;
+    window.location.hash = formatted;
+    setCurrentRoute(formatted);
   };
 
   // Get current active business object
