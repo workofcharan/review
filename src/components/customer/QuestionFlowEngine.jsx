@@ -207,25 +207,25 @@ export default function QuestionFlowEngine({
     const ratingColor = selectedRating >= 4 ? 'text-amber-500' : selectedRating === 3 ? 'text-amber-600' : 'text-rose-500';
 
     return (
-      <div className="space-y-5 animate-slide-up">
+      <div className="space-y-4 animate-slide-up">
         {/* Question Title & Subtitle */}
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           <div className={`flex items-center gap-1.5 text-xs font-bold ${ratingColor}`}>
             <span>{'★'.repeat(selectedRating)}</span>
             <span className="text-slate-500 font-medium">({selectedRating} {selectedRating === 1 ? 'Star' : 'Stars'} Selected)</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+          <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight">
             {ratingThreeOptions.title}
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
+          <p className="text-xs text-slate-500 font-medium leading-relaxed">
             {ratingThreeOptions.subtitle}
           </p>
         </div>
 
         {/* Exactly 3 Tailored Options for this Star Rating */}
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
-            <span>Select Your Key Highlights / Feedback:</span>
+            <span>Select Key Highlights:</span>
             <button
               type="button"
               onClick={() => {
@@ -245,7 +245,7 @@ export default function QuestionFlowEngine({
               <span>↻ Shuffle Options</span>
             </button>
           </div>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 gap-1.5">
             {ratingThreeOptions.options.map((opt) => {
               const isSelected = selectedList.includes(opt.label);
               return (
@@ -253,14 +253,14 @@ export default function QuestionFlowEngine({
                   key={opt.id}
                   type="button"
                   onClick={() => handleToggleOption(opt.label)}
-                  className={`w-full flex items-center justify-between p-3 sm:p-3.5 rounded-2xl border text-left transition-all duration-200 transform active:scale-[0.99] cursor-pointer ${
+                  className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl border text-left transition-all duration-200 transform active:scale-[0.99] cursor-pointer ${
                     isSelected
-                      ? 'bg-sky-50/90 border-sky-500 text-sky-950 shadow-sm ring-1 ring-sky-400/50'
-                      : 'bg-white border-slate-200/90 text-slate-700 hover:border-sky-300 hover:bg-sky-50/30'
+                      ? 'bg-sky-50/90 border-sky-500 text-sky-950 shadow-xs ring-1 ring-sky-400/50'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-sky-300 hover:bg-sky-50/30'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 transition-transform ${
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-base shrink-0 transition-transform ${
                       isSelected ? 'bg-sky-200/60 scale-105' : 'bg-slate-100'
                     }`}>
                       {opt.emoji}
@@ -269,7 +269,7 @@ export default function QuestionFlowEngine({
                       <div className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
                         {opt.label}
                       </div>
-                      <div className="text-[11px] text-slate-500 leading-tight">
+                      <div className="text-[10px] text-slate-500 leading-tight line-clamp-1">
                         {opt.desc}
                       </div>
                     </div>
@@ -285,12 +285,47 @@ export default function QuestionFlowEngine({
           </div>
         </div>
 
+        {/* Live AI Review Draft Box */}
+        <div className="space-y-1.5 pt-1">
+          <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+            <span className="flex items-center gap-1 text-sky-700">
+              <span>✨ Ready-to-Post Review for {business.name}:</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                const newSeed = Date.now() + Math.floor(Math.random() * 10000000);
+                setScanSeed(newSeed);
+              }}
+              className="text-[10px] text-sky-600 hover:text-sky-800 font-bold hover:underline cursor-pointer"
+            >
+              ↻ Regenerate Draft
+            </button>
+          </div>
+
+          <div className="relative rounded-2xl bg-slate-50 border border-slate-200 p-3 shadow-inner space-y-2">
+            <textarea
+              rows={3}
+              value={activeDraftText || activeReviewDraft}
+              onChange={(e) => setActiveDraftText(e.target.value)}
+              className="w-full bg-transparent text-xs sm:text-sm text-slate-800 leading-relaxed focus:outline-none resize-none font-normal"
+              placeholder="Your custom Google review draft will appear here..."
+            />
+            <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/60">
+              <span className="font-semibold text-emerald-700 flex items-center gap-1">
+                <Check className="w-3 h-3 stroke-[3]" />
+                <span>Tailored for {business.name}</span>
+              </span>
+              <span>1-Click Copy & Post</span>
+            </div>
+          </div>
+        </div>
 
         {/* Direct Google Review Redirection Button */}
         <button
           type="button"
-          onClick={() => handleDirectGoogleSubmit(activeReviewDraft)}
-          className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black text-sm sm:text-base shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
+          onClick={() => handleDirectGoogleSubmit(activeDraftText || activeReviewDraft)}
+          className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
         >
           {redirecting ? (
             <div className="flex items-center gap-2">
@@ -300,7 +335,7 @@ export default function QuestionFlowEngine({
           ) : (
             <>
               <Copy className="w-4 h-4" />
-              <span>Copy Review & Open Google Maps</span>
+              <span>Copy Review & Post on Google Maps</span>
               <ExternalLink className="w-4 h-4 opacity-85" />
             </>
           )}
