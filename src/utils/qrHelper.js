@@ -2,8 +2,20 @@ import QRCode from 'qrcode';
 
 /**
  * Builds the canonical scan URL for a business feedback flow
+ * Supports passing either a business object or a slug string
  */
-export function buildFeedbackUrl(slug, customBase = '') {
+export function buildFeedbackUrl(businessOrSlug, customBase = '') {
+  if (!businessOrSlug) return '';
+  
+  let slug = '';
+  let business = null;
+  if (typeof businessOrSlug === 'object') {
+    business = businessOrSlug;
+    slug = business.slug || '';
+  } else {
+    slug = String(businessOrSlug);
+  }
+  
   if (!slug) return '';
   
   // If a custom base is provided (e.g. production domain or LAN IP)
@@ -18,6 +30,22 @@ export function buildFeedbackUrl(slug, customBase = '') {
 
   // Remove trailing index.html or extra slashes
   base = base.replace(/\/index\.html$/, '').replace(/\/+$/, '');
+  
+  // If business metadata is available, append query parameters for 100% reliable cross-device QR scanning
+  if (business) {
+    const params = new URLSearchParams();
+    if (business.name) params.set('n', business.name);
+    if (business.category) params.set('c', business.category);
+    if (business.logo) params.set('l', business.logo);
+    if (business.type) params.set('t', business.type);
+    if (business.tagline) params.set('tg', business.tagline);
+    if (business.publicReviewUrl) params.set('r', business.publicReviewUrl);
+    if (business.brandColors?.primary) params.set('col', business.brandColors.primary);
+    
+    const qs = params.toString();
+    return `${base}/#/b/${slug}${qs ? `?${qs}` : ''}`;
+  }
+
   return `${base}/#/b/${slug}`;
 }
 

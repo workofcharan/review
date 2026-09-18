@@ -26,7 +26,7 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
   const qrColor = biz?.brandColors?.primary || '#0284c7';
 
   // Determine active destination URL based on selected mode
-  const feedbackFlowUrl = biz ? buildFeedbackUrl(biz.slug) : '';
+  const feedbackFlowUrl = biz ? buildFeedbackUrl(biz) : '';
   const fallbackDirectUrl = biz ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.name)}` : 'https://www.google.com/maps';
   const directGoogleUrl = biz?.publicReviewUrl || fallbackDirectUrl;
   const activeUrl = qrMode === 'direct_google' ? directGoogleUrl : feedbackFlowUrl;
@@ -81,6 +81,7 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
     if (qrMode === 'direct_google') {
       window.open(directGoogleUrl, '_blank', 'noopener,noreferrer');
     } else {
+      setSelectedBusinessId(biz.id);
       navigateTo(`/b/${biz.slug}`);
     }
   };

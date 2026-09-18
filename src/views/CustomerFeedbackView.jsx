@@ -5,7 +5,7 @@ import { Sparkles, Utensils, Building2, Coffee, ShoppingBag, ArrowLeft, Dumbbell
 import { inferCategoryFromBusiness } from '../utils/aiReviewGenerator';
 
 export default function CustomerFeedbackView({ forcedSlug }) {
-  const { businesses, submitFeedback, currentRoute, navigateTo, activeBusiness } = useApp();
+  const { businesses, submitFeedback, currentRoute, navigateTo, activeBusiness, addBusiness } = useApp();
 
   let slug = forcedSlug || '';
   if (!slug) {
@@ -23,8 +23,60 @@ export default function CustomerFeedbackView({ forcedSlug }) {
     }
   }
 
+  // Extract query parameters from hash or search (supports cross-device QR scanning)
+  const getUrlParams = () => {
+    if (typeof window === 'undefined') return new URLSearchParams();
+    const hash = window.location.hash || '';
+    if (hash.includes('?')) {
+      return new URLSearchParams(hash.substring(hash.indexOf('?') + 1));
+    }
+    if (window.location.search) {
+      return new URLSearchParams(window.location.search);
+    }
+    return new URLSearchParams();
+  };
+
   const normalizedSlug = slug ? slug.toLowerCase().trim() : '';
-  const business = (normalizedSlug ? businesses.find(b => b.slug.toLowerCase() === normalizedSlug || b.id === slug) : null) || activeBusiness || businesses[0];
+  let business = normalizedSlug 
+    ? businesses.find(b => b.slug.toLowerCase() === normalizedSlug || b.id === slug) 
+    : null;
+
+  // If business was not found in localStorage (e.g. scanned from a mobile phone), construct dynamically from URL parameters!
+  if (!business && normalizedSlug) {
+    const p = getUrlParams();
+    const pName = p.get('n') || p.get('name') || '';
+    const pCat = p.get('c') || p.get('cat') || p.get('category') || '';
+    const pLogo = p.get('l') || p.get('logo') || '';
+    const pType = p.get('t') || p.get('type') || '';
+    const pTagline = p.get('tg') || p.get('tagline') || '';
+    const pRevUrl = p.get('r') || p.get('revUrl') || p.get('publicReviewUrl') || '';
+    const pCol = p.get('col') || p.get('color') || '#0284c7';
+
+    const formattedName = pName || normalizedSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const detectedCat = pCat || inferCategoryFromBusiness({ name: formattedName, type: pType, logo: pLogo });
+
+    business = {
+      id: `biz-${normalizedSlug}`,
+      name: formattedName,
+      slug: normalizedSlug,
+      category: detectedCat,
+      type: pType || (detectedCat === 'gym' ? 'Modern Fitness & Training Club' : detectedCat === 'cafe' ? 'Specialty Coffee & Bakery' : detectedCat === 'restaurant' ? 'Fine Dining & Craft Kitchen' : detectedCat === 'salon' ? 'Luxury Hair & Beauty Salon' : detectedCat === 'hotel' ? 'Boutique Hotel & Suites' : detectedCat === 'automotive' ? 'Auto Care & Performance Detailing' : detectedCat === 'pet' ? 'Veterinary Hospital & Pet Care' : 'Professional Care & Services'),
+      tagline: pTagline || 'Delivering exceptional customer experiences and 5-star care',
+      logo: pLogo || (detectedCat === 'gym' ? '🏋️' : detectedCat === 'cafe' ? '☕' : detectedCat === 'restaurant' ? '🍽️' : detectedCat === 'salon' ? '💇' : detectedCat === 'hotel' ? '🏨' : detectedCat === 'automotive' ? '🚗' : detectedCat === 'pet' ? '🐾' : detectedCat === 'healthcare' ? '🦷' : '✨'),
+      brandColors: {
+        primary: pCol,
+        accent: pCol,
+        bgGradient: 'from-slate-900 via-slate-800 to-slate-950'
+      },
+      publicReviewUrl: pRevUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formattedName)}`,
+      minPublicRating: 4
+    };
+  }
+
+  // Fallback to activeBusiness or first available
+  if (!business) {
+    business = activeBusiness || businesses[0];
+  }
 
   const getCategoryIcon = (category) => {
     switch (category) {

@@ -260,7 +260,10 @@ export default function AdminBusinessesHubView() {
 
                     <button
                       type="button"
-                      onClick={() => navigateTo(`/b/${biz.slug}`)}
+                      onClick={() => {
+                        setSelectedBusinessId(biz.id);
+                        navigateTo(`/b/${biz.slug}`);
+                      }}
                       className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                     >
                       <ExternalLink className="w-3 h-3 text-slate-500" />
