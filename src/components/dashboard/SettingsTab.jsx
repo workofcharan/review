@@ -12,6 +12,7 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { inferCategoryFromBusiness } from '../../utils/aiReviewGenerator';
 
 export default function SettingsTab() {
   const { activeBusiness, updateBusiness, resetDemoData, removeBusiness, navigateTo, setIsAddModalOpen } = useApp();
@@ -23,7 +24,7 @@ export default function SettingsTab() {
     type: activeBusiness.type || '',
     tagline: activeBusiness.tagline || '',
     logo: activeBusiness.logo || '🍷',
-    primaryColor: activeBusiness.brandColors?.primary || '#e11d48',
+    primaryColor: activeBusiness.brandColors?.primary || '#0284c7',
     publicReviewUrl: activeBusiness.publicReviewUrl || '',
     yelpUrl: activeBusiness.yelpUrl || '',
     minPublicRating: activeBusiness.minPublicRating || 4
@@ -37,7 +38,7 @@ export default function SettingsTab() {
       type: activeBusiness.type || '',
       tagline: activeBusiness.tagline || '',
       logo: activeBusiness.logo || '🍷',
-      primaryColor: activeBusiness.brandColors?.primary || '#e11d48',
+      primaryColor: activeBusiness.brandColors?.primary || '#0284c7',
       publicReviewUrl: activeBusiness.publicReviewUrl || '',
       yelpUrl: activeBusiness.yelpUrl || '',
       minPublicRating: activeBusiness.minPublicRating || 4
@@ -52,15 +53,32 @@ export default function SettingsTab() {
 
   const handleSave = (e) => {
     e.preventDefault();
+    const cleanSlug = (formData.slug || formData.name || 'business')
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    const detectedCategory = inferCategoryFromBusiness({
+      name: formData.name,
+      type: formData.type,
+      tagline: formData.tagline,
+      logo: formData.logo,
+      category: activeBusiness.category
+    });
+
     updateBusiness(activeBusiness.id, {
       name: formData.name,
-      slug: formData.slug,
+      slug: cleanSlug || activeBusiness.slug,
+      category: detectedCategory,
       type: formData.type,
       tagline: formData.tagline,
       logo: formData.logo,
       brandColors: {
         ...activeBusiness.brandColors,
-        primary: formData.primaryColor
+        primary: formData.primaryColor,
+        accent: formData.primaryColor
       },
       publicReviewUrl: formData.publicReviewUrl,
       yelpUrl: formData.yelpUrl,

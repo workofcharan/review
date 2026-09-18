@@ -279,7 +279,7 @@ export default function AdminBusinessesHubView() {
 
       {/* Business QR Code View Modal */}
       <BusinessQrModal
-        business={selectedQrBiz}
+        business={selectedQrBiz ? (businesses.find(b => b.id === selectedQrBiz.id) || selectedQrBiz) : null}
         isOpen={!!selectedQrBiz}
         onClose={() => setSelectedQrBiz(null)}
         onOpenPrintStudio={(bizId) => {

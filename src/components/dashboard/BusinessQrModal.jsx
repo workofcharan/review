@@ -16,13 +16,14 @@ import { generateQrDataUrl, buildFeedbackUrl } from '../../utils/qrHelper';
 import { useApp } from '../../context/AppContext';
 
 export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrintStudio }) {
-  const { navigateTo, setSelectedBusinessId } = useApp();
+  const { navigateTo, setSelectedBusinessId, businesses } = useApp();
   const [qrMode, setQrMode] = useState('feedback_flow'); // 'feedback_flow' or 'direct_google'
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [isCopied, setIsCopied] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const biz = business;
+  // Always resolve the latest live business object from context to ensure real-time QR updates
+  const biz = (business?.id ? businesses.find(b => b.id === business.id) : null) || business;
   const brandColor = biz?.brandColors?.primary || '#0284c7';
 
   // Determine active destination URL based on selected mode

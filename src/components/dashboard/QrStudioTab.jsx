@@ -24,27 +24,42 @@ export default function QrStudioTab() {
   const [tabletopBg, setTabletopBg] = useState('studio'); // studio, wood, marble
   const [headline, setHeadline] = useState('How was your visit today?');
   const [subheadline, setSubheadline] = useState('Scan to share your feedback in seconds');
-  const [qrColor, setQrColor] = useState(activeBusiness.brandColors?.primary || '#0284c7');
+  const [qrColor, setQrColor] = useState(activeBusiness?.brandColors?.primary || '#0284c7');
   const [tableLabel, setTableLabel] = useState('Table #');
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [isCopied, setIsCopied] = useState(false);
 
-  const feedbackFlowUrl = buildFeedbackUrl(activeBusiness);
-  const fallbackDirectUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activeBusiness.name)}`;
-  const directGoogleUrl = activeBusiness.publicReviewUrl || fallbackDirectUrl;
+  // Sync color with activeBusiness changes
+  useEffect(() => {
+    if (activeBusiness?.brandColors?.primary) {
+      setQrColor(activeBusiness.brandColors.primary);
+    }
+  }, [activeBusiness]);
+
+  const feedbackFlowUrl = activeBusiness ? buildFeedbackUrl(activeBusiness) : '';
+  const fallbackDirectUrl = activeBusiness ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activeBusiness.name)}` : 'https://www.google.com/maps';
+  const directGoogleUrl = activeBusiness?.publicReviewUrl || fallbackDirectUrl;
   const targetFeedbackUrl = qrMode === 'direct_google' ? directGoogleUrl : feedbackFlowUrl;
 
   useEffect(() => {
+    let isMounted = true;
     async function loadQr() {
       const url = await generateQrDataUrl(targetFeedbackUrl, {
-        darkColor: qrColor,
+        darkColor: '#0f172a',
         lightColor: '#ffffff',
-        width: 600
+        width: 600,
+        margin: 3,
+        errorCorrectionLevel: 'M'
       });
-      setQrDataUrl(url || '');
+      if (isMounted) {
+        setQrDataUrl(url || '');
+      }
     }
     loadQr();
-  }, [targetFeedbackUrl, qrColor]);
+    return () => {
+      isMounted = false;
+    };
+  }, [targetFeedbackUrl, activeBusiness]);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(targetFeedbackUrl);

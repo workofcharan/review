@@ -177,12 +177,23 @@ export function AppProvider({ children }) {
 
   // Update business configuration (branding, questions flow, review links)
   const updateBusiness = (businessId, updatedFields) => {
-    setBusinesses(prev => prev.map(biz => {
-      if (biz.id === businessId) {
-        return { ...biz, ...updatedFields };
+    let updatedBusiness = null;
+    setBusinesses(prev => {
+      const updated = prev.map(biz => {
+        if (biz.id === businessId) {
+          updatedBusiness = { ...biz, ...updatedFields };
+          return updatedBusiness;
+        }
+        return biz;
+      });
+      try {
+        localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to save businesses to localStorage:', e);
       }
-      return biz;
-    }));
+      return updated;
+    });
+    return updatedBusiness;
   };
 
   // Add new business
