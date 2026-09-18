@@ -165,12 +165,12 @@ export default function AddBusinessModal({ isOpen, onClose }) {
 
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
-  const [category, setCategory] = useState('gym');
-  const [type, setType] = useState('Modern Fitness Club & Personal Training');
-  const [tagline, setTagline] = useState('State-of-the-Art Equipment, Inspiring Coaches & Peak Energy');
-  const [logo, setLogo] = useState('🏋️');
+  const [category, setCategory] = useState('healthcare');
+  const [type, setType] = useState('Advanced Dental & Healthcare Clinic');
+  const [tagline, setTagline] = useState('Gentle, State-of-the-Art Care & Reassuring Doctors');
+  const [logo, setLogo] = useState('🦷');
   const [publicReviewUrl, setPublicReviewUrl] = useState('');
-  const [primaryColor, setPrimaryColor] = useState('#8b5cf6');
+  const [primaryColor, setPrimaryColor] = useState('#0284c7');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Freeze background scrolling when modal is open
@@ -337,6 +337,31 @@ export default function AddBusinessModal({ isOpen, onClose }) {
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Quick Category Presets */}
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Select Category Preset:</span>
+            </label>
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
+              {CATEGORIES.map(cat => (
+                <button
+                  type="button"
+                  key={cat.id}
+                  onClick={() => handleCategorySelect(cat)}
+                  className={`p-2 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center gap-1 ${
+                    category === cat.id
+                      ? 'bg-sky-50 border-sky-500 text-sky-700 font-bold ring-1 ring-sky-500/20 shadow-xs scale-105'
+                      : 'bg-slate-50/80 hover:bg-slate-100 border-slate-200 text-slate-700'
+                  }`}
+                >
+                  <span className="text-base leading-none select-none">{cat.icon}</span>
+                  <span className="text-[9px] truncate w-full">{cat.label.split(' ')[0]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {/* Business Name */}
             <div className="space-y-1">
@@ -367,13 +392,15 @@ export default function AddBusinessModal({ isOpen, onClose }) {
                   onChange={(e) => setLogo(e.target.value)}
                   className="w-14 px-2 py-2 text-center text-lg rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500"
                 />
-                <div className="flex gap-1 overflow-x-auto py-1">
-                  {['🦷', '☕', '🏋️', '🍽️', '💇', '🚗', '🛍️', '🐾'].map(em => (
+                <div className="flex gap-1 overflow-x-auto py-1 flex-1">
+                  {['🦷', '☕', '🏋️', '🍽️', '🏨', '💇', '🚗', '🛍️', '🐾', '✨', '⭐', '🩺'].map(em => (
                     <button
                       key={em}
                       type="button"
                       onClick={() => setLogo(em)}
-                      className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-sm cursor-pointer"
+                      className={`p-1.5 rounded-lg text-sm cursor-pointer transition-transform hover:scale-110 ${
+                        logo === em ? 'bg-sky-100 ring-1 ring-sky-400' : 'bg-slate-100 hover:bg-slate-200'
+                      }`}
                     >
                       {em}
                     </button>
