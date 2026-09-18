@@ -362,8 +362,8 @@ export default function AddBusinessModal({ isOpen, onClose }) {
             </div>
           </div>
 
+          {/* Business Name & Subtitle in 2 columns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            {/* Business Name */}
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
                 Business Name *
@@ -378,50 +378,66 @@ export default function AddBusinessModal({ isOpen, onClose }) {
               />
             </div>
 
-            {/* Logo Emoji */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1">
-                <Smile className="w-3.5 h-3.5 text-slate-400" />
-                <span>Logo Emoji</span>
+              <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                Category / Subtitle
               </label>
-              <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                placeholder="e.g., Advanced Dental & Implantology"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-xs text-slate-900"
+              />
+            </div>
+          </div>
+
+          {/* Logo Emoji Palette (Clean Grid - No Horizontal Scrollbar) */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+                <Smile className="w-3.5 h-3.5 text-slate-500" />
+                <span>Select Logo Emoji:</span>
+                <span className="w-6 h-6 rounded-lg bg-sky-100 text-sky-800 text-base flex items-center justify-center font-bold">
+                  {logo}
+                </span>
+              </label>
+              <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                <span className="text-[10px] font-semibold">Custom:</span>
                 <input
                   type="text"
                   maxLength={4}
                   value={logo}
                   onChange={(e) => setLogo(e.target.value)}
-                  className="w-14 px-2 py-2 text-center text-lg rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  placeholder="✨"
+                  className="w-9 h-7 text-center text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 bg-slate-50 font-normal"
                 />
-                <div className="flex gap-1 overflow-x-auto py-1 flex-1">
-                  {['🦷', '☕', '🏋️', '🍽️', '🏨', '💇', '🚗', '🛍️', '🐾', '✨', '⭐', '🩺'].map(em => (
-                    <button
-                      key={em}
-                      type="button"
-                      onClick={() => setLogo(em)}
-                      className={`p-1.5 rounded-lg text-sm cursor-pointer transition-transform hover:scale-110 ${
-                        logo === em ? 'bg-sky-100 ring-1 ring-sky-400' : 'bg-slate-100 hover:bg-slate-200'
-                      }`}
-                    >
-                      {em}
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
-          </div>
 
-          {/* Subtitle / Type */}
-          <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-              Category / Subtitle
-            </label>
-            <input
-              type="text"
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              placeholder="e.g., Advanced Dental & Implantology"
-              className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-sky-500 text-xs text-slate-900"
-            />
+            <div className="p-2 rounded-2xl bg-slate-50/90 border border-slate-200/90">
+              <div className="grid grid-cols-8 sm:grid-cols-10 gap-1 sm:gap-1.5">
+                {[
+                  '🦷', '🩺', '🏥', '💊', '☕', '🥐', '🍽️', '🍕', '🍔', '🍷',
+                  '🏋️', '🥊', '🧘', '🏃', '🏊', '🏨', '🏖️', '💆', '💇', '💅',
+                  '🌸', '🚗', '🔧', '🏎️', '🛍️', '👟', '💎', '🐾', '🐕', '📚',
+                  '💻', '🏢', '⭐', '✨', '🎯', '🛠️', '🌮', '🍦', '💈', '🎨'
+                ].map(em => (
+                  <button
+                    key={em}
+                    type="button"
+                    onClick={() => setLogo(em)}
+                    className={`h-8 rounded-xl flex items-center justify-center text-base cursor-pointer transition-all duration-150 transform hover:scale-125 select-none ${
+                      logo === em 
+                        ? 'bg-sky-500 text-white shadow-xs ring-2 ring-sky-400/50 scale-110 z-10' 
+                        : 'bg-white hover:bg-slate-100 text-slate-800 border border-slate-100 shadow-2xs'
+                    }`}
+                  >
+                    {em}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Tagline */}
