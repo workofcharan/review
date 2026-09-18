@@ -49,7 +49,7 @@ const CATEGORIES = [
     step1Greeting: 'How was your care experience at',
     defaultHighlights: [
       'Painless & Gentle Procedure',
-      'Dr. & Team Clear Guidance',
+      'Clear Guidance & Caring Doctors',
       'Spotless & Modern Sterile Equipment',
       'Prompt Zero-Wait Time',
       'Friendly Front Desk Team',
@@ -63,7 +63,7 @@ const CATEGORIES = [
     defaultType: 'Fine Dining & Craft Kitchen',
     defaultTagline: 'Artisanal Flavors, Fresh Local Ingredients & Warm Hospitality',
     defaultColor: '#e11d48',
-    step1Greeting: 'How was your meal and visit at',
+    step1Greeting: 'How was your dining experience at',
     defaultHighlights: [
       'Delicious & Exquisite Flavors',
       'Attentive & Friendly Table Service',
@@ -82,16 +82,16 @@ const CATEGORIES = [
     defaultColor: '#d97706',
     step1Greeting: 'How was your coffee & pastry at',
     defaultHighlights: [
-      'Exceptional Specialty Coffee',
+      'Specialty Coffee & Artisan Brews',
       'Fresh & Flaky Artisan Pastries',
-      'Fast & Friendly Baristas',
-      'Chill Ambience & Comfortable Seating',
+      'Fast & Super Friendly Baristas',
+      'Cozy Aesthetic & Chill Ambience',
       'Reliable Wi-Fi & Work Vibe',
-      'Smooth Mobile Ordering'
+      'Smooth Ordering & Fast Service'
     ]
   },
   { 
-    id: 'hospitality', 
+    id: 'hotel', 
     label: 'Hotel & Resort', 
     icon: '🏨', 
     defaultType: 'Boutique Hotel & Luxury Suites',
@@ -157,18 +157,92 @@ const CATEGORIES = [
       'Great Quality Products',
       'Hassle-Free Return & Exchange Policy'
     ]
+  },
+  { 
+    id: 'pet', 
+    label: 'Pet Care & Veterinary', 
+    icon: '🐾', 
+    defaultType: 'Veterinary Hospital & Pet Care',
+    defaultTagline: 'Gentle, Compassionate & Comprehensive Animal Care',
+    defaultColor: '#10b981',
+    step1Greeting: 'How was your pet’s visit at',
+    defaultHighlights: [
+      'Gentle & Compassionate Care',
+      'Stress-Free & Calming Handling',
+      'Spotless & Odor-Free Clinic',
+      'Clear Treatment & Medication Advice',
+      'Prompt Appointment & Caring Vets'
+    ]
+  },
+  { 
+    id: 'general', 
+    label: 'General Business & Services', 
+    icon: '✨', 
+    defaultType: 'Professional Service & Client Care',
+    defaultTagline: 'Outstanding Quality, Dedicated Team & Seamless Experience',
+    defaultColor: '#0284c7',
+    step1Greeting: 'How was your experience at',
+    defaultHighlights: [
+      'Outstanding Service Quality',
+      'Friendly & Attentive Team',
+      'Clean & Inviting Space',
+      'Fast & Seamless Turnaround',
+      'Great Communication & Value'
+    ]
   }
 ];
+
+function detectCategory(logoEmoji, nameText = '', typeText = '') {
+  const text = `${nameText} ${typeText}`.toLowerCase();
+  
+  // Gym
+  if (['🏋️', '🥊', '🧘', '🏃', '🏊'].includes(logoEmoji) || /gym|fitness|crossfit|workout|trainer|training|boxing|yoga|athletics|apex/.test(text)) {
+    return 'gym';
+  }
+  // Cafe
+  if (['☕', '🥐', '🥖', '🥯', '🍩'].includes(logoEmoji) || /cafe|coffee|bakery|roastery|espresso|brew|matcha|tea/.test(text)) {
+    return 'cafe';
+  }
+  // Restaurant
+  if (['🍽️', '🍕', '🍔', '🍷', '🌮', '🍦', '🍜', '🍣', '🥩'].includes(logoEmoji) || /restaurant|bistro|kitchen|grill|pizza|burger|dining|food|eatery|taco|steak|sushi|pasta/.test(text)) {
+    return 'restaurant';
+  }
+  // Salon
+  if (['💇', '💆', '💅', '🌸', '💈', '💄'].includes(logoEmoji) || /salon|spa|hair|beauty|barber|nails|massage|skin|glow|aesthetic/.test(text)) {
+    return 'salon';
+  }
+  // Hotel
+  if (['🏨', '🏖️', '🌴', '🛏️'].includes(logoEmoji) || /hotel|resort|suites|inn|stay|lodge|motel|villa|grand/.test(text)) {
+    return 'hotel';
+  }
+  // Auto
+  if (['🚗', '🔧', '🏎️', '🛠️'].includes(logoEmoji) || /auto|car|motors|garage|tire|mechanic|detailing|lube|wash/.test(text)) {
+    return 'automotive';
+  }
+  // Retail
+  if (['🛍️', '👟', '💎', '👗', '👔', '👠'].includes(logoEmoji) || /boutique|store|shop|retail|fashion|apparel|jewel|shoes|market/.test(text)) {
+    return 'retail';
+  }
+  // Pet
+  if (['🐾', '🐕', '🐈'].includes(logoEmoji) || /pet|vet|paws|veterinary|animal|hound|dog|cat/.test(text)) {
+    return 'pet';
+  }
+  // Healthcare
+  if (['🦷', '🩺', '🏥', '💊'].includes(logoEmoji) || /dental|dentist|clinic|doctor|dr\.|teeth|ortho|chiro|medical|health/.test(text)) {
+    return 'healthcare';
+  }
+
+  return 'general';
+}
 
 export default function AddBusinessModal({ isOpen, onClose }) {
   const { addBusiness, navigateTo } = useApp();
 
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
-  const [category, setCategory] = useState('healthcare');
   const [type, setType] = useState('');
   const [tagline, setTagline] = useState('');
-  const [logo, setLogo] = useState('🦷');
+  const [logo, setLogo] = useState('✨');
   const [publicReviewUrl, setPublicReviewUrl] = useState('');
   const [primaryColor, setPrimaryColor] = useState('#0284c7');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -208,29 +282,42 @@ export default function AddBusinessModal({ isOpen, onClose }) {
     setSlug(autoSlug);
   };
 
+  const handleSelectEmoji = (em) => {
+    setLogo(em);
+    const detected = detectCategory(em, name, type);
+    const config = CATEGORIES.find(c => c.id === detected);
+    if (config && config.defaultColor && primaryColor === '#0284c7') {
+      setPrimaryColor(config.defaultColor);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!name.trim()) return;
 
     setIsSubmitting(true);
     const finalSlug = slug.trim() || name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || `biz-${Date.now()}`;
-    const selectedCatConfig = CATEGORIES.find(c => c.id === category) || CATEGORIES[0];
+    const detectedCategory = detectCategory(logo, name, type);
+    const selectedCatConfig = CATEGORIES.find(c => c.id === detectedCategory) || CATEGORIES[CATEGORIES.length - 1];
     const greetingPrefix = selectedCatConfig.step1Greeting || 'How was your visit at';
+    
+    // Default to search on Google Maps for this specific business name if not entered
+    const finalReviewUrl = publicReviewUrl.trim() || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name.trim())}`;
 
     const newBusinessPayload = {
       name: name.trim(),
       slug: finalSlug,
-      category,
-      type,
-      tagline,
+      category: detectedCategory,
+      type: type.trim() || selectedCatConfig.defaultType,
+      tagline: tagline.trim() || selectedCatConfig.defaultTagline,
       logo,
       brandColors: {
         primary: primaryColor,
         accent: primaryColor,
         bgGradient: 'from-slate-900 via-slate-800 to-slate-950'
       },
-      publicReviewUrl: publicReviewUrl.trim() || 'https://g.page/r/CVfAf-zR7rBLEBE/review',
-      yelpUrl: publicReviewUrl.trim() || '',
+      publicReviewUrl: finalReviewUrl,
+      yelpUrl: '',
       tripAdvisorUrl: '',
       minPublicRating: 4,
       tableCount: 10,
@@ -246,8 +333,8 @@ export default function AddBusinessModal({ isOpen, onClose }) {
               { value: 1, label: 'Poor', emoji: '😣', sentiment: 'negative' },
               { value: 2, label: 'Unsatisfied', emoji: '😕', sentiment: 'negative' },
               { value: 3, label: 'Average', emoji: '😐', sentiment: 'neutral' },
-              { value: 4, label: 'Good & Friendly', emoji: '😊', sentiment: 'positive' },
-              { value: 5, label: 'Outstanding!', emoji: '😁✨', sentiment: 'positive' },
+              { value: 4, label: 'Good', emoji: '😊', sentiment: 'positive' },
+              { value: 5, label: 'Outstanding!', emoji: '🤩', sentiment: 'positive' },
             ],
             next: {
               '5': 'positive_highlights',
@@ -260,15 +347,15 @@ export default function AddBusinessModal({ isOpen, onClose }) {
           positive_highlights: {
             id: 'positive_highlights',
             type: 'chips_multiselect',
-            title: 'What did you enjoy most today?',
-            subtitle: 'Select all highlights that made your visit great (Step 2 of 2)',
+            title: `What made your visit to ${name.trim()} great?`,
+            subtitle: 'Select your key highlights (Step 2 of 2)',
             options: selectedCatConfig.defaultHighlights || [
               'Outstanding Customer Service',
               'Quick & Efficient Service',
               'Clean & Comfortable Environment',
               'Friendly & Professional Team',
               'High Quality Experience',
-              'Transparent & Fair Pricing'
+              'Great Overall Value'
             ],
             next: {
               default: 'direct_submit'
@@ -295,6 +382,8 @@ export default function AddBusinessModal({ isOpen, onClose }) {
     setSlug('');
     setType('');
     setTagline('');
+    setLogo('✨');
+    setPublicReviewUrl('');
     navigateTo('/dashboard');
   };
 
@@ -395,7 +484,7 @@ export default function AddBusinessModal({ isOpen, onClose }) {
                   <button
                     key={em}
                     type="button"
-                    onClick={() => setLogo(em)}
+                    onClick={() => handleSelectEmoji(em)}
                     className={`h-8 rounded-xl flex items-center justify-center text-base cursor-pointer transition-all duration-150 transform hover:scale-125 select-none ${
                       logo === em 
                         ? 'bg-sky-500 text-white shadow-xs ring-2 ring-sky-400/50 scale-110 z-10' 

@@ -2,11 +2,12 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 import QuestionFlowEngine from '../components/customer/QuestionFlowEngine';
 import { Sparkles, Utensils, Building2, Coffee, ShoppingBag, ArrowLeft, Dumbbell, Car, Scissors, HeartPulse, PawPrint } from 'lucide-react';
+import { inferCategoryFromBusiness } from '../utils/aiReviewGenerator';
 
 export default function CustomerFeedbackView({ forcedSlug }) {
   const { businesses, submitFeedback, currentRoute, navigateTo, activeBusiness } = useApp();
 
-  let slug = forcedSlug;
+  let slug = forcedSlug || '';
   if (!slug) {
     if (currentRoute.includes('/b/')) {
       slug = currentRoute.substring(currentRoute.indexOf('/b/') + 3).split('?')[0].split('#')[0].replace(/\/$/, '');
@@ -22,14 +23,16 @@ export default function CustomerFeedbackView({ forcedSlug }) {
     }
   }
 
-  const business = businesses.find(b => b.slug === slug || b.id === slug) || activeBusiness || businesses[0];
+  const normalizedSlug = slug ? slug.toLowerCase().trim() : '';
+  const business = (normalizedSlug ? businesses.find(b => b.slug.toLowerCase() === normalizedSlug || b.id === slug) : null) || activeBusiness || businesses[0];
 
   const getCategoryIcon = (category) => {
     switch (category) {
       case 'gym':
       case 'fitness': return <Dumbbell className="w-4 h-4 text-purple-600" />;
       case 'restaurant': return <Utensils className="w-4 h-4 text-rose-600" />;
-      case 'hotel': return <Building2 className="w-4 h-4 text-teal-600" />;
+      case 'hotel':
+      case 'hospitality': return <Building2 className="w-4 h-4 text-teal-600" />;
       case 'cafe': return <Coffee className="w-4 h-4 text-amber-600" />;
       case 'salon':
       case 'spa': return <Scissors className="w-4 h-4 text-pink-600" />;
@@ -40,6 +43,8 @@ export default function CustomerFeedbackView({ forcedSlug }) {
       default: return <Sparkles className="w-4 h-4 text-sky-600" />;
     }
   };
+
+  const activeCategory = inferCategoryFromBusiness(business);
 
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col justify-between py-6 px-4 sm:px-6">
@@ -56,8 +61,8 @@ export default function CustomerFeedbackView({ forcedSlug }) {
 
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5 bg-white shadow-xs px-3 py-1.5 rounded-full border border-slate-200">
-            {getCategoryIcon(business.category)}
-            <span>{business.type}</span>
+            {getCategoryIcon(activeCategory)}
+            <span>{business.type || business.name}</span>
           </span>
         </div>
       </header>

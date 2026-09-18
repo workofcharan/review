@@ -30,7 +30,8 @@ export default function QrStudioTab() {
   const [isCopied, setIsCopied] = useState(false);
 
   const feedbackFlowUrl = buildFeedbackUrl(activeBusiness.slug);
-  const directGoogleUrl = activeBusiness.publicReviewUrl || DEFAULT_REVIEW_URL;
+  const fallbackDirectUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activeBusiness.name)}`;
+  const directGoogleUrl = activeBusiness.publicReviewUrl || fallbackDirectUrl;
   const targetFeedbackUrl = qrMode === 'direct_google' ? directGoogleUrl : feedbackFlowUrl;
 
   useEffect(() => {

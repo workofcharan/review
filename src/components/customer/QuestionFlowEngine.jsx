@@ -7,10 +7,8 @@ import {
   ExternalLink
 } from 'lucide-react';
 import EmojiScale from './EmojiScale';
-import { generateReviewDraft, getThreeOptionsForRating } from '../../utils/aiReviewGenerator';
+import { generateReviewDraft, getThreeOptionsForRating, getStaffLabelForBusiness, inferCategoryFromBusiness } from '../../utils/aiReviewGenerator';
 import { copyTextToClipboard, redirectToReviewPage } from '../../utils/mobileRedirectHelper';
-
-const DR_C_EXACT_REVIEW_PAGE = "https://g.page/r/CVfAf-zR7rBLEBE/review";
 
 export default function QuestionFlowEngine({
   business,
@@ -26,6 +24,9 @@ export default function QuestionFlowEngine({
 
   const selectedRating = Number(answers.overall_experience || 5);
   const ratingThreeOptions = getThreeOptionsForRating(business, selectedRating, scanSeed);
+
+  const fallbackReviewUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business?.name || 'Local Business')}`;
+  const targetGoogleUrl = business?.publicReviewUrl || fallbackReviewUrl;
 
   const handleSelectRating = (ratingVal) => {
     const num = Number(ratingVal);
@@ -77,7 +78,7 @@ export default function QuestionFlowEngine({
       business,
       rating,
       highlights,
-      staffShoutout: business.name.includes('Dr C') ? 'Dr. C' : 'the team',
+      staffShoutout: getStaffLabelForBusiness(business),
       tone: 'enthusiastic',
       scanSeed
     });
@@ -116,8 +117,7 @@ export default function QuestionFlowEngine({
     }
 
     // Immediate direct navigation to Google Maps Review Page URL
-    const targetUrl = business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE;
-    redirectToReviewPage(targetUrl);
+    redirectToReviewPage(targetGoogleUrl);
   };
 
   const totalEstimatedSteps = 2;
@@ -129,7 +129,7 @@ export default function QuestionFlowEngine({
     business,
     rating: selectedRating,
     highlights: answers.selected_options || [ratingThreeOptions.options[0]?.label || ''],
-    staffShoutout: business.name.includes('Dr C') ? 'Dr. C' : 'the team',
+    staffShoutout: getStaffLabelForBusiness(business),
     scanSeed
   });
 
@@ -140,11 +140,13 @@ export default function QuestionFlowEngine({
         if (business.questionFlow?.questions?.overall_experience?.title) {
           return business.questionFlow.questions.overall_experience.title;
         }
-        switch (business.category) {
+        const cat = inferCategoryFromBusiness(business);
+        switch (cat) {
           case 'gym':
           case 'fitness':
             return `How was your workout session at ${business.name}?`;
           case 'hotel':
+          case 'hospitality':
             return `How was your stay experience at ${business.name}?`;
           case 'salon':
           case 'spa':
@@ -156,8 +158,9 @@ export default function QuestionFlowEngine({
           case 'pet':
             return `How was your pet's visit to ${business.name}?`;
           case 'restaurant':
-          case 'cafe':
             return `How was your dining experience at ${business.name}?`;
+          case 'cafe':
+            return `How was your coffee & pastry at ${business.name}?`;
           case 'healthcare':
             return `How was your care experience at ${business.name}?`;
           default:
@@ -167,7 +170,7 @@ export default function QuestionFlowEngine({
 
       const step1Question = {
         title: getGreetingTitle(),
-        subtitle: business.questionFlow?.questions?.overall_experience?.subtitle || "Tap an emoji to rate your experience today",
+        subtitle: business.questionFlow?.questions?.overall_experience?.subtitle || "Tap an emoji to rate your experience today (Step 1 of 2)",
         options: [
           { value: 1, label: "Poor", emoji: "😣", sentiment: "negative" },
           { value: 2, label: "Fair", emoji: "🙁", sentiment: "negative" },
@@ -305,7 +308,7 @@ export default function QuestionFlowEngine({
 
         {redirecting && (
           <a
-            href={business.publicReviewUrl || DR_C_EXACT_REVIEW_PAGE}
+            href={targetGoogleUrl}
             target="_top"
             rel="noopener noreferrer"
             className="block text-center text-xs text-sky-700 font-bold underline animate-pulse py-1"

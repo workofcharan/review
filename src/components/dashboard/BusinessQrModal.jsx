@@ -10,27 +10,10 @@ import {
   Smartphone, 
   Printer, 
   Sparkles,
-  Share2
-} from 'lucide-react';
-import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { 
-  X, 
-  Download, 
-  Copy, 
-  Check, 
-  ExternalLink, 
-  QrCode, 
-  Smartphone, 
-  Printer, 
-  Sparkles,
-  Star,
-  Globe
+  Star
 } from 'lucide-react';
 import { generateQrDataUrl, buildFeedbackUrl } from '../../utils/qrHelper';
 import { useApp } from '../../context/AppContext';
-
-const DEFAULT_REVIEW_URL = "https://g.page/r/CVfAf-zR7rBLEBE/review";
 
 export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrintStudio }) {
   const { navigateTo } = useApp();
@@ -44,7 +27,8 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
 
   // Determine active destination URL based on selected mode
   const feedbackFlowUrl = biz ? buildFeedbackUrl(biz.slug) : '';
-  const directGoogleUrl = biz?.publicReviewUrl || DEFAULT_REVIEW_URL;
+  const fallbackDirectUrl = biz ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.name)}` : 'https://www.google.com/maps';
+  const directGoogleUrl = biz?.publicReviewUrl || fallbackDirectUrl;
   const activeUrl = qrMode === 'direct_google' ? directGoogleUrl : feedbackFlowUrl;
 
   useEffect(() => {
