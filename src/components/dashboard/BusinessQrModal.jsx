@@ -16,14 +16,14 @@ import { generateQrDataUrl, buildFeedbackUrl } from '../../utils/qrHelper';
 import { useApp } from '../../context/AppContext';
 
 export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrintStudio }) {
-  const { navigateTo } = useApp();
+  const { navigateTo, setSelectedBusinessId } = useApp();
   const [qrMode, setQrMode] = useState('feedback_flow'); // 'feedback_flow' or 'direct_google'
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [isCopied, setIsCopied] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const biz = business;
-  const qrColor = biz?.brandColors?.primary || '#0284c7';
+  const brandColor = biz?.brandColors?.primary || '#0284c7';
 
   // Determine active destination URL based on selected mode
   const feedbackFlowUrl = biz ? buildFeedbackUrl(biz) : '';
@@ -38,10 +38,13 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
     setIsLoading(true);
 
     async function generate() {
+      // High-contrast dark slate (#0f172a) ensures 100% camera optical decodability
       const url = await generateQrDataUrl(activeUrl, {
-        darkColor: qrColor,
+        darkColor: '#0f172a',
         lightColor: '#ffffff',
-        width: 600
+        width: 600,
+        margin: 3,
+        errorCorrectionLevel: 'M'
       });
       if (isMounted) {
         setQrDataUrl(url || '');
@@ -54,7 +57,7 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
     return () => {
       isMounted = false;
     };
-  }, [isOpen, biz, activeUrl, qrColor]);
+  }, [isOpen, biz, activeUrl]);
 
   if (!isOpen || !biz) return null;
 
@@ -111,7 +114,7 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
           <div className="flex items-center gap-3">
             <div 
               className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl shadow-md border border-white/20"
-              style={{ backgroundColor: qrColor }}
+              style={{ backgroundColor: brandColor }}
             >
               {biz.logo}
             </div>

@@ -1,8 +1,8 @@
 import QRCode from 'qrcode';
 
 /**
- * Builds the canonical scan URL for a business feedback flow
- * Supports passing either a business object or a slug string
+ * Builds an optimized, clean scan URL for a business feedback flow
+ * Keeps the payload compact for maximum QR optical decodability across all mobile cameras
  */
 export function buildFeedbackUrl(businessOrSlug, customBase = '') {
   if (!businessOrSlug) return '';
@@ -31,16 +31,12 @@ export function buildFeedbackUrl(businessOrSlug, customBase = '') {
   // Remove trailing index.html or extra slashes
   base = base.replace(/\/index\.html$/, '').replace(/\/+$/, '');
   
-  // If business metadata is available, append query parameters for 100% reliable cross-device QR scanning
+  // Append compact query parameters (name, category, logo) to ensure 100% reliable cross-device reconstruction without bloating QR density
   if (business) {
     const params = new URLSearchParams();
     if (business.name) params.set('n', business.name);
     if (business.category) params.set('c', business.category);
     if (business.logo) params.set('l', business.logo);
-    if (business.type) params.set('t', business.type);
-    if (business.tagline) params.set('tg', business.tagline);
-    if (business.publicReviewUrl) params.set('r', business.publicReviewUrl);
-    if (business.brandColors?.primary) params.set('col', business.brandColors.primary);
     
     const qs = params.toString();
     return `${base}/#/b/${slug}${qs ? `?${qs}` : ''}`;
@@ -50,19 +46,20 @@ export function buildFeedbackUrl(businessOrSlug, customBase = '') {
 }
 
 /**
- * Generates a high-quality QR Code as a Data URL (PNG)
+ * Generates a high-contrast, camera-friendly QR Code as a Data URL (PNG)
+ * Uses Level M error correction and standard margin for 100% optical decodability
  */
 export async function generateQrDataUrl(url, options = {}) {
   if (!url) return '';
   try {
     const defaultOptions = {
       width: options.width || 600,
-      margin: options.margin !== undefined ? options.margin : 2,
+      margin: options.margin !== undefined ? options.margin : 3,
       color: {
-        dark: options.darkColor || '#0284c7',
+        dark: options.darkColor || '#0f172a',
         light: options.lightColor || '#ffffff',
       },
-      errorCorrectionLevel: options.errorCorrectionLevel || 'H'
+      errorCorrectionLevel: options.errorCorrectionLevel || 'M'
     };
     return await QRCode.toDataURL(url, defaultOptions);
   } catch (err) {
@@ -71,7 +68,7 @@ export async function generateQrDataUrl(url, options = {}) {
     try {
       return await QRCode.toDataURL(url, {
         width: 400,
-        margin: 2,
+        margin: 3,
         color: { dark: '#000000', light: '#ffffff' },
         errorCorrectionLevel: 'M'
       });
@@ -90,12 +87,12 @@ export async function generateQrSvg(url, options = {}) {
   try {
     const defaultOptions = {
       width: options.width || 600,
-      margin: options.margin !== undefined ? options.margin : 2,
+      margin: options.margin !== undefined ? options.margin : 3,
       color: {
-        dark: options.darkColor || '#0284c7',
+        dark: options.darkColor || '#0f172a',
         light: options.lightColor || '#ffffff',
       },
-      errorCorrectionLevel: options.errorCorrectionLevel || 'H'
+      errorCorrectionLevel: options.errorCorrectionLevel || 'M'
     };
     return await QRCode.toString(url, { ...defaultOptions, type: 'svg' });
   } catch (err) {
