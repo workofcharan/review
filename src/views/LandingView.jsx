@@ -39,7 +39,7 @@ export default function LandingView() {
 
   // Live Interactive Hero Demo Widget State
   const [heroRating, setHeroRating] = useState(5);
-  const [selectedHeroChips, setSelectedHeroChips] = useState(['Truffle Tagliatelle', 'Sommelier Wine Pairing']);
+  const [selectedHeroChips, setSelectedHeroChips] = useState(['Painless & Gentle Procedure', "Dr. C's Clear & Reassuring Guidance"]);
   const [heroTone, setHeroTone] = useState('enthusiastic');
   const [heroGeneratedDraft, setHeroGeneratedDraft] = useState('');
   const [heroCopied, setHeroCopied] = useState(false);
@@ -50,20 +50,20 @@ export default function LandingView() {
 
   // Live Simulated Social Proof Ticker
   const [recentLiveNotification, setRecentLiveNotification] = useState({
-    name: 'Clara V.',
-    biz: "L'Aura Bistro",
+    name: 'Rahul S.',
+    biz: 'Dr C Dental Clinic',
     action: 'posted a 5★ Google Review',
     time: 'just now',
-    avatar: '🍷'
+    avatar: '🦷'
   });
 
   const availableChips = [
-    'Truffle Tagliatelle',
-    'Sommelier Wine Pairing',
-    'Warm & Attentive Service',
-    'Romantic Jazz Ambiance',
-    'Dry-Aged Ribeye',
-    'Craft Cocktails'
+    'Painless & Gentle Procedure',
+    "Dr. C's Clear & Reassuring Guidance",
+    'Spotless & Modern Sterile Equipment',
+    'Prompt Zero-Wait Time',
+    'Friendly Front Desk Team',
+    'Thorough Scaling & Cleaning'
   ];
 
   // Update Hero Generated Review Draft
@@ -72,8 +72,8 @@ export default function LandingView() {
       business: activeBusiness,
       rating: heroRating,
       highlights: selectedHeroChips,
-      staffShoutout: 'Maya (Sommelier)',
-      freeText: 'Celebrated our anniversary and it was perfection!',
+      staffShoutout: 'Dr. C & Team',
+      freeText: 'Best dental clinic visit ever, completely painless!',
       tone: heroTone
     });
     setHeroGeneratedDraft(draft);
