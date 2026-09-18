@@ -166,8 +166,8 @@ export default function AddBusinessModal({ isOpen, onClose }) {
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [category, setCategory] = useState('healthcare');
-  const [type, setType] = useState('Advanced Dental & Healthcare Clinic');
-  const [tagline, setTagline] = useState('Gentle, State-of-the-Art Care & Reassuring Doctors');
+  const [type, setType] = useState('');
+  const [tagline, setTagline] = useState('');
   const [logo, setLogo] = useState('🦷');
   const [publicReviewUrl, setPublicReviewUrl] = useState('');
   const [primaryColor, setPrimaryColor] = useState('#0284c7');
@@ -293,6 +293,8 @@ export default function AddBusinessModal({ isOpen, onClose }) {
     onClose();
     setName('');
     setSlug('');
+    setType('');
+    setTagline('');
     navigateTo('/dashboard');
   };
 
