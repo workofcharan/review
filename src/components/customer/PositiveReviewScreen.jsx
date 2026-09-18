@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Copy, Check, ExternalLink, RefreshCw, Star, Gift } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { generateReviewDraft } from '../../utils/aiReviewGenerator';
+import { generateReviewDraft, getStaffLabelForBusiness, inferCategoryFromBusiness } from '../../utils/aiReviewGenerator';
 import { copyTextToClipboard, redirectToReviewPage } from '../../utils/mobileRedirectHelper';
-
-const TONES = [
-  { id: 'enthusiastic', label: '🤩 Enthusiastic', desc: 'Energetic & glowing' },
-  { id: 'detailed', label: '🩺 Clear & Detailed', desc: 'Professional patient feedback' },
-  { id: 'concise', label: '⚡ Short & Sweet', desc: 'Quick 2-sentence review' },
-  { id: 'casual', label: '😊 Friendly & Recommending', desc: 'Warm & welcoming' },
-];
 
 export default function PositiveReviewScreen({ 
   business, 
@@ -21,14 +14,26 @@ export default function PositiveReviewScreen({
   const [isCopied, setIsCopied] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const category = inferCategoryFromBusiness(business);
+  const tones = [
+    { id: 'enthusiastic', label: '🤩 Enthusiastic', desc: 'Energetic & glowing' },
+    { 
+      id: 'detailed', 
+      label: category === 'healthcare' ? '🩺 Clear & Detailed' : '📝 Thorough & Detailed', 
+      desc: category === 'healthcare' ? 'Detailed patient feedback' : 'Comprehensive review' 
+    },
+    { id: 'concise', label: '⚡ Short & Sweet', desc: 'Quick 2-sentence review' },
+    { id: 'casual', label: '😊 Friendly & Recommending', desc: 'Warm & welcoming' },
+  ];
+
   const refreshDraft = (tone = selectedTone) => {
     setIsGenerating(true);
     setTimeout(() => {
       const generated = generateReviewDraft({
         business,
         rating: answers.overall_experience || 5,
-        highlights: answers.positive_highlights || [],
-        staffShoutout: answers.staff_shoutout || 'Dr. C',
+        highlights: answers.positive_highlights || answers.selected_options || [],
+        staffShoutout: answers.staff_shoutout || getStaffLabelForBusiness(business),
         freeText: answers.positive_free_text || '',
         tone
       });
@@ -99,7 +104,7 @@ export default function PositiveReviewScreen({
           Review Tone:
         </label>
         <div className="grid grid-cols-2 gap-1.5">
-          {TONES.map((tone) => (
+          {tones.map((tone) => (
             <button
               key={tone.id}
               type="button"

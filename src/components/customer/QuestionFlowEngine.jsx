@@ -56,6 +56,7 @@ export default function QuestionFlowEngine({
     } else {
       updated = [...currentList, optionLabel];
     }
+    setActiveDraftText('');
     setAnswers(prev => ({
       ...prev,
       selected_options: updated
@@ -294,6 +295,7 @@ export default function QuestionFlowEngine({
             <button
               type="button"
               onClick={() => {
+                setActiveDraftText('');
                 const newSeed = Date.now() + Math.floor(Math.random() * 10000000);
                 setScanSeed(newSeed);
               }}
