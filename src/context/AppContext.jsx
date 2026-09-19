@@ -4,10 +4,10 @@ import { INITIAL_BUSINESSES, INITIAL_FEEDBACKS, INITIAL_AI_INSIGHTS } from '../d
 const AppContext = createContext(null);
 
 const STORAGE_KEYS = {
-  BUSINESSES: 'revpulse_businesses_v7',
-  SELECTED_BIZ: 'revpulse_selected_biz_v7',
-  FEEDBACKS: 'revpulse_feedbacks_v7',
-  DELETED_BIZ_IDS: 'revpulse_deleted_biz_ids_v7',
+  BUSINESSES: 'revpulse_businesses_v8',
+  SELECTED_BIZ: 'revpulse_selected_biz_v8',
+  FEEDBACKS: 'revpulse_feedbacks_v8',
+  DELETED_BIZ_IDS: 'revpulse_deleted_biz_ids_v8',
 };
 
 export function AppProvider({ children }) {
@@ -20,7 +20,9 @@ export function AppProvider({ children }) {
 
       if (saved) {
         const parsed = JSON.parse(saved);
-        return parsed.filter(b => !deletedIds.has(b.id));
+        const existingIds = new Set(parsed.map(b => b.id));
+        const missingSeeds = INITIAL_BUSINESSES.filter(b => !existingIds.has(b.id) && !deletedIds.has(b.id));
+        return [...parsed, ...missingSeeds].filter(b => !deletedIds.has(b.id));
       }
       return INITIAL_BUSINESSES.filter(b => !deletedIds.has(b.id));
     } catch {
@@ -28,7 +30,7 @@ export function AppProvider({ children }) {
     }
   });
 
-  // Active business ID defaults to Dr C Dental Clinic or first available
+  // Active business ID defaults to first active business
   const [selectedBusinessId, setSelectedBusinessId] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.SELECTED_BIZ);
@@ -54,7 +56,9 @@ export function AppProvider({ children }) {
 
       if (saved) {
         const parsed = JSON.parse(saved);
-        return parsed.filter(f => !deletedIds.has(f.businessId));
+        const existingIds = new Set(parsed.map(f => f.id));
+        const missingSeeds = INITIAL_FEEDBACKS.filter(f => !existingIds.has(f.id) && !deletedIds.has(f.businessId));
+        return [...parsed, ...missingSeeds].filter(f => !deletedIds.has(f.businessId));
       }
       return INITIAL_FEEDBACKS.filter(f => !deletedIds.has(f.businessId));
     } catch {

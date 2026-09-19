@@ -84,6 +84,89 @@ export const INITIAL_BUSINESSES = [
         }
       }
     }
+  },
+
+  // B2: Ebin tech (Permanent Business Seed)
+  {
+    id: "biz-ebintech",
+    slug: "ebin-tech",
+    name: "Ebin tech",
+    category: "marketing",
+    type: "Marketing agency in Hyderabad, Telangana",
+    tagline: "Ebintech, a digital marketing agency in Kompally, Hyderabad, empowers startups, small businesses, and enterprises to thrive in the online world. We offer comprehensive digital solutions including SEO, Social Media Marketing, Web Design, Branding, and AI Review Acceleration.",
+    logo: "💻",
+    brandColors: {
+      primary: "#0284c7",
+      accent: "#4f46e5",
+      bgGradient: "from-slate-950 via-sky-950 to-slate-950"
+    },
+    publicReviewUrl: DR_C_EXACT_REVIEW_URL,
+    yelpUrl: "",
+    tripAdvisorUrl: "",
+    minPublicRating: 4,
+    tableCount: 4,
+    aiPraise: {
+      topic: "Measurable ROI & Growth Strategies",
+      quote: "Ebin tech transformed our online presence and boosted qualified inquiries within weeks."
+    },
+    aiBottleneck: {
+      topic: "High Demand Onboarding Queues",
+      quote: "Occasional queue for new client kickoff slots during peak quarter launches."
+    },
+    questionFlow: {
+      start: "overall_experience",
+      questions: {
+        overall_experience: {
+          id: "overall_experience",
+          type: "emoji_scale",
+          title: "How was your project & service experience with Ebin tech?",
+          subtitle: "Tap an emoji to rate your experience with our team",
+          options: [
+            { value: 1, label: "Poor", emoji: "😣", sentiment: "negative" },
+            { value: 2, label: "Fair", emoji: "🙁", sentiment: "negative" },
+            { value: 3, label: "Average", emoji: "😐", sentiment: "neutral" },
+            { value: 4, label: "Good", emoji: "😊", sentiment: "positive" },
+            { value: 5, label: "Excellent!", emoji: "🤩", sentiment: "positive" },
+          ],
+          next: {
+            "5": "positive_highlights",
+            "4": "positive_highlights",
+            "3": "private_manager_alert",
+            "2": "private_manager_alert",
+            "1": "private_manager_alert",
+          }
+        },
+        positive_highlights: {
+          id: "positive_highlights",
+          type: "chips_multiselect",
+          title: "What delighted you most about our marketing & strategy?",
+          subtitle: "Select all that contributed to your great experience",
+          options: [
+            "Measurable Lead & ROI Growth",
+            "Creative Branding & Content",
+            "Prompt & Responsive Communication",
+            "High-Converting Website Design",
+            "Transparent Analytics & Reporting",
+            "Strategic SEO Optimization",
+            "Expert AI Growth Tactics",
+            "Dedicated Account Management"
+          ],
+          next: {
+            default: "direct_submit"
+          }
+        },
+        private_manager_alert: {
+          id: "private_manager_alert",
+          type: "private_resolution",
+          title: "Direct Escalation to Ebin tech Leadership",
+          subtitle: "Your feedback reaches our Managing Director confidentially for immediate review and resolution.",
+          placeholder: "Please describe what happened so our leadership team can assist you directly...",
+          next: {
+            default: "completion_screen"
+          }
+        }
+      }
+    }
   }
 ];
 
@@ -134,6 +217,54 @@ export const INITIAL_FEEDBACKS = [
     },
     recoveryStatus: "none_needed",
     customerContact: "priya.nair@outlook.com",
+    managerNotes: ""
+  },
+
+  // Ebin tech (Permanent Feedbacks: 2 Scans, 5.0 CSAT, 2 Google Converted)
+  {
+    id: "fb-ebin-1",
+    businessId: "biz-ebintech",
+    businessSlug: "ebin-tech",
+    createdAt: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
+    rating: 5,
+    sentiment: "positive",
+    tableOrLocation: "Client Strategy Desk",
+    channel: "QR Scan (Client Welcome Kit)",
+    answers: {
+      overall_experience: 5,
+      positive_highlights: ["Measurable Lead & ROI Growth", "Creative Branding & Content", "Prompt & Responsive Communication"]
+    },
+    generatedReview: {
+      tone: "enthusiastic",
+      draft: "Ebin tech in Kompally, Hyderabad provided phenomenal digital marketing and branding results for our business. Inquiries jumped significantly and the team is super professional!",
+      wasPublishedPublicly: true,
+      platform: "Google Reviews"
+    },
+    recoveryStatus: "none_needed",
+    customerContact: "vikram.reddy@startup.in",
+    managerNotes: ""
+  },
+  {
+    id: "fb-ebin-2",
+    businessId: "biz-ebintech",
+    businessSlug: "ebin-tech",
+    createdAt: new Date(Date.now() - 1000 * 60 * 110).toISOString(),
+    rating: 5,
+    sentiment: "positive",
+    tableOrLocation: "Executive Meeting Room",
+    channel: "QR Scan (Proposal Deck)",
+    answers: {
+      overall_experience: 5,
+      positive_highlights: ["High-Converting Website Design", "Strategic SEO Optimization", "Dedicated Account Management"]
+    },
+    generatedReview: {
+      tone: "professional",
+      draft: "Outstanding web development and SEO strategy by Ebin tech. Delivered our project on time with spotless execution.",
+      wasPublishedPublicly: true,
+      platform: "Google Reviews"
+    },
+    recoveryStatus: "none_needed",
+    customerContact: "ananya.rao@enterprise.co",
     managerNotes: ""
   }
 ];
