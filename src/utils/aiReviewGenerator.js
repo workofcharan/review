@@ -45,6 +45,10 @@ export function inferCategoryFromBusiness(business) {
   if (['🦷', '🏥', '💊'].includes(logo) || /dental|dentist|clinic|doctor|\bdr\b|teeth|ortho|chiro|medical|health|care/i.test(text)) {
     return 'healthcare';
   }
+  // Tech / IT / Electronics
+  if (['💻', '🖥️', '📱', '⌨️', '🖱️', '💾', '📡', '🔌'].includes(logo) || /\btech\b|technology|software|hardware|computer|laptop|\bit\b|developer|repair|digital|electronics|cyber|cloud/i.test(text)) {
+    return 'tech';
+  }
 
   if (business.category) {
     const c = business.category.toLowerCase();
@@ -52,6 +56,7 @@ export function inferCategoryFromBusiness(business) {
     if (c === 'fitness') return 'gym';
     if (c === 'spa') return 'salon';
     if (c === 'hospitality') return 'hotel';
+    if (c === 'it' || c === 'technology') return 'tech';
     return c;
   }
 
@@ -88,6 +93,8 @@ export function getStaffLabelForBusiness(business) {
       return 'the veterinary care team';
     case 'healthcare':
       return 'the doctors & medical staff';
+    case 'tech':
+      return 'the tech specialists & engineers';
     default:
       return 'the staff & team';
   }
@@ -378,6 +385,31 @@ export function generateReviewDraft({
       1: [
         `Very poor patient experience at ${bizName}. ${itemsText ? `Major issue with ${itemsText}. ` : 'Rude front desk, 45-minute delay, and painful procedure.'} 1 star.`,
         `Unacceptable care at ${bizName}. ${itemsText ? `Unprofessional handling of ${itemsText}. ` : 'Surprise charges and dismissive attitude from staff.'} Will not return.`
+      ]
+    },
+
+    tech: {
+      5: [
+        `Incredible service from ${bizName}! Fixed my technical issues in record time. ${itemsText ? `What impressed me most was ${itemsText}. ` : 'The team was knowledgeable, responsive, and resolved everything seamlessly. '}Huge shoutout to ${staff} for the top-notch technical expertise! 5/5 stars! 💻⚡✨`,
+        `Outstanding experience with ${bizName}! ${itemsText ? `Particularly impressed by ${itemsText}. ` : 'Super fast turnaround, clear explanations, and reliable results. '}10/10 recommendation for tech solutions! ⭐⭐⭐⭐⭐`,
+        `Cannot say enough good things about ${bizName}! ${itemsText ? `The highlight was definitely ${itemsText}. ` : 'Extremely professional, fair pricing, and great communication. '}${staff ? `Big thanks to ${staff}! ` : ''}Will definitely be back for any future tech needs! 🖥️🙌`,
+        `Five stars all the way for ${bizName}! ${itemsText ? `Really appreciated ${itemsText}. ` : 'Fast, reliable, and exceptional quality tech support. '}A lifesaver! 🌟`
+      ],
+      4: [
+        `Very good service from ${bizName}. ${itemsText ? `Appreciated ${itemsText}. ` : 'Knowledgeable staff and smooth turnaround. '}${staff ? `${staff.charAt(0).toUpperCase() + staff.slice(1)} were very helpful throughout. ` : ''}Solid 4-star experience! 👍`,
+        `Great support at ${bizName}. ${itemsText ? `Liked ${itemsText}. ` : 'Clean setup and good technical expertise. '}Will return if needed.`
+      ],
+      3: [
+        `Average experience with ${bizName}. Technical work was done, but ${itemsText ? `${itemsText} took a bit longer than anticipated. ` : 'communication could be slightly more proactive. '}Decent overall.`,
+        `Fair service at ${bizName}. ${itemsText ? `Noticed ${itemsText}. ` : 'Everything works now, though pricing felt a little steep.'}`
+      ],
+      2: [
+        `Disappointing service from ${bizName}. Had issues with ${itemsText ? `${itemsText}. ` : 'long diagnostic delays and unclear pricing.'} Expected better communication.`,
+        `Below expectations at ${bizName}. ${itemsText ? `Frustrated by ${itemsText}. ` : 'Issue was not fully resolved on first attempt.'}`
+      ],
+      1: [
+        `Very poor tech support from ${bizName}. Extremely disappointed with ${itemsText ? `${itemsText}. ` : 'unresponsive support and unresolved issues.'} 1 star.`,
+        `Unacceptable experience at ${bizName}. ${itemsText ? `Major issue with ${itemsText}. ` : 'Device was returned late and staff was unhelpful.'} Will not use again.`
       ]
     },
 
@@ -839,6 +871,48 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
             { id: "opt_hc_1_1", label: "Appointment Wait Time", emoji: "⏱️", desc: "Waited longer than expected before treatment" },
             { id: "opt_hc_1_2", label: "Treatment Cost & Pricing Clarity", emoji: "💬", desc: "Needed more clarity on fees or treatment plan" },
             { id: "opt_hc_1_3", label: "Communication During Procedure", emoji: "🗣️", desc: "Would prefer more step-by-step updates" }
+          ]
+        );
+    }
+  }
+
+  // Tech / IT & Electronics Category
+  if (category === 'tech') {
+    switch (numRating) {
+      case 5:
+        return pickThree(
+          `What made your tech service at ${bizName} exceptional?`,
+          "Select your top service & support highlights",
+          [
+            { id: "opt_tech_5_1", label: "Fast & Accurate Diagnostic", emoji: "⚡", desc: "Pinpointed the issue quickly and accurately" },
+            { id: "opt_tech_5_2", label: "Expert & Knowledgeable Techs", emoji: "💻", desc: "Super skilled and clear explanations" },
+            { id: "opt_tech_5_3", label: "Flawless Repair & Clean Setup", emoji: "✨", desc: "Device running smooth and spotless" },
+            { id: "opt_tech_5_4", label: "Transparent & Fair Pricing", emoji: "📋", desc: "Clear estimate with zero surprise fees" },
+            { id: "opt_tech_5_5", label: "Prompt Turnaround Time", emoji: "⏱️", desc: "Delivered exactly when promised" },
+            { id: "opt_tech_5_6", label: "Friendly Customer Support", emoji: "🤝", desc: "Patient, helpful, and courteous team" }
+          ]
+        );
+      case 4:
+        return pickThree(
+          `What did you like about ${bizName}?`,
+          "Select what went well today",
+          [
+            { id: "opt_tech_4_1", label: "Good Technical Knowledge", emoji: "💻", desc: "Helpful and competent staff" },
+            { id: "opt_tech_4_2", label: "Reliable Service Result", emoji: "🔧", desc: "Issue fixed properly" },
+            { id: "opt_tech_4_3", label: "Courteous Communication", emoji: "📱", desc: "Polite updates on progress" }
+          ]
+        );
+      case 3:
+      case 2:
+      case 1:
+      default:
+        return pickThree(
+          "What was your impression of the technical service?",
+          "Select your primary takeaway",
+          [
+            { id: "opt_tech_1_1", label: "Diagnostic / Repair Speed", emoji: "⏱️", desc: "Service timeline took longer than expected" },
+            { id: "opt_tech_1_2", label: "Cost & Pricing Transparency", emoji: "💵", desc: "Clarity on parts and repair fees" },
+            { id: "opt_tech_1_3", label: "Status Update Communication", emoji: "📱", desc: "Communication on repair milestones" }
           ]
         );
     }

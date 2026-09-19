@@ -31,12 +31,15 @@ export function buildFeedbackUrl(businessOrSlug, customBase = '') {
   // Remove trailing index.html or extra slashes
   base = base.replace(/\/index\.html$/, '').replace(/\/+$/, '');
   
-  // Append compact query parameters (name, category, logo) to ensure 100% reliable cross-device reconstruction without bloating QR density
+  // Append compact query parameters (name, category, logo, review url, type, color) to ensure 100% reliable cross-device reconstruction without bloating QR density
   if (business) {
     const params = new URLSearchParams();
     if (business.name) params.set('n', business.name);
     if (business.category) params.set('c', business.category);
     if (business.logo) params.set('l', business.logo);
+    if (business.type) params.set('t', business.type);
+    if (business.publicReviewUrl) params.set('r', business.publicReviewUrl);
+    if (business.brandColors?.primary) params.set('col', business.brandColors.primary);
     
     const qs = params.toString();
     return `${base}/#/b/${slug}${qs ? `?${qs}` : ''}`;

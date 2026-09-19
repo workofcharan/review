@@ -60,16 +60,68 @@ export default function CustomerFeedbackView({ forcedSlug }) {
       name: formattedName,
       slug: normalizedSlug,
       category: detectedCat,
-      type: pType || (detectedCat === 'gym' ? 'Modern Fitness & Training Club' : detectedCat === 'cafe' ? 'Specialty Coffee & Bakery' : detectedCat === 'restaurant' ? 'Fine Dining & Craft Kitchen' : detectedCat === 'salon' ? 'Luxury Hair & Beauty Salon' : detectedCat === 'hotel' ? 'Boutique Hotel & Suites' : detectedCat === 'automotive' ? 'Auto Care & Performance Detailing' : detectedCat === 'pet' ? 'Veterinary Hospital & Pet Care' : 'Professional Care & Services'),
+      type: pType || (detectedCat === 'tech' ? 'IT Solutions, Tech Repair & Electronics' : detectedCat === 'gym' ? 'Modern Fitness & Training Club' : detectedCat === 'cafe' ? 'Specialty Coffee & Bakery' : detectedCat === 'restaurant' ? 'Fine Dining & Craft Kitchen' : detectedCat === 'salon' ? 'Luxury Hair & Beauty Salon' : detectedCat === 'hotel' ? 'Boutique Hotel & Suites' : detectedCat === 'automotive' ? 'Auto Care & Performance Detailing' : detectedCat === 'pet' ? 'Veterinary Hospital & Pet Care' : 'Professional Care & Services'),
       tagline: pTagline || 'Delivering exceptional customer experiences and 5-star care',
-      logo: pLogo || (detectedCat === 'gym' ? '🏋️' : detectedCat === 'cafe' ? '☕' : detectedCat === 'restaurant' ? '🍽️' : detectedCat === 'salon' ? '💇' : detectedCat === 'hotel' ? '🏨' : detectedCat === 'automotive' ? '🚗' : detectedCat === 'pet' ? '🐾' : detectedCat === 'healthcare' ? '🦷' : '✨'),
+      logo: pLogo || (detectedCat === 'tech' ? '💻' : detectedCat === 'gym' ? '🏋️' : detectedCat === 'cafe' ? '☕' : detectedCat === 'restaurant' ? '🍽️' : detectedCat === 'salon' ? '💇' : detectedCat === 'hotel' ? '🏨' : detectedCat === 'automotive' ? '🚗' : detectedCat === 'pet' ? '🐾' : detectedCat === 'healthcare' ? '🦷' : '✨'),
       brandColors: {
         primary: pCol,
         accent: pCol,
         bgGradient: 'from-slate-900 via-slate-800 to-slate-950'
       },
       publicReviewUrl: pRevUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formattedName)}`,
-      minPublicRating: 4
+      minPublicRating: 4,
+      questionFlow: {
+        start: 'overall_experience',
+        questions: {
+          overall_experience: {
+            id: 'overall_experience',
+            type: 'emoji_scale',
+            title: `How was your visit at ${formattedName}?`,
+            subtitle: 'Tap an emoji to rate your experience (Step 1 of 2)',
+            options: [
+              { value: 1, label: 'Poor', emoji: '😣', sentiment: 'negative' },
+              { value: 2, label: 'Fair', emoji: '🙁', sentiment: 'negative' },
+              { value: 3, label: 'Average', emoji: '😐', sentiment: 'neutral' },
+              { value: 4, label: 'Good', emoji: '😊', sentiment: 'positive' },
+              { value: 5, label: 'Outstanding!', emoji: '🤩', sentiment: 'positive' },
+            ],
+            next: {
+              '5': 'positive_highlights',
+              '4': 'positive_highlights',
+              '3': 'private_manager_alert',
+              '2': 'private_manager_alert',
+              '1': 'private_manager_alert',
+            }
+          },
+          positive_highlights: {
+            id: 'positive_highlights',
+            type: 'chips_multiselect',
+            title: `What made your visit to ${formattedName} great?`,
+            subtitle: 'Select your key highlights (Step 2 of 2)',
+            options: [
+              'Outstanding Customer Service',
+              'Quick & Efficient Turnaround',
+              'Clean & Professional Environment',
+              'Friendly & Knowledgeable Team',
+              'High Quality Results',
+              'Great Overall Value'
+            ],
+            next: {
+              default: 'direct_submit'
+            }
+          },
+          private_manager_alert: {
+            id: 'private_manager_alert',
+            type: 'private_resolution',
+            title: 'Direct Escalation to Management',
+            subtitle: 'Your message is sent confidentially to our management team for prompt resolution.',
+            placeholder: 'Please describe what happened so we can make this right...',
+            next: {
+              default: 'completion_screen'
+            }
+          }
+        }
+      }
     };
   }
 

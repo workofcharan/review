@@ -175,6 +175,23 @@ const CATEGORIES = [
     ]
   },
   { 
+    id: 'tech', 
+    label: 'Tech, IT & Electronics', 
+    icon: '💻', 
+    defaultType: 'IT Solutions, Tech Repair & Electronics', 
+    defaultTagline: 'Fast Expert Diagnostics, Reliable Repairs & Top-Tier Support', 
+    defaultColor: '#0284c7', 
+    step1Greeting: 'How was your service at', 
+    defaultHighlights: [
+      'Fast & Accurate Diagnostic',
+      'Expert & Knowledgeable Techs',
+      'Flawless Repair & Clean Setup',
+      'Transparent & Fair Pricing',
+      'Prompt Turnaround Time',
+      'Friendly Customer Support'
+    ] 
+  },
+  { 
     id: 'general', 
     label: 'General Business & Services', 
     icon: '✨', 
@@ -230,6 +247,10 @@ function detectCategory(logoEmoji, nameText = '', typeText = '') {
   // Healthcare
   if (['🦷', '🩺', '🏥', '💊'].includes(logoEmoji) || /dental|dentist|clinic|doctor|dr\.|teeth|ortho|chiro|medical|health/.test(text)) {
     return 'healthcare';
+  }
+  // Tech
+  if (['💻', '🖥️', '📱', '⌨️', '🖱️', '💾', '📡', '🔌'].includes(logoEmoji) || /\btech\b|technology|software|hardware|computer|laptop|\bit\b|developer|repair|digital|electronics|cyber|cloud/.test(text)) {
+    return 'tech';
   }
 
   return 'general';
