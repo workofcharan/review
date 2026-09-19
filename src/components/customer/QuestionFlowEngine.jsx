@@ -444,7 +444,6 @@ export default function QuestionFlowEngine({
           <div className="grid grid-cols-1 gap-1.5">
             {displayedOptions.map((opt, idx) => {
               const label = typeof opt === 'string' ? opt : opt.label || opt.name || String(opt);
-              const emoji = typeof opt === 'object' && opt.emoji ? opt.emoji : '✨';
               const desc = typeof opt === 'object' && opt.desc ? opt.desc : `Top quality ${label.toLowerCase()}`;
               const isSelected = selectedList.includes(label);
               return (
@@ -452,30 +451,23 @@ export default function QuestionFlowEngine({
                   key={opt.id || idx}
                   type="button"
                   onClick={() => handleToggleChip(label, currentNode.type !== 'chips_single')}
-                  className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl border text-left transition-all duration-200 transform active:scale-[0.99] cursor-pointer ${
+                  className={`w-full flex items-center justify-between p-3 sm:p-3.5 rounded-2xl border text-left transition-all duration-200 transform active:scale-[0.99] cursor-pointer ${
                     isSelected
                       ? 'bg-sky-50/90 border-sky-500 text-sky-950 shadow-xs ring-1 ring-sky-400/50 font-bold'
                       : 'bg-white border-slate-200 text-slate-700 hover:border-sky-300 hover:bg-sky-50/30 font-medium'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5">
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-base shrink-0 transition-transform ${
-                      isSelected ? 'bg-sky-200/60 scale-105' : 'bg-slate-100'
-                    }`}>
-                      {emoji}
+                  <div className="min-w-0 pr-2">
+                    <div className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
+                      {label}
                     </div>
-                    <div>
-                      <div className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-                        {label}
+                    {desc && (
+                      <div className="text-[10px] sm:text-xs text-slate-500 leading-tight line-clamp-1 mt-0.5">
+                        {desc}
                       </div>
-                      {desc && (
-                        <div className="text-[10px] text-slate-500 leading-tight line-clamp-1">
-                          {desc}
-                        </div>
-                      )}
-                    </div>
+                    )}
                   </div>
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ml-2 transition-all ${
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all ${
                     isSelected ? 'bg-sky-600 text-white' : 'border border-slate-300'
                   }`}>
                     {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
