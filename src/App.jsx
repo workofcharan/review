@@ -45,7 +45,7 @@ export default function App() {
         <footer className="border-t border-slate-200 bg-white py-8 px-4 sm:px-6 text-center text-xs text-slate-500 shadow-sm">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-800">RevPulse AI</span>
+              <span className="font-bold text-slate-800">💻 Ebin tech Command Center</span>
               <span>•</span>
               <span>Smart QR Feedback & Review Acceleration Engine</span>
             </div>

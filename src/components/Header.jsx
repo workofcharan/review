@@ -21,20 +21,17 @@ export default function Header() {
         {/* Left: Brand Logo */}
         <div 
           onClick={() => navigateTo('/')}
-          className="flex items-center gap-2.5 cursor-pointer group select-none"
+          className="flex items-center gap-2.5 cursor-pointer group select-none min-w-0"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-600 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-sky-600/20 group-hover:scale-105 transition-all">
-            <QrCode className="w-5 h-5" />
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-600 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-sky-600/20 group-hover:scale-105 transition-all shrink-0 text-base">
+            <span>💻</span>
           </div>
-          <div>
-            <div className="flex items-center gap-1.5 font-display font-extrabold text-base tracking-tight text-slate-900 leading-tight">
-              <span>RevPulse</span>
-              <span className="text-[9px] uppercase px-1.5 py-0.5 rounded-md bg-sky-100 text-sky-700 font-black border border-sky-200/80">
-                AI
-              </span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 font-display font-extrabold text-sm sm:text-base tracking-tight text-slate-900 leading-tight">
+              <span className="truncate">Ebin tech Command Center</span>
             </div>
             <p className="text-[10px] text-slate-500 font-medium hidden sm:block leading-none">
-              Smart Feedback & Review Accelerator
+              Smart QR Feedback & AI Review Acceleration
             </p>
           </div>
         </div>

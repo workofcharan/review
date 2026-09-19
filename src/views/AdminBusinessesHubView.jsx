@@ -57,6 +57,19 @@ export default function AdminBusinessesHubView() {
 
   return (
     <div className="min-h-[calc(100vh-4rem)] max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6 animate-fade-in">
+      {/* Command Center Title Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200/80">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <span>💻</span>
+            <span>Ebin tech Command Center</span>
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 font-medium">
+            Multi-location QR feedback interception and automated Google review acceleration engine.
+          </p>
+        </div>
+      </div>
+
       {/* Aggregate KPI Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         {/* Metric 1 */}
