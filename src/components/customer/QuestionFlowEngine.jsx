@@ -453,47 +453,9 @@ export default function QuestionFlowEngine({
           </div>
         </div>
 
-        {/* Dynamic AI Review Draft Box (if direct_submit is next) */}
+        {/* Direct Google Review Redirection Button (if direct_submit is next) */}
         {isPositiveTerminal ? (
           <>
-            <div className="space-y-1.5 pt-1">
-              <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-                <span className="flex items-center gap-1 text-sky-700">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Ready-to-Post Review for {business.name}:</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveDraftText('');
-                    const newSeed = Date.now() + Math.floor(Math.random() * 10000000);
-                    setScanSeed(newSeed);
-                  }}
-                  className="text-[10px] text-sky-600 hover:text-sky-800 font-bold hover:underline cursor-pointer"
-                >
-                  ↻ Regenerate Draft
-                </button>
-              </div>
-
-              <div className="relative rounded-2xl bg-slate-50 border border-slate-200 p-3 shadow-inner space-y-2">
-                <textarea
-                  rows={3}
-                  value={activeDraftText || activeReviewDraft}
-                  onChange={(e) => setActiveDraftText(e.target.value)}
-                  className="w-full bg-transparent text-xs sm:text-sm text-slate-800 leading-relaxed focus:outline-none resize-none font-normal"
-                  placeholder="Your custom Google review draft will appear here..."
-                />
-                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/60">
-                  <span className="font-semibold text-emerald-700 flex items-center gap-1">
-                    <Check className="w-3 h-3 stroke-[3]" />
-                    <span>Tailored for {business.name}</span>
-                  </span>
-                  <span>1-Click Copy & Post</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Direct Google Review Redirection Button */}
             <button
               type="button"
               onClick={() => handleDirectGoogleSubmit(activeDraftText || activeReviewDraft)}
