@@ -68,7 +68,7 @@ export default function CustomerFeedbackView({ forcedSlug }) {
         bgGradient: 'from-slate-900 via-slate-800 to-slate-950'
       },
       publicReviewUrl: pRevUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(formattedName)}`,
-      minPublicRating: 4,
+      minPublicRating: 1,
       questionFlow: {
         start: 'overall_experience',
         questions: {
@@ -87,9 +87,9 @@ export default function CustomerFeedbackView({ forcedSlug }) {
             next: {
               '5': 'positive_highlights',
               '4': 'positive_highlights',
-              '3': 'private_manager_alert',
-              '2': 'private_manager_alert',
-              '1': 'private_manager_alert',
+              '3': 'positive_highlights',
+              '2': 'positive_highlights',
+              '1': 'positive_highlights',
             }
           },
           positive_highlights: {

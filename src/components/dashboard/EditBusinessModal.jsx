@@ -239,7 +239,7 @@ export default function EditBusinessModal({ isOpen, onClose }) {
               <LinkIcon className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
             </div>
             <p className="text-[10px] text-slate-500">
-              When 4-star and 5-star guests tap "Copy Review & Post on Google Maps", they are automatically directed to this link.
+              When guests tap "Copy Review & Post on Google Maps", they are automatically directed to this link.
             </p>
           </div>
 
@@ -248,18 +248,19 @@ export default function EditBusinessModal({ isOpen, onClose }) {
             <div className="space-y-1.5">
               <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Public Review Threshold</span>
+                <span>Public Review Redirection</span>
               </label>
               <select
                 value={formData.minPublicRating}
                 onChange={(e) => handleChange('minPublicRating', Number(e.target.value))}
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-sky-500"
               >
-                <option value={4}>4 Stars & Above (Recommended)</option>
-                <option value={5}>5 Stars Only (Strict Shielding)</option>
+                <option value={1}>All Stars (1★–5★ to Google) (Recommended)</option>
+                <option value={4}>4 Stars & Above</option>
+                <option value={5}>5 Stars Only</option>
               </select>
               <p className="text-[10px] text-slate-500">
-                Ratings below this threshold are intercepted for confidential management recovery.
+                All star ratings redirect customers straight to your Google Maps review form.
               </p>
             </div>
 

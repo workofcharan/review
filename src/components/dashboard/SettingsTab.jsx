@@ -219,11 +219,11 @@ export default function SettingsTab() {
             <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-slate-800">Public Review Threshold:</label>
-                <span className="text-xs font-bold text-emerald-700">{formData.minPublicRating}+ Stars</span>
+                <span className="text-xs font-bold text-emerald-700">{formData.minPublicRating === 1 ? 'All Stars (1★–5★)' : `${formData.minPublicRating}+ Stars`}</span>
               </div>
               <input
                 type="range"
-                min="3"
+                min="1"
                 max="5"
                 step="1"
                 value={formData.minPublicRating}
@@ -231,7 +231,7 @@ export default function SettingsTab() {
                 className="w-full accent-sky-600"
               />
               <p className="text-[11px] text-slate-500">
-                Customers rating {formData.minPublicRating}+ stars get the AI Google Review prompt. Lower ratings get intercepted privately.
+                All star reviews (1★–5★) copy the AI review draft and redirect directly to Google Reviews.
               </p>
             </div>
           </div>

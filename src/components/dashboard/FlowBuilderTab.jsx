@@ -504,7 +504,7 @@ export default function FlowBuilderTab() {
   const handleSimSelectRating = (val) => {
     const num = Number(val);
     setSimAnswers(prev => ({ ...prev, overall_experience: num }));
-    const nextTarget = simNode.next?.[String(num)] || (num >= (activeBusiness.minPublicRating || 4) ? 'positive_highlights' : 'private_manager_alert');
+    const nextTarget = simNode.next?.[String(num)] || 'positive_highlights';
     setSimHistory(prev => [...prev, simCurrentNodeId]);
     setSimCurrentNodeId(nextTarget);
   };
@@ -875,9 +875,7 @@ export default function FlowBuilderTab() {
                     </div>
                     <h4 className="font-black text-slate-900 text-sm">Feedback Complete!</h4>
                     <p className="text-xs text-slate-500">
-                      {simAnswers.overall_experience >= (activeBusiness.minPublicRating || 4)
-                        ? 'Simulated customer copy & redirect to Google Maps.'
-                        : 'Simulated customer private escalation to General Management.'}
+                      Simulated customer copy & redirect to Google Maps.
                     </p>
                     <button
                       onClick={handleSimReset}

@@ -20,7 +20,7 @@ export const INITIAL_BUSINESSES = [
     publicReviewUrl: DR_C_EXACT_REVIEW_URL,
     yelpUrl: DR_C_EXACT_REVIEW_URL,
     tripAdvisorUrl: "",
-    minPublicRating: 4,
+    minPublicRating: 1,
     tableCount: 6,
     aiPraise: {
       topic: "Dr. C's Gentle & Painless Care",
@@ -48,9 +48,9 @@ export const INITIAL_BUSINESSES = [
           next: {
             "5": "positive_highlights",
             "4": "positive_highlights",
-            "3": "private_manager_alert",
-            "2": "private_manager_alert",
-            "1": "private_manager_alert",
+            "3": "positive_highlights",
+            "2": "positive_highlights",
+            "1": "positive_highlights",
           }
         },
         positive_highlights: {
@@ -103,7 +103,7 @@ export const INITIAL_BUSINESSES = [
     publicReviewUrl: DR_C_EXACT_REVIEW_URL,
     yelpUrl: "",
     tripAdvisorUrl: "",
-    minPublicRating: 4,
+    minPublicRating: 1,
     tableCount: 4,
     aiPraise: {
       topic: "Measurable ROI & Growth Strategies",
@@ -131,9 +131,9 @@ export const INITIAL_BUSINESSES = [
           next: {
             "5": "positive_highlights",
             "4": "positive_highlights",
-            "3": "private_manager_alert",
-            "2": "private_manager_alert",
-            "1": "private_manager_alert",
+            "3": "positive_highlights",
+            "2": "positive_highlights",
+            "1": "positive_highlights",
           }
         },
         positive_highlights: {

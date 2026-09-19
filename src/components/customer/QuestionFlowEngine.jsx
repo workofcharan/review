@@ -478,58 +478,35 @@ export default function QuestionFlowEngine({
           </div>
         </div>
 
-        {/* Action Button: Google Maps for 4-5 Stars, Confidential Resolution for 1-3 Stars */}
-        {isPublicPositiveRating ? (
-          <>
-            <button
-              type="button"
-              onClick={() => handleDirectGoogleSubmit(activeDraftText || activeReviewDraft)}
-              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
-            >
-              {redirecting ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Opening Google Review Page...</span>
-                </div>
-              ) : (
-                <>
-                  <Copy className="w-4 h-4" />
-                  <span>Copy Review & Post on Google Maps</span>
-                  <ExternalLink className="w-4 h-4 opacity-85" />
-                </>
-              )}
-            </button>
+        {/* Action Button: Direct Google Submit for ALL star ratings (1★-5★) */}
+        <button
+          type="button"
+          onClick={() => handleDirectGoogleSubmit(activeDraftText || activeReviewDraft)}
+          className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
+        >
+          {redirecting ? (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Opening Google Review Page...</span>
+            </div>
+          ) : (
+            <>
+              <Copy className="w-4 h-4" />
+              <span>Copy Review & Post on Google Maps</span>
+              <ExternalLink className="w-4 h-4 opacity-85" />
+            </>
+          )}
+        </button>
 
-            {redirecting && (
-              <a
-                href={targetGoogleUrl}
-                target="_top"
-                rel="noopener noreferrer"
-                className="block text-center text-xs text-sky-700 font-bold underline animate-pulse py-1"
-              >
-                Tap here if not opened automatically →
-              </a>
-            )}
-          </>
-        ) : (
-          <button
-            type="button"
-            onClick={handlePrivateResolutionFromStep2}
-            className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-amber-600 via-rose-600 to-red-600 hover:from-amber-500 hover:to-red-500 text-white font-black text-sm shadow-lg shadow-rose-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
+        {redirecting && (
+          <a
+            href={targetGoogleUrl}
+            target="_top"
+            rel="noopener noreferrer"
+            className="block text-center text-xs text-sky-700 font-bold underline animate-pulse py-1"
           >
-            {privateSubmitting ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Delivering to Management...</span>
-              </div>
-            ) : (
-              <>
-                <ShieldCheck className="w-4 h-4" />
-                <span>Send Confidential Feedback to Management</span>
-                <HeartHandshake className="w-4 h-4 opacity-85" />
-              </>
-            )}
-          </button>
+            Tap here if not opened automatically →
+          </a>
         )}
       </div>
     );
