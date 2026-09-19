@@ -115,17 +115,6 @@ export default function QrStudioTab() {
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Design & Layout Settings</h3>
             </div>
 
-            {/* Guaranteed Smart 2-Step Flow Active Banner */}
-            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-sky-50 to-indigo-50 border border-sky-200/80 text-sky-950 space-y-1">
-              <div className="flex items-center gap-1.5 font-black text-xs text-sky-800">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>Smart 2-Step Customer Flow (Compulsory)</span>
-              </div>
-              <p className="text-[11px] text-slate-600 leading-tight">
-                All guest scans route through Step 1 (Rating) & Step 2 (Highlights $\rightarrow$ Direct Google Review / Shielded Recovery).
-              </p>
-            </div>
-
             {/* Template Format Selector */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-700">Collateral Format:</label>

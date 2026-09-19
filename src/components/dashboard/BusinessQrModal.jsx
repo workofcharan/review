@@ -138,20 +138,6 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
 
         {/* Modal Body */}
         <div className="p-6 space-y-4 text-center">
-          {/* Smart 2-Step Flow Indicator Badge */}
-          <div className="p-3 rounded-2xl bg-gradient-to-r from-sky-50 to-indigo-50 border border-sky-200/80 text-sky-950 text-left flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-sky-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-              <Sparkles className="w-4 h-4 text-amber-300" />
-            </div>
-            <div>
-              <div className="font-extrabold text-xs text-sky-900">
-                Compulsory Smart 2-Step Customer Flow
-              </div>
-              <div className="text-[10px] text-slate-500 leading-tight">
-                Step 1: Sentiment Rating $\rightarrow$ Step 2: Highlights & AI Review Drafter
-              </div>
-            </div>
-          </div>
 
           {/* QR Code Container */}
           <div className="relative mx-auto w-52 h-52 bg-slate-50 p-3.5 rounded-3xl border-2 border-slate-200 shadow-inner flex items-center justify-center group">
