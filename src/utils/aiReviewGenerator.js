@@ -6,8 +6,33 @@
 export function inferCategoryFromBusiness(business) {
   if (!business) return 'general';
   
+  if (business.category) {
+    const c = business.category.toLowerCase().trim();
+    if (c === 'dental') return 'healthcare';
+    if (c === 'fitness') return 'gym';
+    if (c === 'spa') return 'salon';
+    if (c === 'hospitality') return 'hotel';
+    if (c === 'marketing' || c === 'agency' || c === 'digital' || c === 'advertising') return 'marketing';
+    if (c === 'it' || c === 'technology') return 'tech';
+    if (['gym', 'cafe', 'restaurant', 'salon', 'hotel', 'automotive', 'retail', 'pet', 'healthcare', 'marketing', 'tech', 'general'].includes(c)) {
+      return c;
+    }
+  }
+
   const text = `${business.name || ''} ${business.type || ''} ${business.tagline || ''}`.toLowerCase();
   const logo = business.logo || '';
+
+  // Digital Marketing / Creative Agency / Advertising / Web & App Development / SEO (Priority check)
+  if (
+    /ebin\s*tech|ebintech|marketing|agency|advertising|\bseo\b|social media|ui\/ux|web design|web dev|website|digital solutions|lead gen|branding|campaign/i.test(text)
+  ) {
+    return 'marketing';
+  }
+
+  // Healthcare / Dental
+  if (['🦷', '🏥', '💊'].includes(logo) || /dental|dentist|clinic|doctor|\bdr\b|teeth|ortho|chiro|medical|health|care/i.test(text)) {
+    return 'healthcare';
+  }
 
   // Gym / Fitness
   if (['🏋️', '🥊', '🧘', '🏃', '🏊'].includes(logo) || /\bgym\b|fitness|crossfit|workout|trainer|training|boxing|yoga|athletics/i.test(text)) {
@@ -33,36 +58,17 @@ export function inferCategoryFromBusiness(business) {
   if (['🚗', '🔧', '🏎️', '🛠️', '🏎'].includes(logo) || /\bauto\b|\bcars?\b|motors|garage|tire|mechanic|detailing|lube|wash|dealership/i.test(text)) {
     return 'automotive';
   }
-  // Retail / Boutique / Store
-  if (['🛍️', '👟', '💎', '👗', '👔', '👠'].includes(logo) || /boutique|\bstore\b|\bshop\b|retail|fashion|apparel|jewel|shoes|market/i.test(text)) {
+  // Retail / Boutique / Store (Fixed: never match "marketing")
+  if (['🛍️', '👟', '💎', '👗', '👔', '👠'].includes(logo) || /boutique|\bstore\b|\bshop\b|\bretail\b|\bfashion\b|\bapparel\b|\bjewelry\b|\bshoes\b|\bclothing\b|\bsupermarket\b/i.test(text)) {
     return 'retail';
   }
   // Pet Care / Veterinary
   if (['🐾', '🐕', '🐈', '🩺'].includes(logo) || /\bpet\b|\bvet\b|paws|veterinary|animal|hound|\bdog\b|\bcat\b/i.test(text)) {
     return 'pet';
   }
-  // Healthcare / Dental
-  if (['🦷', '🏥', '💊'].includes(logo) || /dental|dentist|clinic|doctor|\bdr\b|teeth|ortho|chiro|medical|health|care/i.test(text)) {
-    return 'healthcare';
-  }
-  // Digital Marketing / Creative Agency / Advertising / Web & App Development
-  if (['📱', '💻', '🚀', '📈', '🎨'].includes(logo) || /marketing|agency|advertising|\bseo\b|social media|ui\/ux|web design|website|digital solutions|lead gen|branding|campaign|e-commerce/i.test(text)) {
-    return 'marketing';
-  }
   // Tech / IT / Electronics
   if (['💻', '🖥️', '📱', '⌨️', '🖱️', '💾', '📡', '🔌'].includes(logo) || /\btech\b|technology|software|hardware|computer|laptop|\bit\b|developer|repair|electronics|cyber|cloud/i.test(text)) {
     return 'tech';
-  }
-
-  if (business.category) {
-    const c = business.category.toLowerCase();
-    if (c === 'dental') return 'healthcare';
-    if (c === 'fitness') return 'gym';
-    if (c === 'spa') return 'salon';
-    if (c === 'hospitality') return 'hotel';
-    if (c === 'marketing' || c === 'agency') return 'marketing';
-    if (c === 'it' || c === 'technology') return 'tech';
-    return c;
   }
 
   return 'general';
@@ -1122,58 +1128,61 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
       case 5:
         return pickThree(
           `What made your experience with ${bizName} exceptional?`,
-          "Select your top agency & growth highlights",
+          "Select your top digital marketing & web highlights",
           [
-            { id: "opt_mkt_5_1", label: "High-Converting Campaigns & SEO Growth", emoji: "🚀", desc: "Drove quality traffic, visibility, and measurable leads" },
-            { id: "opt_mkt_5_2", label: "Intuitive UI/UX & Web Development", emoji: "💻", desc: "Modern, responsive design and seamless functionality" },
-            { id: "opt_mkt_5_3", label: "Strategic AI Marketing & Ad Targeting", emoji: "✨", desc: "Innovative, data-driven approach to scaling online" },
-            { id: "opt_mkt_5_4", label: "Dedicated & Responsive Account Team", emoji: "🤝", desc: "Clear updates, proactive communication, and support" },
-            { id: "opt_mkt_5_5", label: "High ROI & Rapid Brand Visibility", emoji: "📈", desc: "Delivered tangible results that elevated our brand" },
-            { id: "opt_mkt_5_6", label: "Smooth Onboarding & Transparent Metrics", emoji: "📋", desc: "Clear milestone tracking and transparent reporting" }
+            { id: "opt_mkt_5_1", label: "Strategic SEO & Google Rankings", desc: "Boosted organic search traffic, keyword ranking, and local visibility" },
+            { id: "opt_mkt_5_2", label: "High-Converting Web Design & UI/UX", desc: "Modern, fast, mobile-friendly website with stunning design" },
+            { id: "opt_mkt_5_3", label: "Targeted Social Media Marketing & Ads", desc: "Creative campaigns and high-ROI lead generation across social channels" },
+            { id: "opt_mkt_5_4", label: "Brand Strategy & Creative Identity", desc: "Elevated brand presence with memorable identity and sleek creatives" },
+            { id: "opt_mkt_5_5", label: "Measurable ROI & Inbound Lead Growth", desc: "Consistent qualified inquiries that grew business revenue" },
+            { id: "opt_mkt_5_6", label: "AI Review Acceleration & Reputation Boost", desc: "Smart QR customer conversion and 5-star reputation growth" },
+            { id: "opt_mkt_5_7", label: "Dedicated & Responsive Account Manager", desc: "Prompt communication, clear sprint milestones, and great collaboration" }
           ]
         );
       case 4:
         return pickThree(
           `What did you like about working with ${bizName}?`,
-          "Select what went well",
+          "Select what went well with your marketing & web project",
           [
-            { id: "opt_mkt_4_1", label: "Good Campaign Strategy & Execution", emoji: "📈", desc: "Solid marketing performance and steady progress" },
-            { id: "opt_mkt_4_2", label: "Helpful & Responsive Account Team", emoji: "🤝", desc: "Prompt answers and cooperative collaboration" },
-            { id: "opt_mkt_4_3", label: "Creative Design & Content Quality", emoji: "🎨", desc: "Quality graphics, landing pages, and creatives" },
-            { id: "opt_mkt_4_4", label: "Clear Project Milestones & Progress", emoji: "⏱️", desc: "Regular updates on deliverables and campaigns" }
+            { id: "opt_mkt_4_1", label: "Good Lead Generation & Online Traffic", desc: "Steady increase in qualified inquiries and website visitors" },
+            { id: "opt_mkt_4_2", label: "Quality Web Design & Creative Assets", desc: "Clean website layout and well-crafted marketing assets" },
+            { id: "opt_mkt_4_3", label: "Strategic SEO & Keyword Improvements", desc: "Noticeable gains in target keywords and search presence" },
+            { id: "opt_mkt_4_4", label: "Responsive Account Coordination & Support", desc: "Helpful project managers and cooperative collaboration" },
+            { id: "opt_mkt_4_5", label: "Transparent Analytics & Performance Reports", desc: "Regular updates on campaigns, reach, and conversion rates" }
           ]
         );
       case 3:
         return pickThree(
-          "What was your impression of the project & services?",
-          "Select the main aspect of your experience",
+          "What was your impression of the marketing & web services?",
+          "Select the main aspect of your project experience",
           [
-            { id: "opt_mkt_3_1", label: "Campaign Lead Volume & Turnaround", emoji: "⏱️", desc: "Lead generation pacing or campaign ramp-up speed" },
-            { id: "opt_mkt_3_2", label: "Weekly Reporting & Metric Clarity", emoji: "📊", desc: "Detailed analytics on SEO, clicks, and conversion rates" },
-            { id: "opt_mkt_3_3", label: "Project Revisions & Turnaround Speed", emoji: "🔄", desc: "Speed of implementing design and copy revisions" },
-            { id: "opt_mkt_3_4", label: "Scope & Deliverable Alignment", emoji: "📋", desc: "Clarity on deliverables and sprint milestones" }
+            { id: "opt_mkt_3_1", label: "Lead Generation & Campaign Ramp-up Pacing", desc: "Inquiries took a bit longer than anticipated to start converting" },
+            { id: "opt_mkt_3_2", label: "Deliverable Pacing & Milestone Timelines", desc: "Website design or campaign revisions took slight extra time" },
+            { id: "opt_mkt_3_3", label: "Analytics Reporting & KPI Deep-dives", desc: "Would appreciate more in-depth breakdown of metrics & data" },
+            { id: "opt_mkt_3_4", label: "Scope & Campaign Strategy Alignment", desc: "Clarity on deliverable milestones and target deliverables" }
           ]
         );
       case 2:
         return pickThree(
-          "What was the main issue during your project?",
-          "Select your primary concern",
+          "What was the main issue during your marketing project?",
+          "Select your primary concern for leadership review",
           [
-            { id: "opt_mkt_2_1", label: "Delayed Campaign / Web Deliverables", emoji: "⏳", desc: "Design assets or website launch postponed past target date" },
-            { id: "opt_mkt_2_2", label: "Lower Than Expected Lead Generation", emoji: "📉", desc: "Campaign traffic and conversions did not meet initial projections" },
-            { id: "opt_mkt_2_3", label: "Slow Communication & Updates", emoji: "📱", desc: "Delayed replies to emails, revisions, or meeting requests" },
-            { id: "opt_mkt_2_4", label: "Scope / Revision Cost Discrepancy", emoji: "💵", desc: "Unexpected extra costs for scope adjustments" }
+            { id: "opt_mkt_2_1", label: "Delayed Web / Campaign Deliverables", desc: "Website launch or creative assets delayed past target deadline" },
+            { id: "opt_mkt_2_2", label: "Lower Than Projected Lead Volume", desc: "Inbound leads and ad conversions fell below initial projections" },
+            { id: "opt_mkt_2_3", label: "Slow Response Times & Communication Gaps", desc: "Delays in answering revision emails or project questions" },
+            { id: "opt_mkt_2_4", label: "Design Revisions & Creative Alignment", desc: "Multiple iterations needed before creative direction matched vision" }
           ]
         );
       case 1:
       default:
         return pickThree(
-          "What was the primary issue with the agency service?",
-          "Select your main concern",
+          "What was the primary issue with the marketing services?",
+          "Select your main concern for immediate leadership escalation",
           [
-            { id: "opt_mkt_1_1", label: "Unmet Project Deadlines & Quality", emoji: "❌", desc: "Deliverables significantly delayed or fell short of expectations" },
-            { id: "opt_mkt_1_2", label: "Unresponsive Account Management", emoji: "🛑", desc: "Lack of communication, missed calls, and poor follow-through" },
-            { id: "opt_mkt_1_3", label: "Underperforming Strategy / Zero Leads", emoji: "⚠️", desc: "Zero tangible results or leads from marketing investment" }
+            { id: "opt_mkt_1_1", label: "Unmet Deadlines & Delayed Deliverables", desc: "Significant project delays and unfinished website/campaign assets" },
+            { id: "opt_mkt_1_2", label: "Unresponsive Account Management & Support", desc: "Difficulty getting status updates, missed calls, and poor coordination" },
+            { id: "opt_mkt_1_3", label: "Zero Measurable ROI / Low Lead Inquiries", desc: "Investment did not yield expected online leads or visibility" },
+            { id: "opt_mkt_1_4", label: "Strategy Misalignment with Brand Vision", desc: "Campaigns and deliverables failed to represent our brand identity" }
           ]
         );
     }
