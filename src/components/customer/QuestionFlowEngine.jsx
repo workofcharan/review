@@ -4,7 +4,13 @@ import {
   ShieldCheck, 
   Copy, 
   Check, 
-  ExternalLink
+  ExternalLink,
+  MessageSquare,
+  Sparkles,
+  HeartHandshake,
+  Send,
+  Mail,
+  ArrowRight
 } from 'lucide-react';
 import EmojiScale from './EmojiScale';
 import { generateReviewDraft, getThreeOptionsForRating, getStaffLabelForBusiness, inferCategoryFromBusiness } from '../../utils/aiReviewGenerator';
@@ -15,18 +21,38 @@ export default function QuestionFlowEngine({
   tableNumber = 'Reception / Operatory',
   onFinishFeedback
 }) {
-  const [currentNodeId, setCurrentNodeId] = useState('step_1_rating');
+  const fallbackReviewUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business?.name || 'Local Business')}`;
+  const targetGoogleUrl = business?.publicReviewUrl || fallbackReviewUrl;
+
+  const questionFlow = business?.questionFlow || {};
+  const questions = questionFlow.questions || {};
+  const startNodeId = questionFlow.start || Object.keys(questions)[0] || 'overall_experience';
+
+  const [currentNodeId, setCurrentNodeId] = useState(startNodeId);
   const [history, setHistory] = useState([]);
   const [answers, setAnswers] = useState({});
   const [redirecting, setRedirecting] = useState(false);
   const [activeDraftText, setActiveDraftText] = useState('');
   const [scanSeed, setScanSeed] = useState(() => Date.now() + Math.floor(Math.random() * 10000000));
+  
+  // Private resolution state
+  const [privateDetails, setPrivateDetails] = useState('');
+  const [privateContact, setPrivateContact] = useState('');
+  const [privateSubmitting, setPrivateSubmitting] = useState(false);
+  const [privateCompleted, setPrivateCompleted] = useState(false);
 
   const selectedRating = Number(answers.overall_experience || 5);
   const ratingThreeOptions = getThreeOptionsForRating(business, selectedRating, scanSeed);
 
-  const fallbackReviewUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business?.name || 'Local Business')}`;
-  const targetGoogleUrl = business?.publicReviewUrl || fallbackReviewUrl;
+  // Get current node definition or fallback
+  const currentNode = questions[currentNodeId] || {
+    id: currentNodeId,
+    type: currentNodeId === 'overall_experience' ? 'emoji_scale' : 'chips_multiselect',
+    title: `How was your experience at ${business?.name || 'our location'}?`,
+    subtitle: 'Tap an emoji to rate your visit today',
+    options: ['Great Customer Service', 'Quick & Friendly', 'Clean Environment', 'Top Quality'],
+    next: { default: 'direct_submit' }
+  };
 
   const handleSelectRating = (ratingVal) => {
     const num = Number(ratingVal);
@@ -35,50 +61,67 @@ export default function QuestionFlowEngine({
 
     const ratingOpts = getThreeOptionsForRating(business, num, newSeed);
     const initialHighlight = ratingOpts.options[0]?.label || '';
-    
+
     setAnswers(prev => ({
       ...prev,
       overall_experience: num,
-      selected_options: [initialHighlight]
+      [currentNodeId]: num,
+      selected_options: prev.selected_options?.length ? prev.selected_options : [initialHighlight]
     }));
 
-    // Advance to Step 2
-    setHistory(['step_1_rating']);
-    setCurrentNodeId('step_2_options');
+    // Check branching routing in questionFlow
+    const targetBranch = currentNode.next?.[String(num)] || 
+      currentNode.next?.default || 
+      (num >= (business?.minPublicRating || 4) ? 'positive_highlights' : 'private_manager_alert');
+
+    setHistory(prev => [...prev, currentNodeId]);
+    setCurrentNodeId(targetBranch);
   };
 
-  const handleToggleOption = (optionLabel) => {
+  const handleToggleChip = (optionLabel, isMulti = true) => {
     const currentList = Array.isArray(answers.selected_options) ? answers.selected_options : [];
     let updated;
-    if (currentList.includes(optionLabel)) {
-      // Keep at least one option selected if possible
-      updated = currentList.length > 1 ? currentList.filter(item => item !== optionLabel) : currentList;
+    if (isMulti) {
+      if (currentList.includes(optionLabel)) {
+        updated = currentList.length > 1 ? currentList.filter(item => item !== optionLabel) : currentList;
+      } else {
+        updated = [...currentList, optionLabel];
+      }
     } else {
-      updated = [...currentList, optionLabel];
+      updated = [optionLabel];
     }
+
     setActiveDraftText('');
     setAnswers(prev => ({
       ...prev,
-      selected_options: updated
+      selected_options: updated,
+      [currentNodeId]: updated
     }));
+  };
+
+  const handleAdvanceToNext = () => {
+    const nextTarget = currentNode.next?.default || 'direct_submit';
+    setHistory(prev => [...prev, currentNodeId]);
+    setCurrentNodeId(nextTarget);
   };
 
   const handleBack = () => {
     if (history.length === 0) return;
-    setHistory([]);
-    setCurrentNodeId('step_1_rating');
+    const prevNodeId = history[history.length - 1];
+    setHistory(prev => prev.slice(0, -1));
+    setCurrentNodeId(prevNodeId);
   };
 
-  // Direct Submit & Immediate Browser Redirect to Google Maps Review Page for all ratings
+  // Direct Submit & Immediate Browser Redirect to Google Maps Review Page
   const handleDirectGoogleSubmit = async (chosenDraft) => {
-    const highlights = answers.selected_options || [];
+    const highlights = answers.selected_options || answers[currentNodeId] || [];
     const rating = selectedRating;
     
     // Synthesize review draft
     const draftText = chosenDraft || activeDraftText || generateReviewDraft({
       business,
       rating,
-      highlights,
+      highlights: Array.isArray(highlights) ? highlights : [String(highlights)],
       staffShoutout: getStaffLabelForBusiness(business),
       tone: 'enthusiastic',
       scanSeed
@@ -121,58 +164,145 @@ export default function QuestionFlowEngine({
     redirectToReviewPage(targetGoogleUrl);
   };
 
-  const totalEstimatedSteps = 2;
-  const currentStepNumber = currentNodeId === 'step_1_rating' ? 1 : 2;
-  const progressPct = Math.round((currentStepNumber / totalEstimatedSteps) * 100);
+  // Submit private manager escalation
+  const handlePrivateResolutionSubmit = (e) => {
+    e.preventDefault();
+    setPrivateSubmitting(true);
 
-  // Generate authentic AI review draft tailored to the selected emoji rating and highlights dynamically per scan
+    setTimeout(() => {
+      const fullPayload = {
+        businessId: business.id,
+        businessSlug: business.slug,
+        rating: selectedRating,
+        sentiment: 'negative',
+        tableOrLocation: tableNumber,
+        channel: 'QR Scan (Mobile)',
+        answers: {
+          ...answers,
+          private_manager_alert: privateDetails
+        },
+        generatedReview: null,
+        recoveryStatus: 'pending_review',
+        customerContact: privateContact,
+        managerNotes: 'Confidential message submitted through private QR resolution gate.'
+      };
+
+      if (onFinishFeedback) {
+        onFinishFeedback(fullPayload);
+      }
+
+      setPrivateSubmitting(false);
+      setPrivateCompleted(true);
+    }, 400);
+  };
+
+  // Generate authentic AI review draft tailored to current answers
   const activeReviewDraft = generateReviewDraft({
     business,
     rating: selectedRating,
-    highlights: answers.selected_options || [ratingThreeOptions.options[0]?.label || ''],
+    highlights: answers.selected_options || (Array.isArray(currentNode.options) ? [currentNode.options[0]] : ['Great Customer Service']),
     staffShoutout: getStaffLabelForBusiness(business),
     scanSeed
   });
 
-  const renderQuestionContent = () => {
-    // STEP 1: Star Rating Selection (5 Emojis)
-    if (currentNodeId === 'step_1_rating') {
-      const getGreetingTitle = () => {
-        if (business.questionFlow?.questions?.overall_experience?.title) {
-          return business.questionFlow.questions.overall_experience.title;
-        }
-        const cat = inferCategoryFromBusiness(business);
-        switch (cat) {
-          case 'gym':
-          case 'fitness':
-            return `How was your workout session at ${business.name}?`;
-          case 'hotel':
-          case 'hospitality':
-            return `How was your stay experience at ${business.name}?`;
-          case 'salon':
-          case 'spa':
-            return `How was your styling & spa visit at ${business.name}?`;
-          case 'automotive':
-            return `How was your vehicle service at ${business.name}?`;
-          case 'retail':
-            return `How was your shopping experience at ${business.name}?`;
-          case 'pet':
-            return `How was your pet's visit to ${business.name}?`;
-          case 'restaurant':
-            return `How was your dining experience at ${business.name}?`;
-          case 'cafe':
-            return `How was your coffee & pastry at ${business.name}?`;
-          case 'healthcare':
-            return `How was your care experience at ${business.name}?`;
-          default:
-            return `How was your visit at ${business.name}?`;
-        }
-      };
+  const isPositiveTerminal = currentNodeId === 'direct_submit' || 
+    currentNodeId === 'ai_review_screen' || 
+    (currentNode.type === 'chips_multiselect' && (!currentNode.next?.default || currentNode.next?.default === 'direct_submit' || currentNode.next?.default === 'ai_review_screen'));
 
-      const step1Question = {
-        title: getGreetingTitle(),
-        subtitle: business.questionFlow?.questions?.overall_experience?.subtitle || "Tap an emoji to rate your experience today (Step 1 of 2)",
-        options: [
+  const renderContent = () => {
+    // 1. Private Resolution Completed Confirmation
+    if (privateCompleted || currentNodeId === 'completion_screen') {
+      return (
+        <div className="text-center py-6 space-y-4 animate-fade-in">
+          <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl font-bold shadow-sm">
+            ✓
+          </div>
+          <div className="space-y-1">
+            <h3 className="text-xl font-extrabold text-slate-900">Message Delivered Privately</h3>
+            <p className="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
+              Thank you for letting us know. Your note has been escalated directly to our leadership team for immediate resolution.
+            </p>
+          </div>
+          <div className="pt-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-[11px] font-bold text-slate-700">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Kept 100% Confidential</span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 2. Private Resolution Form (1-3 Star Recovery Gate)
+    if (currentNode.type === 'private_resolution' || currentNodeId === 'private_manager_alert') {
+      return (
+        <form onSubmit={handlePrivateResolutionSubmit} className="space-y-4 animate-slide-up">
+          {/* Empathetic Banner */}
+          <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-amber-900 space-y-1.5">
+            <div className="flex items-center gap-2 font-bold text-amber-800 text-xs">
+              <HeartHandshake className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>Direct to General Management</span>
+            </div>
+            <p className="text-[11px] text-amber-800/90 leading-relaxed">
+              {currentNode.subtitle || "We are sincerely sorry your visit didn't meet expectations. Your message bypasses public directories and goes straight to our leadership team."}
+            </p>
+          </div>
+
+          {/* Details Box */}
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700">
+              {currentNode.title || 'How can we make this right?'}
+            </label>
+            <textarea
+              required
+              rows={3}
+              value={privateDetails}
+              onChange={(e) => setPrivateDetails(e.target.value)}
+              placeholder={currentNode.placeholder || "Please share any specifics (timing, order, or service interaction) so we can investigate and make it right..."}
+              className="w-full rounded-2xl bg-slate-50 border border-slate-300 p-3 text-slate-900 text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none shadow-xs font-medium"
+            />
+          </div>
+
+          {/* Contact info for resolution */}
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+              <span>Contact Info for Follow-up (Optional)</span>
+              <span className="text-[10px] text-slate-400 font-semibold">Kept Private</span>
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                value={privateContact}
+                onChange={(e) => setPrivateContact(e.target.value)}
+                placeholder="Email or phone number for manager follow-up"
+                className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+              <Mail className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={privateSubmitting || !privateDetails.trim()}
+            className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-amber-500 to-rose-600 hover:from-amber-600 hover:to-rose-700 disabled:opacity-50 text-white font-black text-xs shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
+          >
+            <Send className="w-3.5 h-3.5" />
+            <span>{privateSubmitting ? 'Sending to Management...' : 'Send Private Message to Leadership'}</span>
+          </button>
+        </form>
+      );
+    }
+
+    // 3. 5-Point Sentiment Scale Node (Emoji / Stars)
+    if (currentNode.type === 'emoji_scale' || currentNodeId === 'overall_experience') {
+      const dynamicTitle = currentNode.title || `How was your experience at ${business?.name || 'our location'}?`;
+      const dynamicSubtitle = currentNode.subtitle || "Tap an emoji to rate your visit today (Step 1 of 2)";
+
+      const stepQuestion = {
+        title: dynamicTitle,
+        subtitle: dynamicSubtitle,
+        options: currentNode.options || [
           { value: 1, label: "Poor", emoji: "😣", sentiment: "negative" },
           { value: 2, label: "Fair", emoji: "🙁", sentiment: "negative" },
           { value: 3, label: "Average", emoji: "😐", sentiment: "neutral" },
@@ -183,47 +313,79 @@ export default function QuestionFlowEngine({
 
       return (
         <div className="space-y-6 animate-slide-up">
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
-              {step1Question.title}
+              {stepQuestion.title}
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed">
-              {step1Question.subtitle}
+              {stepQuestion.subtitle}
             </p>
           </div>
 
           <EmojiScale
-            question={step1Question}
+            question={stepQuestion}
             selectedValue={answers.overall_experience}
-            onSelect={(val) => {
-              handleSelectRating(val);
-            }}
+            onSelect={(val) => handleSelectRating(val)}
           />
         </div>
       );
     }
 
-    // STEP 2: RELEVANT 3 OPTIONS + RELEVANT 3 AI REVIEW DRAFTS DIRECTLY TO GOOGLE REVIEWS
+    // 4. Free Text Question Node
+    if (currentNode.type === 'free_text') {
+      return (
+        <div className="space-y-4 animate-slide-up">
+          <div className="space-y-1">
+            <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight">
+              {currentNode.title || 'Any extra details or staff shoutouts?'}
+            </h2>
+            <p className="text-xs text-slate-500 font-medium">
+              {currentNode.subtitle || 'Please share your thoughts (optional)'}
+            </p>
+          </div>
+
+          <textarea
+            rows={4}
+            value={answers[currentNodeId] || ''}
+            onChange={(e) => setAnswers(prev => ({ ...prev, [currentNodeId]: e.target.value }))}
+            placeholder={currentNode.placeholder || 'Type here...'}
+            className="w-full rounded-2xl bg-slate-50 border border-slate-300 p-3.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none font-medium"
+          />
+
+          <button
+            type="button"
+            onClick={handleAdvanceToNext}
+            className="w-full py-3 px-4 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+          >
+            <span>Continue</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      );
+    }
+
+    // 5. Multi-Select / Single-Select Chips Question Node (With Live AI Review Draft & Google Redirection)
     const selectedList = Array.isArray(answers.selected_options) ? answers.selected_options : [];
+    const chipPool = currentNode.options || ratingThreeOptions.options.map(o => o.label);
     const ratingColor = selectedRating >= 4 ? 'text-amber-500' : selectedRating === 3 ? 'text-amber-600' : 'text-rose-500';
 
     return (
       <div className="space-y-4 animate-slide-up">
-        {/* Question Title & Subtitle */}
+        {/* Title & Star Badges */}
         <div className="space-y-1">
           <div className={`flex items-center gap-1.5 text-xs font-bold ${ratingColor}`}>
             <span>{'★'.repeat(selectedRating)}</span>
             <span className="text-slate-500 font-medium">({selectedRating} {selectedRating === 1 ? 'Star' : 'Stars'} Selected)</span>
           </div>
           <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight">
-            {ratingThreeOptions.title}
+            {currentNode.title || ratingThreeOptions.title}
           </h2>
           <p className="text-xs text-slate-500 font-medium leading-relaxed">
-            {ratingThreeOptions.subtitle}
+            {currentNode.subtitle || ratingThreeOptions.subtitle}
           </p>
         </div>
 
-        {/* Exactly 3 Tailored Options for this Star Rating */}
+        {/* Chips Selector */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
             <span>Select Key Highlights:</span>
@@ -240,40 +402,36 @@ export default function QuestionFlowEngine({
                   }));
                 }
               }}
-              title="Show different options"
-              className="text-[10px] text-sky-600 hover:text-sky-800 font-bold flex items-center gap-1 hover:underline cursor-pointer transition-colors"
+              className="text-[10px] text-sky-600 hover:text-sky-800 font-bold flex items-center gap-1 hover:underline cursor-pointer"
             >
-              <span>↻ Shuffle Options</span>
+              <span>↻ Shuffle</span>
             </button>
           </div>
+
           <div className="grid grid-cols-1 gap-1.5">
-            {ratingThreeOptions.options.map((opt) => {
-              const isSelected = selectedList.includes(opt.label);
+            {chipPool.map((chipLabel, idx) => {
+              const label = typeof chipLabel === 'string' ? chipLabel : chipLabel.label || chipLabel.name;
+              const isSelected = selectedList.includes(label);
               return (
                 <button
-                  key={opt.id}
+                  key={idx}
                   type="button"
-                  onClick={() => handleToggleOption(opt.label)}
-                  className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl border text-left transition-all duration-200 transform active:scale-[0.99] cursor-pointer ${
+                  onClick={() => handleToggleChip(label, currentNode.type !== 'chips_single')}
+                  className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
                     isSelected
-                      ? 'bg-sky-50/90 border-sky-500 text-sky-950 shadow-xs ring-1 ring-sky-400/50'
-                      : 'bg-white border-slate-200 text-slate-700 hover:border-sky-300 hover:bg-sky-50/30'
+                      ? 'bg-sky-50/90 border-sky-500 text-sky-950 shadow-xs ring-1 ring-sky-400/50 font-bold'
+                      : 'bg-white border-slate-200 text-slate-700 hover:border-sky-300 hover:bg-sky-50/30 font-medium'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-base shrink-0 transition-transform ${
-                      isSelected ? 'bg-sky-200/60 scale-105' : 'bg-slate-100'
+                    <div className={`w-7 h-7 rounded-xl flex items-center justify-center text-sm shrink-0 ${
+                      isSelected ? 'bg-sky-200/60' : 'bg-slate-100'
                     }`}>
-                      {opt.emoji}
+                      ✨
                     </div>
-                    <div>
-                      <div className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-                        {opt.label}
-                      </div>
-                      <div className="text-[10px] text-slate-500 leading-tight line-clamp-1">
-                        {opt.desc}
-                      </div>
-                    </div>
+                    <span className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
+                      {label}
+                    </span>
                   </div>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ml-2 transition-all ${
                     isSelected ? 'bg-sky-600 text-white' : 'border border-slate-300'
@@ -286,72 +444,86 @@ export default function QuestionFlowEngine({
           </div>
         </div>
 
-        {/* Live AI Review Draft Box */}
-        <div className="space-y-1.5 pt-1">
-          <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
-            <span className="flex items-center gap-1 text-sky-700">
-              <span>✨ Ready-to-Post Review for {business.name}:</span>
-            </span>
+        {/* Dynamic AI Review Draft Box (if direct_submit is next) */}
+        {isPositiveTerminal ? (
+          <>
+            <div className="space-y-1.5 pt-1">
+              <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-500">
+                <span className="flex items-center gap-1 text-sky-700">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Ready-to-Post Review for {business.name}:</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActiveDraftText('');
+                    const newSeed = Date.now() + Math.floor(Math.random() * 10000000);
+                    setScanSeed(newSeed);
+                  }}
+                  className="text-[10px] text-sky-600 hover:text-sky-800 font-bold hover:underline cursor-pointer"
+                >
+                  ↻ Regenerate Draft
+                </button>
+              </div>
+
+              <div className="relative rounded-2xl bg-slate-50 border border-slate-200 p-3 shadow-inner space-y-2">
+                <textarea
+                  rows={3}
+                  value={activeDraftText || activeReviewDraft}
+                  onChange={(e) => setActiveDraftText(e.target.value)}
+                  className="w-full bg-transparent text-xs sm:text-sm text-slate-800 leading-relaxed focus:outline-none resize-none font-normal"
+                  placeholder="Your custom Google review draft will appear here..."
+                />
+                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/60">
+                  <span className="font-semibold text-emerald-700 flex items-center gap-1">
+                    <Check className="w-3 h-3 stroke-[3]" />
+                    <span>Tailored for {business.name}</span>
+                  </span>
+                  <span>1-Click Copy & Post</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Direct Google Review Redirection Button */}
             <button
               type="button"
-              onClick={() => {
-                setActiveDraftText('');
-                const newSeed = Date.now() + Math.floor(Math.random() * 10000000);
-                setScanSeed(newSeed);
-              }}
-              className="text-[10px] text-sky-600 hover:text-sky-800 font-bold hover:underline cursor-pointer"
+              onClick={() => handleDirectGoogleSubmit(activeDraftText || activeReviewDraft)}
+              className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
             >
-              ↻ Regenerate Draft
+              {redirecting ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Opening Google Review Page...</span>
+                </div>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4" />
+                  <span>Copy Review & Post on Google Maps</span>
+                  <ExternalLink className="w-4 h-4 opacity-85" />
+                </>
+              )}
             </button>
-          </div>
 
-          <div className="relative rounded-2xl bg-slate-50 border border-slate-200 p-3 shadow-inner space-y-2">
-            <textarea
-              rows={3}
-              value={activeDraftText || activeReviewDraft}
-              onChange={(e) => setActiveDraftText(e.target.value)}
-              className="w-full bg-transparent text-xs sm:text-sm text-slate-800 leading-relaxed focus:outline-none resize-none font-normal"
-              placeholder="Your custom Google review draft will appear here..."
-            />
-            <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-200/60">
-              <span className="font-semibold text-emerald-700 flex items-center gap-1">
-                <Check className="w-3 h-3 stroke-[3]" />
-                <span>Tailored for {business.name}</span>
-              </span>
-              <span>1-Click Copy & Post</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Direct Google Review Redirection Button */}
-        <button
-          type="button"
-          onClick={() => handleDirectGoogleSubmit(activeDraftText || activeReviewDraft)}
-          className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-black text-sm shadow-lg shadow-sky-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
-        >
-          {redirecting ? (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>Opening Google Review Page...</span>
-            </div>
-          ) : (
-            <>
-              <Copy className="w-4 h-4" />
-              <span>Copy Review & Post on Google Maps</span>
-              <ExternalLink className="w-4 h-4 opacity-85" />
-            </>
-          )}
-        </button>
-
-        {redirecting && (
-          <a
-            href={targetGoogleUrl}
-            target="_top"
-            rel="noopener noreferrer"
-            className="block text-center text-xs text-sky-700 font-bold underline animate-pulse py-1"
+            {redirecting && (
+              <a
+                href={targetGoogleUrl}
+                target="_top"
+                rel="noopener noreferrer"
+                className="block text-center text-xs text-sky-700 font-bold underline animate-pulse py-1"
+              >
+                Tap here if not opened automatically →
+              </a>
+            )}
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={handleAdvanceToNext}
+            className="w-full py-3 px-4 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            Tap here if not opened automatically →
-          </a>
+            <span>Continue</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         )}
       </div>
     );
@@ -361,9 +533,9 @@ export default function QuestionFlowEngine({
     <div className="w-full max-w-md mx-auto relative">
       {/* Top Header Card */}
       <div className="rounded-3xl p-5 sm:p-6 border border-slate-200/90 shadow-2xl shadow-slate-200/60 relative overflow-hidden bg-white">
-        {/* Top bar with back button & progress */}
+        {/* Top bar with back button */}
         <div className="flex items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100">
-          {history.length > 0 ? (
+          {history.length > 0 && !privateCompleted ? (
             <button
               type="button"
               onClick={handleBack}
@@ -381,28 +553,22 @@ export default function QuestionFlowEngine({
             </div>
           )}
 
-          {/* Step & Progress Bar */}
+          {/* Step indicator */}
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-bold text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-200">
-              Step {currentStepNumber} of {totalEstimatedSteps}
+              {history.length === 0 ? 'Step 1' : 'Step 2'}
             </span>
-            <div className="w-16 h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-              <div 
-                className="h-full bg-gradient-to-r from-sky-500 to-indigo-600 transition-all duration-300 rounded-full"
-                style={{ width: `${progressPct}%` }}
-              />
-            </div>
           </div>
         </div>
 
         {/* Main dynamic question node */}
-        {renderQuestionContent()}
+        {renderContent()}
 
         {/* Footer Guarantee */}
         <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
           <div className="flex items-center gap-1.5 font-semibold text-slate-600">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>Direct Google Review Redirect</span>
+            <span>Verified Customer Flow</span>
           </div>
           <span className="text-slate-400 font-medium truncate max-w-[120px]">{business.name}</span>
         </div>
