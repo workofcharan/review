@@ -9,21 +9,20 @@ import {
   Eye,
   Palette,
   Image as ImageIcon,
-  Star
+  Star,
+  ShieldCheck,
+  Zap
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { generateQrDataUrl, buildFeedbackUrl } from '../../utils/qrHelper';
 
-const DEFAULT_REVIEW_URL = "https://g.page/r/CVfAf-zR7rBLEBE/review";
-
 export default function QrStudioTab() {
   const { activeBusiness } = useApp();
 
-  const [qrMode, setQrMode] = useState('feedback_flow'); // 'feedback_flow' or 'direct_google'
   const [cardFormat, setCardFormat] = useState('table_tent');
   const [tabletopBg, setTabletopBg] = useState('studio'); // studio, wood, marble
   const [headline, setHeadline] = useState('How was your visit today?');
-  const [subheadline, setSubheadline] = useState('Scan to share your feedback in seconds');
+  const [subheadline, setSubheadline] = useState('Scan to rate & share your feedback in seconds');
   const [qrColor, setQrColor] = useState(activeBusiness?.brandColors?.primary || '#0284c7');
   const [tableLabel, setTableLabel] = useState('Table #');
   const [qrDataUrl, setQrDataUrl] = useState('');
@@ -36,14 +35,13 @@ export default function QrStudioTab() {
     }
   }, [activeBusiness]);
 
-  const feedbackFlowUrl = activeBusiness ? buildFeedbackUrl(activeBusiness) : '';
-  const fallbackDirectUrl = activeBusiness ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(activeBusiness.name)}` : 'https://www.google.com/maps';
-  const directGoogleUrl = activeBusiness?.publicReviewUrl || fallbackDirectUrl;
-  const targetFeedbackUrl = qrMode === 'direct_google' ? directGoogleUrl : feedbackFlowUrl;
+  // QR always routes compulsorily through the Smart 2-Step Flow
+  const targetFeedbackUrl = activeBusiness ? buildFeedbackUrl(activeBusiness) : '';
 
   useEffect(() => {
     let isMounted = true;
     async function loadQr() {
+      if (!targetFeedbackUrl) return;
       const url = await generateQrDataUrl(targetFeedbackUrl, {
         darkColor: '#0f172a',
         lightColor: '#ffffff',
@@ -71,7 +69,7 @@ export default function QrStudioTab() {
     if (!qrDataUrl) return;
     const link = document.createElement('a');
     link.href = qrDataUrl;
-    link.download = `${activeBusiness.slug}-${qrMode}-qr.png`;
+    link.download = `${activeBusiness.slug}-smart-flow-qr.png`;
     link.click();
   };
 
@@ -117,42 +115,15 @@ export default function QrStudioTab() {
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Design & Layout Settings</h3>
             </div>
 
-            {/* QR Destination Mode Selector */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-700">QR Scan Destination Mode:</label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setQrMode('feedback_flow')}
-                  className={`p-2.5 rounded-xl text-left border transition-all text-xs cursor-pointer ${
-                    qrMode === 'feedback_flow'
-                      ? 'bg-sky-50 border-sky-500 text-sky-900 ring-1 ring-sky-400 font-bold'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                    <span>Smart 2-Step Flow</span>
-                  </div>
-                  <div className="text-[10px] text-slate-400 font-normal mt-0.5">Rates & AI Review Drafter</div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setQrMode('direct_google')}
-                  className={`p-2.5 rounded-xl text-left border transition-all text-xs cursor-pointer ${
-                    qrMode === 'direct_google'
-                      ? 'bg-emerald-50 border-emerald-500 text-emerald-900 ring-1 ring-emerald-400 font-bold'
-                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  <div className="flex items-center gap-1.5">
-                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-                    <span>Direct Google Link</span>
-                  </div>
-                  <div className="text-[10px] text-slate-400 font-normal mt-0.5">Instant Google Maps Page</div>
-                </button>
+            {/* Guaranteed Smart 2-Step Flow Active Banner */}
+            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-sky-50 to-indigo-50 border border-sky-200/80 text-sky-950 space-y-1">
+              <div className="flex items-center gap-1.5 font-black text-xs text-sky-800">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <span>Smart 2-Step Customer Flow (Compulsory)</span>
               </div>
+              <p className="text-[11px] text-slate-600 leading-tight">
+                All guest scans route through Step 1 (Rating) & Step 2 (Highlights $\rightarrow$ Direct Google Review / Shielded Recovery).
+              </p>
             </div>
 
             {/* Template Format Selector */}
@@ -168,7 +139,7 @@ export default function QrStudioTab() {
                   <button
                     key={item.id}
                     onClick={() => setCardFormat(item.id)}
-                    className={`p-2.5 rounded-xl text-left border transition-all text-xs ${
+                    className={`p-2.5 rounded-xl text-left border transition-all text-xs cursor-pointer ${
                       cardFormat === item.id
                         ? 'bg-sky-50 border-sky-500 text-sky-900 ring-1 ring-sky-400 font-bold'
                         : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -194,7 +165,7 @@ export default function QrStudioTab() {
                     key={bg.id}
                     type="button"
                     onClick={() => setTabletopBg(bg.id)}
-                    className={`p-2 rounded-xl text-center text-xs font-semibold border transition-all ${
+                    className={`p-2 rounded-xl text-center text-xs font-semibold border transition-all cursor-pointer ${
                       tabletopBg === bg.id
                         ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
                         : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
@@ -213,13 +184,13 @@ export default function QrStudioTab() {
                 type="text"
                 value={headline}
                 onChange={(e) => setHeadline(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 font-semibold"
               />
             </div>
 
             {/* Subtitle / CTA */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700">Subheader / Reward Hook:</label>
+              <label className="text-xs font-bold text-slate-700">Subheader / Instruction:</label>
               <input
                 type="text"
                 value={subheadline}
@@ -258,14 +229,14 @@ export default function QrStudioTab() {
             <div className="pt-2 flex gap-2">
               <button
                 onClick={handleDownloadPng}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
+                className="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Download PNG</span>
               </button>
               <button
                 onClick={handlePrint}
-                className="flex-1 py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs"
+                className="flex-1 py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>Print Flyer</span>
@@ -337,7 +308,7 @@ export default function QrStudioTab() {
 
               <div className="mt-3 pt-3 border-t border-slate-100 w-full flex items-center justify-between text-[11px] text-slate-400">
                 <span className="font-mono font-semibold text-slate-500">{tableLabel} ___</span>
-                <span className="font-bold" style={{ color: qrColor }}>Direct Google Reviews</span>
+                <span className="font-bold" style={{ color: qrColor }}>Smart 2-Step Flow</span>
               </div>
             </div>
           </div>

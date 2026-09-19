@@ -10,14 +10,13 @@ import {
   Smartphone, 
   Printer, 
   Sparkles,
-  Star
+  ShieldCheck
 } from 'lucide-react';
 import { generateQrDataUrl, buildFeedbackUrl } from '../../utils/qrHelper';
 import { useApp } from '../../context/AppContext';
 
 export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrintStudio }) {
   const { navigateTo, setSelectedBusinessId, businesses } = useApp();
-  const [qrMode, setQrMode] = useState('feedback_flow'); // 'feedback_flow' or 'direct_google'
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [isCopied, setIsCopied] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,11 +25,8 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
   const biz = (business?.id ? businesses.find(b => b.id === business.id) : null) || business;
   const brandColor = biz?.brandColors?.primary || '#0284c7';
 
-  // Determine active destination URL based on selected mode
-  const feedbackFlowUrl = biz ? buildFeedbackUrl(biz) : '';
-  const fallbackDirectUrl = biz ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.name)}` : 'https://www.google.com/maps';
-  const directGoogleUrl = biz?.publicReviewUrl || fallbackDirectUrl;
-  const activeUrl = qrMode === 'direct_google' ? directGoogleUrl : feedbackFlowUrl;
+  // Every business QR code is compulsorily locked to the Smart 2-Step Customer Flow
+  const activeUrl = biz ? buildFeedbackUrl(biz) : '';
 
   useEffect(() => {
     if (!isOpen || !biz) return;
@@ -76,18 +72,14 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
     if (!qrDataUrl) return;
     const link = document.createElement('a');
     link.href = qrDataUrl;
-    link.download = `${biz.slug}-${qrMode}-qr.png`;
+    link.download = `${biz.slug}-smart-flow-qr.png`;
     link.click();
   };
 
   const handleOpenCustomerFlow = () => {
     onClose();
-    if (qrMode === 'direct_google') {
-      window.open(directGoogleUrl, '_blank', 'noopener,noreferrer');
-    } else {
-      setSelectedBusinessId(biz.id);
-      navigateTo(`/b/${biz.slug}`);
-    }
+    setSelectedBusinessId(biz.id);
+    navigateTo(`/b/${biz.slug}`);
   };
 
   const handleOpenStudio = () => {
@@ -146,37 +138,18 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
 
         {/* Modal Body */}
         <div className="p-6 space-y-4 text-center">
-          {/* QR Destination Mode Selector */}
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block text-left">
-              QR Destination Mode:
-            </label>
-            <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-100 rounded-2xl border border-slate-200">
-              <button
-                type="button"
-                onClick={() => setQrMode('feedback_flow')}
-                className={`py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  qrMode === 'feedback_flow'
-                    ? 'bg-white text-sky-700 shadow-xs ring-1 ring-sky-500/20'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>Smart 2-Step Flow</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setQrMode('direct_google')}
-                className={`py-2 px-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  qrMode === 'direct_google'
-                    ? 'bg-white text-emerald-700 shadow-xs ring-1 ring-emerald-500/20'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-                <span>Direct Google Link</span>
-              </button>
+          {/* Smart 2-Step Flow Indicator Badge */}
+          <div className="p-3 rounded-2xl bg-gradient-to-r from-sky-50 to-indigo-50 border border-sky-200/80 text-sky-950 text-left flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-sky-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Sparkles className="w-4 h-4 text-amber-300" />
+            </div>
+            <div>
+              <div className="font-extrabold text-xs text-sky-900">
+                Compulsory Smart 2-Step Customer Flow
+              </div>
+              <div className="text-[10px] text-slate-500 leading-tight">
+                Step 1: Sentiment Rating $\rightarrow$ Step 2: Highlights & AI Review Drafter
+              </div>
             </div>
           </div>
 
@@ -199,7 +172,7 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
                   onClick={handleOpenCustomerFlow}
                 >
                   <ExternalLink className="w-4 h-4" />
-                  <span>{qrMode === 'direct_google' ? 'Open Google Link' : 'Launch Live Flow'}</span>
+                  <span>Launch Live Flow</span>
                 </div>
               </div>
             ) : (
@@ -211,8 +184,8 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
           <div className="space-y-1 text-left">
             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
               <span>Scanned Target Destination:</span>
-              <span className="text-[10px] text-slate-400 font-mono font-normal">
-                {qrMode === 'direct_google' ? 'Google Review Page' : 'Customer Feedback UX'}
+              <span className="text-[10px] text-emerald-700 font-bold font-mono">
+                Smart Customer UX
               </span>
             </label>
             <div className="flex items-center gap-2 p-1.5 pl-3 bg-slate-50 border border-slate-200 rounded-2xl">
@@ -256,7 +229,7 @@ export default function BusinessQrModal({ business, isOpen, onClose, onOpenPrint
               className="py-2.5 px-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>{qrMode === 'direct_google' ? 'Test Google Link' : 'Test Flow'}</span>
+              <span>Test Flow</span>
             </button>
           </div>
 
