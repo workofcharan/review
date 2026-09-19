@@ -364,9 +364,9 @@ export default function QuestionFlowEngine({
       );
     }
 
-    // 5. Multi-Select / Single-Select Chips Question Node (With Live AI Review Draft & Google Redirection)
+    // 5. Exactly 3 Dynamic Suggestions (Per Scan) + AI Review Draft + Google Redirection
     const selectedList = Array.isArray(answers.selected_options) ? answers.selected_options : [];
-    const chipPool = currentNode.options || ratingThreeOptions.options.map(o => o.label);
+    const displayedOptions = (ratingThreeOptions.options || []).slice(0, 3);
     const ratingColor = selectedRating >= 4 ? 'text-amber-500' : selectedRating === 3 ? 'text-amber-600' : 'text-rose-500';
 
     return (
@@ -378,14 +378,14 @@ export default function QuestionFlowEngine({
             <span className="text-slate-500 font-medium">({selectedRating} {selectedRating === 1 ? 'Star' : 'Stars'} Selected)</span>
           </div>
           <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight">
-            {currentNode.title || ratingThreeOptions.title}
+            {ratingThreeOptions.title || currentNode.title}
           </h2>
           <p className="text-xs text-slate-500 font-medium leading-relaxed">
-            {currentNode.subtitle || ratingThreeOptions.subtitle}
+            {ratingThreeOptions.subtitle || currentNode.subtitle}
           </p>
         </div>
 
-        {/* Chips Selector */}
+        {/* Exactly 3 Dynamic Highlight Suggestions (Rotated per scan) */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
             <span>Select Key Highlights:</span>
@@ -404,34 +404,43 @@ export default function QuestionFlowEngine({
               }}
               className="text-[10px] text-sky-600 hover:text-sky-800 font-bold flex items-center gap-1 hover:underline cursor-pointer"
             >
-              <span>↻ Shuffle</span>
+              <span>↻ Shuffle Options</span>
             </button>
           </div>
 
           <div className="grid grid-cols-1 gap-1.5">
-            {chipPool.map((chipLabel, idx) => {
-              const label = typeof chipLabel === 'string' ? chipLabel : chipLabel.label || chipLabel.name;
+            {displayedOptions.map((opt, idx) => {
+              const label = typeof opt === 'string' ? opt : opt.label || opt.name || String(opt);
+              const emoji = typeof opt === 'object' && opt.emoji ? opt.emoji : '✨';
+              const desc = typeof opt === 'object' && opt.desc ? opt.desc : `Top quality ${label.toLowerCase()}`;
               const isSelected = selectedList.includes(label);
               return (
                 <button
-                  key={idx}
+                  key={opt.id || idx}
                   type="button"
                   onClick={() => handleToggleChip(label, currentNode.type !== 'chips_single')}
-                  className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl border text-left transition-all duration-200 cursor-pointer ${
+                  className={`w-full flex items-center justify-between p-2.5 sm:p-3 rounded-2xl border text-left transition-all duration-200 transform active:scale-[0.99] cursor-pointer ${
                     isSelected
                       ? 'bg-sky-50/90 border-sky-500 text-sky-950 shadow-xs ring-1 ring-sky-400/50 font-bold'
                       : 'bg-white border-slate-200 text-slate-700 hover:border-sky-300 hover:bg-sky-50/30 font-medium'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <div className={`w-7 h-7 rounded-xl flex items-center justify-center text-sm shrink-0 ${
-                      isSelected ? 'bg-sky-200/60' : 'bg-slate-100'
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-base shrink-0 transition-transform ${
+                      isSelected ? 'bg-sky-200/60 scale-105' : 'bg-slate-100'
                     }`}>
-                      ✨
+                      {emoji}
                     </div>
-                    <span className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
-                      {label}
-                    </span>
+                    <div>
+                      <div className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
+                        {label}
+                      </div>
+                      {desc && (
+                        <div className="text-[10px] text-slate-500 leading-tight line-clamp-1">
+                          {desc}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ml-2 transition-all ${
                     isSelected ? 'bg-sky-600 text-white' : 'border border-slate-300'
