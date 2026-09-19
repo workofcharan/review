@@ -14,14 +14,17 @@ import {
   ThumbsUp, 
   Layers,
   BarChart3,
-  Award 
+  Award,
+  Edit3
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import BusinessQrModal from './BusinessQrModal';
+import EditBusinessModal from './EditBusinessModal';
 
 export default function OverviewTab({ setActiveTab }) {
   const { activeBusiness, feedbacks, navigateTo } = useApp();
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const bizFeedbacks = feedbacks.filter(f => f.businessId === activeBusiness.id);
 
@@ -59,23 +62,40 @@ export default function OverviewTab({ setActiveTab }) {
     <div className="space-y-6 animate-fade-in">
       {/* Top Banner with Quick Actions */}
       <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
+        <div className="space-y-1.5 flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xl leading-none">{activeBusiness.logo}</span>
-            <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
-              {activeBusiness.name} Command Center
+            <h2 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-1.5">
+              <span>{activeBusiness.name} Command Center</span>
             </h2>
+            <button
+              type="button"
+              onClick={() => setIsEditModalOpen(true)}
+              className="p-1 rounded-lg text-slate-400 hover:text-sky-600 hover:bg-sky-50 transition-colors cursor-pointer"
+              title="Edit Business Details"
+            >
+              <Edit3 className="w-4 h-4" />
+            </button>
             <span className="badge-sky text-[10px] font-bold px-2 py-0.5 rounded-full">
               AI Acceleration Active
             </span>
           </div>
-          <p className="text-xs text-slate-500 max-w-xl">
-            {activeBusiness.tagline} • All 5-star guests are nudged to Google Reviews while negative feedback is intercepted privately.
+          <p className="text-xs text-slate-500 max-w-2xl leading-relaxed">
+            "{activeBusiness.tagline || activeBusiness.type}" • All 5-star guests are nudged to Google Reviews while negative feedback is intercepted privately.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
           <button
+            type="button"
+            onClick={() => setIsEditModalOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-800 border border-slate-200 font-extrabold text-xs flex items-center gap-1.5 shadow-2xs transition-all transform active:scale-95 cursor-pointer"
+          >
+            <Edit3 className="w-3.5 h-3.5 text-sky-600" />
+            <span>Edit</span>
+          </button>
+          <button
+            type="button"
             onClick={() => setIsQrModalOpen(true)}
             className="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-extrabold text-xs flex items-center gap-2 shadow-xs transition-all transform active:scale-95 cursor-pointer"
           >
@@ -83,6 +103,7 @@ export default function OverviewTab({ setActiveTab }) {
             <span>Show QR Code</span>
           </button>
           <button
+            type="button"
             onClick={() => navigateTo(`/b/${activeBusiness.slug}`)}
             className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all transform active:scale-95 cursor-pointer"
           >
@@ -90,6 +111,7 @@ export default function OverviewTab({ setActiveTab }) {
             <span>Customer View</span>
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('qr_studio')}
             className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-bold text-xs flex items-center gap-2 shadow-2xs transition-all cursor-pointer"
           >
@@ -397,6 +419,12 @@ export default function OverviewTab({ setActiveTab }) {
         isOpen={isQrModalOpen}
         onClose={() => setIsQrModalOpen(false)}
         onOpenPrintStudio={() => setActiveTab('qr_studio')}
+      />
+
+      {/* Edit Business Profile Modal */}
+      <EditBusinessModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
       />
     </div>
   );
