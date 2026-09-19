@@ -66,13 +66,11 @@ export default function QuestionFlowEngine({
       ...prev,
       overall_experience: num,
       [currentNodeId]: num,
-      selected_options: prev.selected_options?.length ? prev.selected_options : [initialHighlight]
+      selected_options: [initialHighlight]
     }));
 
-    // Check branching routing in questionFlow
-    const targetBranch = currentNode.next?.[String(num)] || 
-      currentNode.next?.default || 
-      (num >= (business?.minPublicRating || 4) ? 'positive_highlights' : 'private_manager_alert');
+    // In 2-step flow, always advance to Step 2 (rating suggestions) for ALL star ratings (1★-5★)
+    const targetBranch = 'positive_highlights';
 
     setHistory(prev => [...prev, currentNodeId]);
     setCurrentNodeId(targetBranch);
@@ -196,6 +194,40 @@ export default function QuestionFlowEngine({
     }, 400);
   };
 
+  // Submit confidential feedback directly from Step 2
+  const handlePrivateResolutionFromStep2 = () => {
+    setPrivateSubmitting(true);
+    const chosenHighlights = answers.selected_options || answers[currentNodeId] || [];
+    const highlightsText = Array.isArray(chosenHighlights) ? chosenHighlights.join(', ') : String(chosenHighlights);
+
+    setTimeout(() => {
+      const fullPayload = {
+        businessId: business.id,
+        businessSlug: business.slug,
+        rating: selectedRating,
+        sentiment: selectedRating === 3 ? 'neutral' : 'negative',
+        tableOrLocation: tableNumber,
+        channel: 'QR Scan (Mobile)',
+        answers: {
+          ...answers,
+          feedback_points: chosenHighlights,
+          private_manager_alert: `Key customer concerns selected: ${highlightsText}`
+        },
+        generatedReview: null,
+        recoveryStatus: 'pending_review',
+        customerContact: privateContact || '',
+        managerNotes: 'Confidential feedback submitted directly via 2-step smart QR feedback.'
+      };
+
+      if (onFinishFeedback) {
+        onFinishFeedback(fullPayload);
+      }
+
+      setPrivateSubmitting(false);
+      setPrivateCompleted(true);
+    }, 400);
+  };
+
   // Generate authentic AI review draft tailored to current answers
   const activeReviewDraft = generateReviewDraft({
     business,
@@ -205,6 +237,7 @@ export default function QuestionFlowEngine({
     scanSeed
   });
 
+  const isPublicPositiveRating = selectedRating >= (business?.minPublicRating || 4);
   const isPositiveTerminal = currentNodeId === 'direct_submit' || 
     currentNodeId === 'ai_review_screen' || 
     (currentNode.type === 'chips_multiselect' && (!currentNode.next?.default || currentNode.next?.default === 'direct_submit' || currentNode.next?.default === 'ai_review_screen'));
@@ -453,8 +486,8 @@ export default function QuestionFlowEngine({
           </div>
         </div>
 
-        {/* Direct Google Review Redirection Button (if direct_submit is next) */}
-        {isPositiveTerminal ? (
+        {/* Action Button: Google Maps for 4-5 Stars, Confidential Resolution for 1-3 Stars */}
+        {isPublicPositiveRating ? (
           <>
             <button
               type="button"
@@ -489,11 +522,21 @@ export default function QuestionFlowEngine({
         ) : (
           <button
             type="button"
-            onClick={handleAdvanceToNext}
-            className="w-full py-3 px-4 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-black text-xs shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
+            onClick={handlePrivateResolutionFromStep2}
+            className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-amber-600 via-rose-600 to-red-600 hover:from-amber-500 hover:to-red-500 text-white font-black text-sm shadow-lg shadow-rose-600/25 flex items-center justify-center gap-2 transition-all transform active:scale-98 cursor-pointer"
           >
-            <span>Continue</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            {privateSubmitting ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Delivering to Management...</span>
+              </div>
+            ) : (
+              <>
+                <ShieldCheck className="w-4 h-4" />
+                <span>Send Confidential Feedback to Management</span>
+                <HeartHandshake className="w-4 h-4 opacity-85" />
+              </>
+            )}
           </button>
         )}
       </div>

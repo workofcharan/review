@@ -616,20 +616,41 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
           [
             { id: "opt_cafe_4_1", label: "Great Tasting Coffee & Drinks", emoji: "☕", desc: "Quality brews and well-crafted drinks" },
             { id: "opt_cafe_4_2", label: "Courteous Barista Staff", emoji: "🤝", desc: "Polite and helpful order taking" },
-            { id: "opt_cafe_4_3", label: "Comfortable Seating Space", emoji: "🛋️", desc: "Pleasant environment to sit and relax" }
+            { id: "opt_cafe_4_3", label: "Comfortable Seating Space", emoji: "🛋️", desc: "Pleasant environment to sit and relax" },
+            { id: "opt_cafe_4_4", label: "Good Pastry & Snack Selection", emoji: "🍪", desc: "Nice variety of quick bites" }
           ]
         );
       case 3:
-      case 2:
-      case 1:
-      default:
         return pickThree(
           "What was your impression of today's visit?",
           "Select the main aspect of your experience",
           [
-            { id: "opt_cafe_1_1", label: "Drink Wait Time & Queue", emoji: "⏱️", desc: "Order took longer than anticipated" },
-            { id: "opt_cafe_1_2", label: "Beverage Temperature or Taste", emoji: "☕", desc: "Coffee flavor, heat, or milk texture" },
-            { id: "opt_cafe_1_3", label: "Seating Availability & Space", emoji: "🪑", desc: "Seating rush or table cleanliness" }
+            { id: "opt_cafe_3_1", label: "Drink Wait Time & Queue", emoji: "⏱️", desc: "Order took longer than anticipated" },
+            { id: "opt_cafe_3_2", label: "Beverage Temperature or Taste", emoji: "☕", desc: "Coffee flavor, heat, or milk texture" },
+            { id: "opt_cafe_3_3", label: "Seating Availability & Space", emoji: "🪑", desc: "Seating rush or table cleanliness" },
+            { id: "opt_cafe_3_4", label: "Pricing / Portion Balance", emoji: "💲", desc: "Price relative to portion size" }
+          ]
+        );
+      case 2:
+        return pickThree(
+          "What was the main issue during your cafe visit?",
+          "Select your primary concern",
+          [
+            { id: "opt_cafe_2_1", label: "Long Wait for Simple Drinks", emoji: "⏳", desc: "Barista queue was significantly delayed" },
+            { id: "opt_cafe_2_2", label: "Order Accuracy / Milk Substitution", emoji: "🥛", desc: "Milk alternative or sweetness preference missed" },
+            { id: "opt_cafe_2_3", label: "Unclean Tables / Trash Full", emoji: "🧹", desc: "Tables or bus stations needed cleaning" },
+            { id: "opt_cafe_2_4", label: "Loud or Distracting Noise Level", emoji: "🔊", desc: "Too noisy for relaxed conversation" }
+          ]
+        );
+      case 1:
+      default:
+        return pickThree(
+          "What was the primary concern with your visit?",
+          "Select your main issue",
+          [
+            { id: "opt_cafe_1_1", label: "Cold / Incorrect Coffee Order", emoji: "❌", desc: "Drink prepared incorrectly or taste unacceptable" },
+            { id: "opt_cafe_1_2", label: "Unfriendly Barista Interaction", emoji: "⚠️", desc: "Dismissive or rude staff service" },
+            { id: "opt_cafe_1_3", label: "Excessive Wait & Overcharged", emoji: "🛑", desc: "Unreasonable delay and checkout error" }
           ]
         );
     }
@@ -657,20 +678,41 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
           [
             { id: "opt_rest_4_1", label: "Delicious Food & Drinks", emoji: "🍽️", desc: "High quality flavors and generous portions" },
             { id: "opt_rest_4_2", label: "Pleasant Dining Atmosphere", emoji: "🥂", desc: "Comfortable seating and great vibe" },
-            { id: "opt_rest_4_3", label: "Prompt & Courteous Service", emoji: "⚡", desc: "Friendly servers and timely orders" }
+            { id: "opt_rest_4_3", label: "Prompt & Courteous Service", emoji: "⚡", desc: "Friendly servers and timely orders" },
+            { id: "opt_rest_4_4", label: "Good Menu Variety", emoji: "📋", desc: "Great options across appetizers and mains" }
           ]
         );
       case 3:
+        return pickThree(
+          "What was your impression of today's dining visit?",
+          "Select the main aspect of your experience",
+          [
+            { id: "opt_rest_3_1", label: "Kitchen / Table Wait Time", emoji: "⏱️", desc: "Order took longer than anticipated" },
+            { id: "opt_rest_3_2", label: "Food Temperature or Seasoning", emoji: "🥘", desc: "Dish preparation or seasoning balance" },
+            { id: "opt_rest_3_3", label: "Server Attention & Follow-up", emoji: "👥", desc: "Table check-in or water refills" },
+            { id: "opt_rest_3_4", label: "Noise Level / Dining Ambience", emoji: "🔊", desc: "Acoustics or dining room crowding" }
+          ]
+        );
       case 2:
-      case 1:
-      default:
         return pickThree(
           "What was the main issue during your dining visit?",
           "Select your primary concern",
           [
-            { id: "opt_rest_1_1", label: "Kitchen / Table Wait Time", emoji: "⏱️", desc: "Order took longer than anticipated" },
-            { id: "opt_rest_1_2", label: "Food Temperature or Order Accuracy", emoji: "🥘", desc: "Dish preparation or temperature issue" },
-            { id: "opt_rest_1_3", label: "Server Attention & Follow-up", emoji: "👥", desc: "Table check-in or billing turnaround" }
+            { id: "opt_rest_2_1", label: "Slow Kitchen & Lukewarm Food", emoji: "⏳", desc: "Dishes arrived late or not piping hot" },
+            { id: "opt_rest_2_2", label: "Missing or Incorrect Item", emoji: "⚠️", desc: "Special request or side item missed" },
+            { id: "opt_rest_2_3", label: "Inattentive Server Follow-up", emoji: "👤", desc: "Had to hunt down server for bill or drinks" },
+            { id: "opt_rest_2_4", label: "High Price for Portion Received", emoji: "💲", desc: "Value didn't match bill total" }
+          ]
+        );
+      case 1:
+      default:
+        return pickThree(
+          "What was the primary issue with your dining experience?",
+          "Select your main concern",
+          [
+            { id: "opt_rest_1_1", label: "Extremely Long Kitchen Delay", emoji: "❌", desc: "Waited an unreasonable time for food" },
+            { id: "opt_rest_1_2", label: "Poor Food Quality / Cold Meal", emoji: "🛑", desc: "Dishes were undercooked, cold, or disappointing" },
+            { id: "opt_rest_1_3", label: "Unfriendly Staff Interaction", emoji: "⚠️", desc: "Rude or dismissive server service" }
           ]
         );
     }
@@ -692,17 +734,46 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
           ]
         );
       case 4:
+        return pickThree(
+          `What did you like about your appointment at ${bizName}?`,
+          "Select what went well today",
+          [
+            { id: "opt_sal_4_1", label: "Good Cut & Styling Result", emoji: "💇", desc: "Happy with overall hairstyle" },
+            { id: "opt_sal_4_2", label: "Friendly & Polite Stylist", emoji: "🤝", desc: "Courteous and attentive service" },
+            { id: "opt_sal_4_3", label: "Clean & Pleasant Salon", emoji: "✨", desc: "Clean station and nice atmosphere" },
+            { id: "opt_sal_4_4", label: "Prompt Start Time", emoji: "⚡", desc: "Seated close to scheduled appointment" }
+          ]
+        );
       case 3:
-      case 2:
-      case 1:
-      default:
         return pickThree(
           "What did you notice about your salon appointment?",
           "Select your primary observation",
           [
-            { id: "opt_sal_1_1", label: "Stylist Consultation & Attention", emoji: "💅", desc: "Discussion of look and desired finish" },
-            { id: "opt_sal_1_2", label: "Appointment Timing & Pacing", emoji: "⏱️", desc: "Promptness and chair transition" },
-            { id: "opt_sal_1_3", label: "Ambiance & Salon Cleanliness", emoji: "🪞", desc: "Studio vibe, music, and station hygiene" }
+            { id: "opt_sal_3_1", label: "Stylist Consultation & Attention", emoji: "💅", desc: "Discussion of look and desired finish" },
+            { id: "opt_sal_3_2", label: "Appointment Timing & Chair Transition", emoji: "⏱️", desc: "Promptness and chair transition" },
+            { id: "opt_sal_3_3", label: "Ambiance & Salon Cleanliness", emoji: "🪞", desc: "Studio vibe, music, and station hygiene" },
+            { id: "opt_sal_3_4", label: "Service Pricing Transparency", emoji: "💵", desc: "Clarity on add-on service pricing" }
+          ]
+        );
+      case 2:
+        return pickThree(
+          "What was the main issue during your salon visit?",
+          "Select your primary concern",
+          [
+            { id: "opt_sal_2_1", label: "Rushed Haircut or Styling", emoji: "⏳", desc: "Stylist seemed rushed or distracted" },
+            { id: "opt_sal_2_2", label: "Appointment Started Late", emoji: "⏱️", desc: "Waited past scheduled booking time" },
+            { id: "opt_sal_2_3", label: "Cut or Color Not Exactly as Desired", emoji: "⚠️", desc: "Result differed from consultation" }
+          ]
+        );
+      case 1:
+      default:
+        return pickThree(
+          "What was the primary issue with your appointment?",
+          "Select your main concern",
+          [
+            { id: "opt_sal_1_1", label: "Damaged Hair / Unacceptable Result", emoji: "❌", desc: "Haircut or color significantly flawed" },
+            { id: "opt_sal_1_2", label: "Excessive Delay & Ignored", emoji: "🛑", desc: "Long wait without communication" },
+            { id: "opt_sal_1_3", label: "Unprofessional Stylist Treatment", emoji: "⚠️", desc: "Rude or dismissive service" }
           ]
         );
     }
@@ -724,17 +795,46 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
           ]
         );
       case 4:
+        return pickThree(
+          `What did you enjoy about your stay at ${bizName}?`,
+          "Select what went well",
+          [
+            { id: "opt_hot_4_1", label: "Comfortable Room & Good Bedding", emoji: "🛏️", desc: "Quiet and well-kept room" },
+            { id: "opt_hot_4_2", label: "Friendly Front Desk Staff", emoji: "🤝", desc: "Helpful and polite customer service" },
+            { id: "opt_hot_4_3", label: "Convenient Location & Amenities", emoji: "📍", desc: "Great spot for travel and parking" },
+            { id: "opt_hot_4_4", label: "Satisfying Breakfast", emoji: "☕", desc: "Good morning food selection" }
+          ]
+        );
       case 3:
-      case 2:
-      case 1:
-      default:
         return pickThree(
           "What was your impression of your stay?",
           "Select your primary takeaway",
           [
-            { id: "opt_hot_1_1", label: "Room Comfort & Housekeeping", emoji: "✨", desc: "Cleanliness and room amenities" },
-            { id: "opt_hot_1_2", label: "Front Desk & Check-in Speed", emoji: "⏳", desc: "Arrival and key delivery speed" },
-            { id: "opt_hot_1_3", label: "Facility Amenities & Location", emoji: "📍", desc: "Property access and surrounding area" }
+            { id: "opt_hot_3_1", label: "Room Comfort & Housekeeping", emoji: "✨", desc: "Cleanliness and room amenities" },
+            { id: "opt_hot_3_2", label: "Front Desk & Check-in Speed", emoji: "⏳", desc: "Arrival and key delivery speed" },
+            { id: "opt_hot_3_3", label: "Facility Amenities & Location", emoji: "📍", desc: "Property access and surrounding area" },
+            { id: "opt_hot_3_4", label: "Wi-Fi & Noise Insulation", emoji: "📶", desc: "Internet speed or hallway noise" }
+          ]
+        );
+      case 2:
+        return pickThree(
+          "What was the main issue during your hotel stay?",
+          "Select your primary concern",
+          [
+            { id: "opt_hot_2_1", label: "Slow Check-in / Key Card Issue", emoji: "⏱️", desc: "Long wait in lobby to get into room" },
+            { id: "opt_hot_2_2", label: "Room Cleanliness Issue", emoji: "🧹", desc: "Bathroom or linens needed better cleaning" },
+            { id: "opt_hot_2_3", label: "Loud Air Conditioning or Noise", emoji: "🔊", desc: "Disturbed sleep from hallway or equipment" }
+          ]
+        );
+      case 1:
+      default:
+        return pickThree(
+          "What was the primary issue with your stay?",
+          "Select your main concern",
+          [
+            { id: "opt_hot_1_1", label: "Unsanitary Room or Bathroom", emoji: "❌", desc: "Unacceptable cleanliness standards" },
+            { id: "opt_hot_1_2", label: "Rude Front Desk Treatment", emoji: "🛑", desc: "Unhelpful or hostile staff interaction" },
+            { id: "opt_hot_1_3", label: "Broken AC / Facility Breakdown", emoji: "⚠️", desc: "Key amenities failed with no resolution" }
           ]
         );
     }
@@ -751,21 +851,51 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
             { id: "opt_auto_5_1", label: "Fast Diagnostic & Expert Repair", emoji: "🔧", desc: "Precise troubleshooting and smooth driving result" },
             { id: "opt_auto_5_2", label: "Transparent & Honest Quote", emoji: "📋", desc: "Clear explanations with no surprise fees" },
             { id: "opt_auto_5_3", label: "Spotless Detailing & Wash Finish", emoji: "✨", desc: "Car returned clean and sparkling" },
-            { id: "opt_auto_5_4", label: "On-Time Vehicle Delivery", emoji: "⚡", desc: "Completed exactly when promised" }
+            { id: "opt_auto_5_4", label: "On-Time Vehicle Delivery", emoji: "⚡", desc: "Completed exactly when promised" },
+            { id: "opt_auto_5_5", label: "Courteous Service Advisors", emoji: "🤝", desc: "Knowledgeable, friendly, and respectful team" }
           ]
         );
       case 4:
+        return pickThree(
+          `What did you like about your visit to ${bizName}?`,
+          "Select what went well today",
+          [
+            { id: "opt_auto_4_1", label: "Reliable & Quality Repair Work", emoji: "🔧", desc: "Car is running smoothly" },
+            { id: "opt_auto_4_2", label: "Polite Service Advisors", emoji: "🤝", desc: "Helpful and courteous staff" },
+            { id: "opt_auto_4_3", label: "Fair & Clear Estimate", emoji: "💵", desc: "Estimate was explained clearly" },
+            { id: "opt_auto_4_4", label: "Clean Waiting Lounge", emoji: "🛋️", desc: "Comfortable customer area" }
+          ]
+        );
       case 3:
-      case 2:
-      case 1:
-      default:
         return pickThree(
           "What did you notice about your vehicle service?",
           "Select your primary observation",
           [
-            { id: "opt_auto_1_1", label: "Turnaround Time & Service Speed", emoji: "⏱️", desc: "Repair timeline and turnaround" },
-            { id: "opt_auto_1_2", label: "Estimate Clarity & Pricing", emoji: "💵", desc: "Clear breakdown of labor and parts" },
-            { id: "opt_auto_1_3", label: "Customer Communication Updates", emoji: "📱", desc: "Timely status updates on progress" }
+            { id: "opt_auto_3_1", label: "Turnaround Time & Service Speed", emoji: "⏱️", desc: "Repair timeline and turnaround" },
+            { id: "opt_auto_3_2", label: "Estimate Clarity & Pricing", emoji: "💵", desc: "Clear breakdown of labor and parts" },
+            { id: "opt_auto_3_3", label: "Customer Communication Updates", emoji: "📱", desc: "Timely status updates on progress" },
+            { id: "opt_auto_3_4", label: "Vehicle Inspection Walkthrough", emoji: "📋", desc: "Overview of suggested maintenance" }
+          ]
+        );
+      case 2:
+        return pickThree(
+          "What was the main issue with your service visit?",
+          "Select your primary concern",
+          [
+            { id: "opt_auto_2_1", label: "Repair Delayed Past Promised Time", emoji: "⏳", desc: "Car not ready when originally stated" },
+            { id: "opt_auto_2_2", label: "Unclear Invoicing / Extra Charges", emoji: "💵", desc: "Final bill differed from initial quote" },
+            { id: "opt_auto_2_3", label: "Lack of Progress Updates", emoji: "📱", desc: "Had to call multiple times for status" }
+          ]
+        );
+      case 1:
+      default:
+        return pickThree(
+          "What was the primary issue with your automotive service?",
+          "Select your main concern",
+          [
+            { id: "opt_auto_1_1", label: "Vehicle Issue Still Unresolved", emoji: "❌", desc: "Problem remains or new issue created" },
+            { id: "opt_auto_1_2", label: "Significant Invoicing Surprise", emoji: "🛑", desc: "Charged for unauthorized or unexpected work" },
+            { id: "opt_auto_1_3", label: "Unprofessional Communication", emoji: "⚠️", desc: "Rude or dismissive service advisor" }
           ]
         );
     }
@@ -786,17 +916,46 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
           ]
         );
       case 4:
+        return pickThree(
+          `What did you like about shopping at ${bizName}?`,
+          "Select what went well today",
+          [
+            { id: "opt_ret_4_1", label: "Good Product Selection & Variety", emoji: "🛍️", desc: "Nice range of items and styles" },
+            { id: "opt_ret_4_2", label: "Friendly Cashier & Associates", emoji: "🤝", desc: "Polite and welcoming team" },
+            { id: "opt_ret_4_3", label: "Clean & Organized Store Layout", emoji: "✨", desc: "Easy to navigate and browse" },
+            { id: "opt_ret_4_4", label: "Good Quality for Price", emoji: "🏷️", desc: "Fair value on merchandise" }
+          ]
+        );
       case 3:
-      case 2:
-      case 1:
-      default:
         return pickThree(
           "What was your impression of your shopping visit?",
           "Select your primary takeaway",
           [
-            { id: "opt_ret_1_1", label: "Product Sizing & Stock Availability", emoji: "🏷️", desc: "Availability of sizes or desired items" },
-            { id: "opt_ret_1_2", label: "Staff Assistance & Helpfulness", emoji: "🤝", desc: "Assistance on the sales floor" },
-            { id: "opt_ret_1_3", label: "Pricing & Promotion Clarity", emoji: "💳", desc: "Discount and tag pricing clarity" }
+            { id: "opt_ret_3_1", label: "Product Sizing & Stock Availability", emoji: "🏷️", desc: "Availability of sizes or desired items" },
+            { id: "opt_ret_3_2", label: "Staff Assistance & Helpfulness", emoji: "🤝", desc: "Assistance on the sales floor" },
+            { id: "opt_ret_3_3", label: "Pricing & Promotion Clarity", emoji: "💳", desc: "Discount and tag pricing clarity" },
+            { id: "opt_ret_3_4", label: "Checkout Line Speed", emoji: "⏱️", desc: "Cashier wait time during rush" }
+          ]
+        );
+      case 2:
+        return pickThree(
+          "What was the main issue during your shopping trip?",
+          "Select your primary concern",
+          [
+            { id: "opt_ret_2_1", label: "Limited Sizes in Stock", emoji: "👗", desc: "Popular sizes were completely sold out" },
+            { id: "opt_ret_2_2", label: "Slow Register Checkout Line", emoji: "⏳", desc: "Only one register open with a long line" },
+            { id: "opt_ret_2_3", label: "Inattentive Sales Floor Staff", emoji: "👤", desc: "Hard to find help or ask questions" }
+          ]
+        );
+      case 1:
+      default:
+        return pickThree(
+          "What was the primary issue with your shopping experience?",
+          "Select your main concern",
+          [
+            { id: "opt_ret_1_1", label: "Rude / Unhelpful Cashier", emoji: "❌", desc: "Dismissive interaction at the register" },
+            { id: "opt_ret_1_2", label: "Price Mismatch at Register", emoji: "🛑", desc: "Charged higher than shelf tag price" },
+            { id: "opt_ret_1_3", label: "Return / Exchange Policy Issue", emoji: "⚠️", desc: "Unreasonable return or exchange barrier" }
           ]
         );
     }
@@ -817,17 +976,46 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
           ]
         );
       case 4:
+        return pickThree(
+          `What did you like about your pet's visit to ${bizName}?`,
+          "Select what went well today",
+          [
+            { id: "opt_pet_4_1", label: "Caring Vet & Tech Team", emoji: "🐾", desc: "Friendly and gentle with my pet" },
+            { id: "opt_pet_4_2", label: "Clean Examination Rooms", emoji: "✨", desc: "Tidy and professional clinic" },
+            { id: "opt_pet_4_3", label: "Prompt Appointment Timing", emoji: "⚡", desc: "Taken back close to scheduled time" },
+            { id: "opt_pet_4_4", label: "Clear Care Instructions", emoji: "💡", desc: "Helpful guidance on pet health" }
+          ]
+        );
       case 3:
-      case 2:
-      case 1:
-      default:
         return pickThree(
           "What was your impression of the veterinary visit?",
           "Select your primary takeaway",
           [
-            { id: "opt_pet_1_1", label: "Appointment Wait Time", emoji: "⏱️", desc: "Time spent in waiting area" },
-            { id: "opt_pet_1_2", label: "Treatment Cost Transparency", emoji: "💵", desc: "Clarity on medication and exam fees" },
-            { id: "opt_pet_1_3", label: "Gentle Handling & Care", emoji: "🐕", desc: "Comfort level for the pet during exam" }
+            { id: "opt_pet_3_1", label: "Appointment Wait Time", emoji: "⏱️", desc: "Time spent in waiting area" },
+            { id: "opt_pet_3_2", label: "Treatment Cost Transparency", emoji: "💵", desc: "Clarity on medication and exam fees" },
+            { id: "opt_pet_3_3", label: "Gentle Handling & Care", emoji: "🐕", desc: "Comfort level for the pet during exam" },
+            { id: "opt_pet_3_4", label: "Follow-up Communication", emoji: "📱", desc: "Clarity on test result timelines" }
+          ]
+        );
+      case 2:
+        return pickThree(
+          "What was the main issue during your pet's appointment?",
+          "Select your primary concern",
+          [
+            { id: "opt_pet_2_1", label: "Extended Exam Room Waiting", emoji: "⏳", desc: "Waited a long time for the vet to enter" },
+            { id: "opt_pet_2_2", label: "Final Bill Higher Than Quoted", emoji: "💵", desc: "Surprise fees for tests or treatments" },
+            { id: "opt_pet_2_3", label: "Rushed Consultation", emoji: "⚠️", desc: "Didn't feel all questions were answered" }
+          ]
+        );
+      case 1:
+      default:
+        return pickThree(
+          "What was the primary concern with your pet's visit?",
+          "Select your main issue",
+          [
+            { id: "opt_pet_1_1", label: "Stressful / Rough Handling", emoji: "❌", desc: "Handling caused excessive stress for pet" },
+            { id: "opt_pet_1_2", label: "Significant Unexplained Charges", emoji: "🛑", desc: "Unreasonable bill with poor explanation" },
+            { id: "opt_pet_1_3", label: "Uncaring Staff Interaction", emoji: "⚠️", desc: "Cold or dismissive team communication" }
           ]
         );
     }
@@ -861,16 +1049,35 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
           ]
         );
       case 3:
-      case 2:
-      case 1:
-      default:
         return pickThree(
           "What was the main aspect of your appointment?",
           "Select your primary takeaway",
           [
-            { id: "opt_hc_1_1", label: "Appointment Wait Time", emoji: "⏱️", desc: "Waited longer than expected before treatment" },
-            { id: "opt_hc_1_2", label: "Treatment Cost & Pricing Clarity", emoji: "💬", desc: "Needed more clarity on fees or treatment plan" },
-            { id: "opt_hc_1_3", label: "Communication During Procedure", emoji: "🗣️", desc: "Would prefer more step-by-step updates" }
+            { id: "opt_hc_3_1", label: "Appointment Wait Time", emoji: "⏱️", desc: "Waited longer than expected before treatment" },
+            { id: "opt_hc_3_2", label: "Treatment Cost & Pricing Clarity", emoji: "💬", desc: "Needed more clarity on fees or treatment plan" },
+            { id: "opt_hc_3_3", label: "Communication During Procedure", emoji: "🗣️", desc: "Would prefer more step-by-step updates" },
+            { id: "opt_hc_3_4", label: "Scheduling & Availability", emoji: "📅", desc: "Ease of getting convenient appointment time" }
+          ]
+        );
+      case 2:
+        return pickThree(
+          "What was the main issue during your appointment?",
+          "Select your primary concern",
+          [
+            { id: "opt_hc_2_1", label: "Extended Waiting Room Delay", emoji: "⏳", desc: "Waited over 30 minutes past appointment" },
+            { id: "opt_hc_2_2", label: "Unexpected Out-of-Pocket Bill", emoji: "💵", desc: "Unclear insurance or co-pay estimates" },
+            { id: "opt_hc_2_3", label: "Rushed Provider Consultation", emoji: "⚠️", desc: "Doctor seemed in a hurry" }
+          ]
+        );
+      case 1:
+      default:
+        return pickThree(
+          "What was the primary concern with your healthcare visit?",
+          "Select your main issue",
+          [
+            { id: "opt_hc_1_1", label: "Painful / Rough Procedure", emoji: "❌", desc: "Discomfort or pain during treatment" },
+            { id: "opt_hc_1_2", label: "Excessive Delay & Ignored", emoji: "🛑", desc: "Extremely long wait with no updates" },
+            { id: "opt_hc_1_3", label: "Uncaring Staff Interaction", emoji: "⚠️", desc: "Cold or dismissive bedside manner" }
           ]
         );
     }
@@ -899,20 +1106,40 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
           [
             { id: "opt_tech_4_1", label: "Good Technical Knowledge", emoji: "💻", desc: "Helpful and competent staff" },
             { id: "opt_tech_4_2", label: "Reliable Service Result", emoji: "🔧", desc: "Issue fixed properly" },
-            { id: "opt_tech_4_3", label: "Courteous Communication", emoji: "📱", desc: "Polite updates on progress" }
+            { id: "opt_tech_4_3", label: "Courteous Communication", emoji: "📱", desc: "Polite updates on progress" },
+            { id: "opt_tech_4_4", label: "Fair & Reasonable Price", emoji: "💵", desc: "Good value for tech service" }
           ]
         );
       case 3:
-      case 2:
-      case 1:
-      default:
         return pickThree(
           "What was your impression of the technical service?",
           "Select your primary takeaway",
           [
-            { id: "opt_tech_1_1", label: "Diagnostic / Repair Speed", emoji: "⏱️", desc: "Service timeline took longer than expected" },
-            { id: "opt_tech_1_2", label: "Cost & Pricing Transparency", emoji: "💵", desc: "Clarity on parts and repair fees" },
-            { id: "opt_tech_1_3", label: "Status Update Communication", emoji: "📱", desc: "Communication on repair milestones" }
+            { id: "opt_tech_3_1", label: "Diagnostic / Repair Speed", emoji: "⏱️", desc: "Service timeline took longer than expected" },
+            { id: "opt_tech_3_2", label: "Cost & Pricing Transparency", emoji: "💵", desc: "Clarity on parts and repair fees" },
+            { id: "opt_tech_3_3", label: "Status Update Communication", emoji: "📱", desc: "Communication on repair milestones" },
+            { id: "opt_tech_3_4", label: "Technical Explanation Clarity", emoji: "💡", desc: "Explanation of root cause and fix" }
+          ]
+        );
+      case 2:
+        return pickThree(
+          "What was the main issue during your technical service?",
+          "Select your primary concern",
+          [
+            { id: "opt_tech_2_1", label: "Delay Beyond Promised Date", emoji: "⏳", desc: "Device repair took several extra days" },
+            { id: "opt_tech_2_2", label: "Higher Final Invoice Than Estimate", emoji: "💵", desc: "Extra fees added without prior approval" },
+            { id: "opt_tech_2_3", label: "Intermittent Issue Still Occurring", emoji: "⚠️", desc: "Device glitch not fully resolved" }
+          ]
+        );
+      case 1:
+      default:
+        return pickThree(
+          "What was the primary issue with your tech service?",
+          "Select your main concern",
+          [
+            { id: "opt_tech_1_1", label: "Device Issue Still Unfixed", emoji: "❌", desc: "Problem persists after repair" },
+            { id: "opt_tech_1_2", label: "Significant Invoicing Surprise", emoji: "🛑", desc: "High unexpected cost with no notice" },
+            { id: "opt_tech_1_3", label: "Poor Support / Dismissive Staff", emoji: "⚠️", desc: "Unhelpful or rude communication" }
           ]
         );
     }
@@ -928,7 +1155,8 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
           { id: "opt_gen_5_1", label: "Outstanding Service Quality", emoji: "⭐", desc: "Top-notch experience from start to finish" },
           { id: "opt_gen_5_2", label: "Friendly & Attentive Team", emoji: "🤝", desc: "Welcoming, courteous, and helpful staff" },
           { id: "opt_gen_5_3", label: "Clean & Inviting Space", emoji: "✨", desc: "Well organized, spotless, and comfortable" },
-          { id: "opt_gen_5_4", label: "Fast & Seamless Turnaround", emoji: "⚡", desc: "Prompt service with zero hassle" }
+          { id: "opt_gen_5_4", label: "Fast & Seamless Turnaround", emoji: "⚡", desc: "Prompt service with zero hassle" },
+          { id: "opt_gen_5_5", label: "Great Overall Value", emoji: "💎", desc: "Exceptional quality for the price" }
         ]
       );
     case 4:
@@ -938,20 +1166,40 @@ export function getThreeOptionsForRating(business, rating = 5, scanSeed = null) 
         [
           { id: "opt_gen_4_1", label: "Good Overall Experience", emoji: "👍", desc: "Smooth and positive visit" },
           { id: "opt_gen_4_2", label: "Helpful Customer Support", emoji: "💬", desc: "Supportive staff and clear help" },
-          { id: "opt_gen_4_3", label: "Clean & Well Maintained", emoji: "✨", desc: "Pleasant environment and facility" }
+          { id: "opt_gen_4_3", label: "Clean & Well Maintained", emoji: "✨", desc: "Pleasant environment and facility" },
+          { id: "opt_gen_4_4", label: "Fair & Reasonable Value", emoji: "💵", desc: "Solid service for the cost" }
         ]
       );
     case 3:
-    case 2:
-    case 1:
-    default:
       return pickThree(
         "What was your impression of today's visit?",
         "Select what stood out",
         [
-          { id: "opt_gen_1_1", label: "Service Speed & Wait Time", emoji: "⏱️", desc: "Faster turnaround and less waiting" },
-          { id: "opt_gen_1_2", label: "Pricing & Value Clarity", emoji: "💲", desc: "Clearer pricing or better value" },
-          { id: "opt_gen_1_3", label: "Customer Service Interaction", emoji: "👥", desc: "Staff communication and support" }
+          { id: "opt_gen_3_1", label: "Service Speed & Wait Time", emoji: "⏱️", desc: "Faster turnaround and less waiting" },
+          { id: "opt_gen_3_2", label: "Pricing & Value Clarity", emoji: "💲", desc: "Clearer pricing or better value" },
+          { id: "opt_gen_3_3", label: "Customer Service Interaction", emoji: "👥", desc: "Staff communication and support" },
+          { id: "opt_gen_3_4", label: "Facility / Environment Quality", emoji: "🏢", desc: "Ambiance, space, or convenience" }
+        ]
+      );
+    case 2:
+      return pickThree(
+        "What was the main issue during your visit?",
+        "Select your primary concern",
+        [
+          { id: "opt_gen_2_1", label: "Service Delay / Extended Wait", emoji: "⏳", desc: "Took longer than expected" },
+          { id: "opt_gen_2_2", label: "Unclear Pricing or Policies", emoji: "💵", desc: "Confusion around costs or terms" },
+          { id: "opt_gen_2_3", label: "Lack of Staff Helpfulness", emoji: "👤", desc: "Staff was unavailable or indifferent" }
+        ]
+      );
+    case 1:
+    default:
+      return pickThree(
+        "What was the primary concern with your visit?",
+        "Select your main issue",
+        [
+          { id: "opt_gen_1_1", label: "Poor Service Quality", emoji: "❌", desc: "Service did not meet basic expectations" },
+          { id: "opt_gen_1_2", label: "Unfriendly Staff Interaction", emoji: "🛑", desc: "Rude or dismissive communication" },
+          { id: "opt_gen_1_3", label: "Unresolved Issue / Complaint", emoji: "⚠️", desc: "Problem occurred with no effort to resolve" }
         ]
       );
   }
